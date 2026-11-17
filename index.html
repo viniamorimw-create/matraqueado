@@ -10,7 +10,7 @@ REGRAS IMPLEMENTADAS
   escondido na tela inicial (atributo hidden). 10 rodadas, até 3 lances por rodada; tocar no dado marca "fica".
 - Casas: Ás, Duque, Terno, Quadra, Quina, Sena = soma dos dados daquele número.
 - Full 10 (15 de boca), Seguida 20 (25), Quadrada 30 (35), General 50 (100 de boca).
-- "De boca": a jogada saiu no primeiro lance da rodada (do segundo lance em diante não vale, mesmo rolando os 5 dados).
+- "De boca": a jogada saiu num lance em que os 5 dados foram rolados juntos (sem nenhum "fica"), em qualquer lance da rodada.
 - Riscar: casa em que os dados não pontuam pode ser riscada (vale 0 e fica eliminada).
 - Survival: 10 fases com 3 a 10 rodadas cada (RODADAS); meta mínima por fase; bateu = libera AVANÇAR e, ao fim, a caça-níquel de
   3 rolos oferece 3 bônus (você escolhe 1); errou = fim da run. Chefes nas fases 5 e 10 (1 lance a menos). Folga de +60% turbina a máquina (mais raros).
@@ -737,7 +737,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
         <dt>General</dt><dd>5 iguais. 50 pontos, 100 de boca.</dd>
       </dl>
       <h3>De boca</h3>
-      <p>Full, Seguida e Quadrada valem 5 pontos a mais, e o General dobra para 100, quando a jogada sai no primeiro lance da rodada. A partir do segundo lance, mesmo rolando os 5 dados de novo, não vale mais.</p>
+      <p>Full, Seguida e Quadrada valem 5 pontos a mais, e o General dobra para 100, quando a jogada sai num lance em que os 5 dados foram rolados juntos, sem guardar nenhum. Vale em qualquer lance da rodada: no primeiro, ou no segundo e no terceiro se você rolar os 5 de novo.</p>
       <h3>Dicas</h3>
       <ul>
         <li>Sena, Quina e Quadra são as casas de número que mais rendem. Guarde os dados 6, 5 e 4.</li>
@@ -816,7 +816,7 @@ var X1=(function(){
     var V=[stop],ACT=[null];
     for(r=1;r<3;r++){
       var prev=V[r-1],EV=new Float64Array(keeps.length);
-      for(ki=0;ki<keeps.length;ki++){e=0;tr=T[ki];for(j=0;j<tr.length;j++)e+=tr[j][1]*prev[0][tr[j][0]];EV[ki]=e}   // de boca só no 1º lance
+      for(ki=0;ki<keeps.length;ki++){var nb=keeps[ki].n===0?1:0;e=0;tr=T[ki];for(j=0;j<tr.length;j++)e+=tr[j][1]*prev[nb][tr[j][0]];EV[ki]=e}   // rolar os 5 juntos: a jogada que sair é de boca
       var cur=new Float64Array(252),act=new Int32Array(252),ks;
       for(b=0;b<2;b++){cur=new Float64Array(252);act=new Int32Array(252);
         for(d=0;d<252;d++){best=stop[b][d];var ba=-1;ks=subK[d];for(j=0;j<ks.length;j++){ki=ks[j];if(keeps[ki].n===5)continue;if(EV[ki]>best){best=EV[ki];ba=ki}}cur[d]=best;act[d]=ba}
@@ -1549,7 +1549,7 @@ var EL={2:[14.3,27.5,39.7,50.7,60.5,69.1,76.5,82.8,87.8,91.4],3:E3,4:[22.5,43.3,
 var PRECO={
   as3:[0.1,0.2,0.4,0.8,1.3,2,2.7,3.5,4.1,4.3],
   x2_u2:[0.2,0.6,1,1.7,2.4,3.2,3.9,4.4,4.7,4.9],
-  nb1:[0.2,0.4,0.6,0.8,1.1,1.4,1.6,1.8,1.9,2],
+  nb1:[0.3,0.6,0.9,1.2,1.7,2.2,2.5,2.8,2.9,3.1],
   gor5:[0.9,1.8,2.6,3.3,3.9,4.5,5,5.5,5.8,6.1],
   rolext:[4.1,4.5,4.7,4.8,5,5,5.1,5.2,5.3,5.4],
   gen75:[0.4,0.8,1.2,1.5,1.9,2.2,2.4,2.7,2.9,3],   // idem
@@ -1563,7 +1563,7 @@ var PRECO={
   x2_u4:[2.6,4.8,6.7,8.1,9.1,9.7,10.1,10.5,10.9,11.3],
   consol:[0,0.1,0.2,0.5,1,1.9,3.2,5.2,7.9,11.3],
   gor10:[1.8,3.6,5.2,6.6,7.9,9.1,10.1,10.9,11.7,12.2],
-  nb2:[0.5,0.9,1.4,1.9,2.4,2.9,3.3,3.6,3.8,4.1],
+  nb2:[0.8,1.4,2.2,3,3.8,4.6,5.3,5.8,6.1,6.6],
   full25:[1.7,3.5,5.3,7.2,9,10.6,11.9,12.8,13.4,13.8],
   x2_u5:[5.3,8.3,10.2,11.4,12.3,12.8,13.3,13.8,14.3,14.8],
   x2_general:[0.5,0.8,1.2,1.6,1.9,2.2,2.5,2.8,3,3.1],   // reduzido após o teste de balanceamento: rende raramente, pesava demais na meta
@@ -1572,7 +1572,7 @@ var PRECO={
   gor15:[2.8,5.3,7.7,9.9,11.8,13.6,15.1,16.4,17.5,18.3],
   lance:[4.1,7.6,10.8,13.6,16,18.3,20.5,22.5,24.4,26],
   x2_quadra:[7.6,13,17.1,20.3,22.7,24.5,25.8,26.8,27.6,28.2],
-  nb3:[1.1,2.1,3.1,4.1,5.1,6,6.8,7.5,8,8.4],
+  nb3:[2,3.9,5.7,7.6,9.4,11.1,12.6,13.9,14.8,15.5],
   i_extra:[4.1,4.5,4.7,4.8,5,5,5.1,5.2,5.3,5.4],
   i_par:[10.9,10.6,10.3,10,9.8,9.5,9.3,9.2,9,9],
   i_alto:[11.4,11.1,10.8,10.5,10.2,9.9,9.7,9.5,9.3,9.3],
@@ -2147,7 +2147,7 @@ function rolar(){
   var todos=S.guardado.every(function(g){return !g}),haDados=S.jogadas>0;
   var antigos=S.dados.slice(),novos=S.dados.slice(),guard=S.guardado.slice(),i;
   for(i=0;i<5;i++)if(!guard[i])novos[i]=sorteia();   // o sorteio sai antes; a animação só revela o resultado
-  function conclui(){var ant=haDados?antigos:[0,0,0,0,0];S.dados=novos;S.jogadas++;S.boca=!haDados&&!(R&&R.mald==="seca");desenha();if(R)salvaRun();else salvaClassico();efeitoRolagem();checa666(ant)}
+  function conclui(){var ant=haDados?antigos:[0,0,0,0,0];S.dados=novos;S.jogadas++;S.boca=todos&&!(R&&R.mald==="seca");desenha();if(R)salvaRun();else salvaClassico();efeitoRolagem();checa666(ant)}
   if(semMovimento()||guard.every(function(g){return g})){conclui();return}   // sem movimento, ou nada para rolar: sem animação
   rolando=true;cenaAtiva=true;
   $("btn-copo").classList.remove("balanco");
@@ -2324,8 +2324,8 @@ var TUTO=[
       '<p>São 10 rodadas para 10 casas, e cada casa só pode ser usada uma vez.</p>'+
       '<p>Se nada servir, <b>risque</b> uma casa: ela vale zero e fica fechada até o fim. Vale mais riscar uma casa difícil, como o General, do que gastar a Sena com pouco.</p>'}},
   {t:"De boca vale mais",h:function(){
-    return '<div class="tuto-boca"><span class="tuto-selo">1º lance</span>'+tutoMini([2,3,4,5,6])+'</div>'+
-      '<p>Se Full, Seguida ou Quadrada sair logo no <b>primeiro lance</b> da rodada, vale 5 pontos a mais. O General de boca vale 100.</p>'+
+    return '<div class="tuto-boca"><span class="tuto-selo">5 dados<br>no copo</span>'+tutoMini([2,3,4,5,6])+'</div>'+
+      '<p>Se Full, Seguida ou Quadrada sair num lance em que você rolou os <b>5 dados juntos</b>, sem guardar nenhum, vale 5 pontos a mais. O General de boca vale 100.</p><p>Vale no primeiro lance e também no segundo ou no terceiro, se você rolar os 5 de novo.</p>'+
       '<div class="tuto-lista">'+[["Full","15"],["Seguida","25"],["Quadrada","35"],["General","100"]].map(function(x){return '<div class="tuto-linha" style="grid-template-columns:1fr auto"><strong>'+x[0]+' de boca</strong><em>'+x[1]+'</em></div>'}).join("")+'</div>'}},
   {t:"Três modos",h:function(){
     return '<div class="tuto-modos">'+
@@ -2593,8 +2593,9 @@ async function rolar(){
   var f=ficha;
   if(J.vez!=="eu"||ocupado||J.lances>=3||J.fim)return;
   ocupado=true;somRola();
+  var todos=J.lances===0||J.guard.every(function(g){return !g});   // de boca: os 5 dados rolados juntos
   for(var k=0;k<5;k++){for(var i=0;i<5;i++)if(!J.guard[i])J.dados[i]=sorteia();desenha(true);await espera(90);if(f!==ficha)return}
-  J.boca=J.lances===0;J.lances++;ocupado=false;desenha();
+  J.boca=todos;J.lances++;ocupado=false;desenha();
   falaJogada(J.dados,J.boca);
 }
 function falaJogada(d,boca){
@@ -2621,8 +2622,9 @@ async function vezDele(){
   vendo="ele";J.guard=[false,false,false,false,false];
   for(;;){
     somRola();
+    var todos=J.guard.every(function(g){return !g});
     for(var k=0;k<5;k++){for(i=0;i<5;i++)if(!J.guard[i])J.dados[i]=sorteia();CENA.dadosDele=J.dados.slice();desenha(true);await espera(90);if(f!==ficha)return}
-    J.boca=rest===2;desenha();falaJogada(J.dados,J.boca);
+    J.boca=todos;desenha();falaJogada(J.dados,J.boca);
     await espera(850);if(f!==ficha)return;
     r=X1.decide(mask(J.ele),J.dados,J.boca,rest,alpha);
     if(!r.fica)break;
@@ -2663,7 +2665,7 @@ function fim(vence,bomba){
   $("tela").hidden=false;$("de-novo").onclick=novo;
 }
 function regras(){
-  $("cx").innerHTML='<h2 class="bom">MODO X1</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>60</b> e cai 5 por rodada. O pavio encurta junto.</li><li>São <b>8 rodadas</b>. Se a bomba não estourar, escapa quem estiver na frente.</li><li>Jogada especial no primeiro lance é de boca: +5 (General vale 100).</li></ul><button type="button" id="ok">VOLTAR</button>';
+  $("cx").innerHTML='<h2 class="bom">MODO X1</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>60</b> e cai 5 por rodada. O pavio encurta junto.</li><li>São <b>8 rodadas</b>. Se a bomba não estourar, escapa quem estiver na frente.</li><li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li></ul><button type="button" id="ok">VOLTAR</button>';
   $("tela").hidden=false;$("ok").onclick=function(){$("tela").hidden=true};
 }
 
