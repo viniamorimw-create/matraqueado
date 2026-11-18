@@ -2575,7 +2575,7 @@ function cabeca(p,y0,larg){                                  // cabeça redonda 
   return y0;
 }
 function ombros(cor,escura,y0){                              // tronco até a mesa
-  for(var y=y0;y<53;y++){var w=34+Math.min(22,(y-y0)*2.2);linhaC(y,w,cor);px(97-w/2,y,2,1,escura);px(97+w/2-2,y,2,1,escura)}
+  for(var y=y0;y<60;y++){var w=34+Math.min(22,(y-y0)*2.2);linhaC(y,w,cor);px(97-w/2,y,2,1,escura);px(97+w/2-2,y,2,1,escura)}
 }
 function olhos(e,y,cor){                                     // olhos de gente: 3×2, pupila acompanha a bomba
   var c=cor||"#f3e6cc",ox=Math.max(-1,Math.min(1,e.ox));
@@ -2682,7 +2682,7 @@ function rival4(e){   // o gato, dono do bar: gravata borboleta, terno, corrente
 }
 /* arte pronta (folha de 6 expressões feita a partir da arte do ChatGPT): quando existe, entra no lugar do desenho por código.
    Quadros: 0 neutro · 1 olhos fechados · 2 bravo · 3 sorrindo · 4 tenso · 5 chamuscado. sprCarrega() fica em rivais_arte.js */
-var SPR={},SPR_Y=9;
+var SPR={},SPR_Y=5;
 function sprCarrega(look,src,w,h){var im=new Image();SPR[look]={img:im,w:w,h:h||w,ok:false};im.onload=function(){SPR[look].ok=true};im.src=src}
 function rivalArte(look,e){
   var s=SPR[look];if(!s||!s.ok)return false;
@@ -2697,12 +2697,12 @@ function rivalArte(look,e){
 }
 function rivalPinta(look,e){
   var arte=rivalArte(look,e);
-  if(!arte)[rival0,rival1,rival2,rival3,rival4].at(look)(e);
-  if(e.morto&&!arte){g.fillStyle="rgba(8,6,8,.62)";g.fillRect(64,0,68,53)}   // chamuscado pela bomba (a arte já vem chamuscada)
-  else if(!arte){var gr=g.createLinearGradient(0,10,0,53);gr.addColorStop(0,"rgba(5,5,7,0)");gr.addColorStop(1,"rgba(5,5,7,.45)");g.fillStyle=gr;g.fillRect(64,10,68,43)}   // a luz da luminária cai de cima
+  if(!arte){g.save();g.translate(0,-2);[rival0,rival1,rival2,rival3,rival4].at(look)(e);g.restore()}
+  if(e.morto&&!arte){g.fillStyle="rgba(8,6,8,.62)";g.fillRect(64,0,68,57)}   // chamuscado pela bomba (a arte já vem chamuscada)
+  else if(!arte){var gr=g.createLinearGradient(0,10,0,53);gr.addColorStop(0,"rgba(5,5,7,0)");gr.addColorStop(1,"rgba(5,5,7,.45)");g.fillStyle=gr;g.fillRect(64,10,68,47)}   // a luz da luminária cai de cima
 }
 function rivalNaMesa(look,e){   // o que fica na frente da mesa
-  if(look===3){px(122,38,4,15,"#1f5a2a");px(123,34,2,5,"#1f5a2a");px(122,33,4,1,"#c9a24a");px(123,42,2,6,"#e3d9b0")}   // garrafa do bêbado
+  if(look===3){px(122,42,4,15,"#1f5a2a");px(123,38,2,5,"#1f5a2a");px(122,37,4,1,"#c9a24a");px(123,46,2,6,"#e3d9b0")}   // garrafa do bêbado
 }
 
 // folhas de expressões dos adversários (PNG embutido; gerado em /home/claude/arte com corta.py)
@@ -2728,15 +2728,15 @@ function cenaFundo(t,pisc){
   for(i=0;i<7;i++){px(8+i*9,30-(i%3)*3,4,10+(i%3)*3,"#0d0709");px(9+i*9,27-(i%3)*3,2,3,"#0d0709");px(128+i*9,31-(i%2)*4,4,9+(i%2)*4,"#0d0709");px(129+i*9,28-(i%2)*4,2,3,"#0d0709")}
   px(4,40,66,2,"#120a0c");px(124,40,66,2,"#120a0c");
   // cone de luz
-  for(i=0;i<5;i++){g.fillStyle="rgba(255,70,40,"+(.035*pisc)+")";g.beginPath();g.moveTo(97-10,8);g.lineTo(97+10,8);g.lineTo(97+48+i*9,92);g.lineTo(97-48-i*9,92);g.fill()}
+  for(i=0;i<5;i++){g.fillStyle="rgba(255,70,40,"+(.035*pisc)+")";g.beginPath();g.moveTo(97-10,4);g.lineTo(97+10,4);g.lineTo(97+48+i*9,92);g.lineTo(97-48-i*9,92);g.fill()}
 }
 var MESA_ARTE=null;   // arte da mesa (mesa_arte.js); sem ela, a mesa desenhada por código
 function mesaCarrega(src){var im=new Image();im.onload=function(){MESA_ARTE=im};im.src=src}
 function cenaMesa(pisc){
   var x,y;
   if(MESA_ARTE){
-    g.fillStyle="#120806";g.fillRect(0,52,195,40);g.imageSmoothingEnabled=false;g.drawImage(MESA_ARTE,0,-38);
-    if(pisc<1){g.fillStyle="rgba(0,0,0,.16)";g.fillRect(0,52,195,40)}   // a luminária falhando escurece a mesa
+    g.fillStyle="#120806";g.fillRect(0,56,195,36);g.imageSmoothingEnabled=false;g.drawImage(MESA_ARTE,0,-34);   // tampo em y≈57
+    if(pisc<1){g.fillStyle="rgba(0,0,0,.16)";g.fillRect(0,56,195,36)}   // a luminária falhando escurece a mesa
     return;
   }
   // mesa em perspectiva
@@ -2750,30 +2750,32 @@ function cenaMesa(pisc){
   }
   px(38,52,119,1,"#6a2a1c");
 }
-function fumaca(t){   // fumaça do cigarro no cinzeiro (a ponta acesa fica em x 166, y 52 da arte da mesa)
+function fumaca(t){   // fumaça do cigarro no cinzeiro (a ponta acesa fica em x 166, y 56)
   if(!MESA_ARTE)return;
-  for(var i=0;i<6;i++){var f=(t*.45+i/6)%1,x=166+Math.sin(t*1.3+i*1.7)*2*f+f*4,y=51-f*22;
+  for(var i=0;i<6;i++){var f=(t*.45+i/6)%1,x=166+Math.sin(t*1.3+i*1.7)*2*f+f*4,y=55-f*22;
     g.fillStyle="rgba(170,160,170,"+(.32*(1-f))+")";g.fillRect(Math.round(x),Math.round(y),f>.5?2:1,f>.5?2:1)}
-  if(Math.floor(t*3)%2)px(166,52,1,1,"#ffb347");                     // a brasa respira
+  if(Math.floor(t*3)%2)px(166,56,1,1,"#ffb347");                     // a brasa respira
 }
-function cenaLuz(pisc){
+function cenaLuz(pisc){   // a luminária fica 4 px mais alta, para não cobrir a cabeça de quem senta
+  g.save();g.translate(0,-4);
   // luminária
   px(96,0,2,5,"#2a1a1a");g.fillStyle="#5a0f14";g.beginPath();g.moveTo(84,10);g.lineTo(110,10);g.lineTo(104,4);g.lineTo(90,4);g.fill();px(84,10,27,1,"#a81720");
   px(94,11,7,2,pisc<1?"#c9781f":"#ffd23e");g.fillStyle="rgba(255,120,60,"+(.18*pisc)+")";g.beginPath();g.arc(97,12,9,0,7);g.fill();
+  g.restore();
 }
 function cadeiraVazia(){   // a cadeira do adversário, esperando o próximo duelo
   var c="#4a2414",e="#2c140c";
-  px(83,24,29,4,c);px(83,24,29,1,"#6a3a22");px(83,24,3,29,c);px(109,24,3,29,c);px(86,27,1,26,e);px(108,27,1,26,e);
-  px(91,30,3,22,c);px(101,30,3,22,c);px(83,40,29,2,e);
+  px(83,20,29,4,c);px(83,20,29,1,"#6a3a22");px(83,20,3,38,c);px(109,20,3,38,c);px(86,23,1,35,e);px(108,23,1,35,e);
+  px(91,26,3,31,c);px(101,26,3,31,c);px(83,38,29,2,e);
 }
 // mesa vazia: o topo das fases de meta (canvas de 195×92 do jogo; t em segundos)
 function pintaVazia(cvx,t){
   var g0=g,pisc=Math.sin(t*23)>.86?0.82:1;g=cvx.getContext("2d");
   cenaFundo(t,pisc);cadeiraVazia();
-  var gr=g.createLinearGradient(0,20,0,53);gr.addColorStop(0,"rgba(5,5,7,0)");gr.addColorStop(1,"rgba(5,5,7,.4)");g.fillStyle=gr;g.fillRect(70,20,56,33);
+  var gr=g.createLinearGradient(0,20,0,57);gr.addColorStop(0,"rgba(5,5,7,0)");gr.addColorStop(1,"rgba(5,5,7,.4)");g.fillStyle=gr;g.fillRect(70,20,56,37);
   cenaMesa(pisc);fumaca(t);
   px(140,72,13,14,"#1a0c08");px(139,71,15,3,"#3a1a10");px(142,77,9,2,"#a81720");                       // o copo de couro do jogador
-  px(56,62,9,8,"#d9bb86");px(56,69,9,1,"#8a6a40");px(58,64,1,1,"#1a0a0e");px(62,67,1,1,"#1a0a0e");px(60,65,1,1,"#1a0a0e");   // um dado esquecido na mesa
+  px(56,64,9,8,"#d9bb86");px(56,71,9,1,"#8a6a40");px(58,66,1,1,"#1a0a0e");px(62,69,1,1,"#1a0a0e");px(60,67,1,1,"#1a0a0e");   // um dado esquecido na mesa
   cenaLuz(pisc);
   g=g0;
 }
@@ -2795,7 +2797,7 @@ function desenhaCena(now){
   cenaMesa(pisc);fumaca(t);
   rivalNaMesa(CFG.look,est);
   // dados dele do outro lado da mesa (pequenos; os que valem aparecem grandes embaixo da cena)
-  if(CENA.dadosDele)for(i=0;i<5;i++){px(70+i*12,55,7,6,"#d9bb86");px(70+i*12,60,7,1,"#8a6a40");var v=CENA.dadosDele[i];if(v%2)px(73+i*12,57,1,1,"#1a0a0e");if(v>1){px(71+i*12,56,1,1,"#1a0a0e");px(75+i*12,59,1,1,"#1a0a0e")}if(v>3){px(75+i*12,56,1,1,"#1a0a0e");px(71+i*12,59,1,1,"#1a0a0e")}if(v===6){px(71+i*12,57,1,1,"#1a0a0e");px(75+i*12,58,1,1,"#1a0a0e")}}
+  g.save();g.translate(0,4);if(CENA.dadosDele)for(i=0;i<5;i++){px(70+i*12,55,7,6,"#d9bb86");px(70+i*12,60,7,1,"#8a6a40");var v=CENA.dadosDele[i];if(v%2)px(73+i*12,57,1,1,"#1a0a0e");if(v>1){px(71+i*12,56,1,1,"#1a0a0e");px(75+i*12,59,1,1,"#1a0a0e")}if(v>3){px(75+i*12,56,1,1,"#1a0a0e");px(71+i*12,59,1,1,"#1a0a0e")}if(v===6){px(71+i*12,57,1,1,"#1a0a0e");px(75+i*12,58,1,1,"#1a0a0e")}}g.restore();
   // copo de couro: fica do lado de quem joga
   if(!J.fim){if(J.vez==="eu"){px(140,72,13,14,"#1a0c08");px(139,71,15,3,"#3a1a10");px(142,77,9,2,"#a81720")}else{px(128,55,7,7,"#1a0c08");px(127,54,9,2,"#3a1a10")}}
   // mecanismo: base, haste, braço e bomba. ang = 0 aponta para ele (longe), PI aponta para você (perto)
