@@ -1,14 +1,13 @@
 # Matraqueado
 
-Jogo de dados de bar em pixel art, no navegador: cinco dados, uma cartela com 10 casas e três modos de jogo.
+Jogo de dados de bar em pixel art, no navegador: cinco dados, uma cartela com 10 casas e dois modos de jogo.
 
 **Jogar:** https://viniamorimw-create.github.io/matraqueado/
 
 ## Modos
 
 - **Modo clássico:** uma cartela, 10 rodadas. Faça o máximo de pontos.
-- **Modo survival:** 10 fases com meta de pontos, bônus da caça-níquel e maldições.
-- **Modo X1:** duelo de 8 rodadas contra o adversário do bar, com uma bomba que explode em quem fica para trás.
+- **Modo Noitada:** uma noite no KAT4 House em 10 fases. Fases de meta, duelos com bomba contra os frequentadores do bar e dois chefes. Cada fase vencida dá um bônus na caça-níquel.
 
 O jogo inteiro está em `index.html`: não precisa instalar nada.
 
