@@ -2575,7 +2575,7 @@ function cabeca(p,y0,larg){                                  // cabeça redonda 
   return y0;
 }
 function ombros(cor,escura,y0){                              // tronco até a mesa
-  for(var y=y0;y<60;y++){var w=34+Math.min(22,(y-y0)*2.2);linhaC(y,w,cor);px(97-w/2,y,2,1,escura);px(97+w/2-2,y,2,1,escura)}
+  for(var y=y0;y<64;y++){var w=34+Math.min(22,(y-y0)*2.2);linhaC(y,w,cor);px(97-w/2,y,2,1,escura);px(97+w/2-2,y,2,1,escura)}
 }
 function olhos(e,y,cor){                                     // olhos de gente: 3×2, pupila acompanha a bomba
   var c=cor||"#f3e6cc",ox=Math.max(-1,Math.min(1,e.ox));
@@ -2682,13 +2682,13 @@ function rival4(e){   // o gato, dono do bar: gravata borboleta, terno, corrente
 }
 /* arte pronta (folha de 6 expressões feita a partir da arte do ChatGPT): quando existe, entra no lugar do desenho por código.
    Quadros: 0 neutro · 1 olhos fechados · 2 bravo · 3 sorrindo · 4 tenso · 5 chamuscado. sprCarrega() fica em rivais_arte.js */
-var SPR={},SPR_Y=5;
+var SPR={},SPR_Y=1;
 function sprCarrega(look,src,w,h){var im=new Image();SPR[look]={img:im,w:w,h:h||w,ok:false};im.onload=function(){SPR[look].ok=true};im.src=src}
 function rivalArte(look,e){
   var s=SPR[look];if(!s||!s.ok)return false;
   var q=e.morto?5:e.abre<.5?1:e.humor==="bravo"?2:e.humor==="calmo"?3:e.humor==="tenso"?4:0,
       dy=e.morto?2:(Math.sin(e.t*1.8)>.2?1:0);                 // respira: sobe e desce 1 pixel
-  var gl=g.createRadialGradient(97,30,4,97,30,38);gl.addColorStop(0,"rgba(255,96,60,.22)");gl.addColorStop(1,"rgba(255,96,60,0)");
+  var gl=g.createRadialGradient(97,26,4,97,26,38);gl.addColorStop(0,"rgba(255,96,60,.22)");gl.addColorStop(1,"rgba(255,96,60,0)");
   g.fillStyle=gl;g.fillRect(55,0,85,53);                        // brilho da luminária atrás dele: separa a silhueta do fundo escuro
   g.imageSmoothingEnabled=false;
   g.drawImage(s.img,q*s.w,0,s.w,s.h,Math.round(97-s.w/2),SPR_Y+dy,s.w,s.h);
@@ -2697,7 +2697,7 @@ function rivalArte(look,e){
 }
 function rivalPinta(look,e){
   var arte=rivalArte(look,e);
-  if(!arte){g.save();g.translate(0,-2);[rival0,rival1,rival2,rival3,rival4].at(look)(e);g.restore()}
+  if(!arte){g.save();g.translate(0,-6);[rival0,rival1,rival2,rival3,rival4].at(look)(e);g.restore()}
   if(e.morto&&!arte){g.fillStyle="rgba(8,6,8,.62)";g.fillRect(64,0,68,57)}   // chamuscado pela bomba (a arte já vem chamuscada)
   else if(!arte){var gr=g.createLinearGradient(0,10,0,53);gr.addColorStop(0,"rgba(5,5,7,0)");gr.addColorStop(1,"rgba(5,5,7,.45)");g.fillStyle=gr;g.fillRect(64,10,68,47)}   // a luz da luminária cai de cima
 }
@@ -2720,15 +2720,32 @@ function neonGato(t){   // letreiro neon de gato na parede da esquerda; falha de
   px(x+6,y+10,3,2,c);px(x+14,y+10,3,2,c);px(x+11,y+13,1,1,c);px(x+10,y+14,1,1,c);px(x+12,y+14,1,1,c);  // olhos e focinho
   px(x-2,y+12,5,1,c);px(x+19,y+12,5,1,c);                                                               // bigodes
 }
+function fundoDetalhes(t){   // parede do bar: o centro (x 64–130) fica livre para quem senta
+  var x,y,i,k;
+  for(y=0;y<58;y+=5){px(0,y,195,1,"#150a0b");for(x=(y/5)%2?6:0;x<195;x+=12)px(x,y,1,5,"#150a0b")}   // tijolos
+  // quadro torto na esquerda
+  px(48,5,14,12,"#4a3418");px(49,6,12,10,"#1c1012");px(50,8,10,6,"#3a1c22");px(52,10,4,3,"#6a3030");px(56,9,3,2,"#2a3a2a");px(47,16,2,1,"#4a3418");
+  // prateleira da esquerda com garrafas
+  var cores=["#1f4a2a","#5a1c16","#6a4416","#2a2a48","#4a1c3a"];
+  px(32,41,32,2,"#3a1c12");px(32,43,32,1,"#1a0a08");
+  for(i=0;i<5;i++){k=i%5;x=34+i*6;y=31+(i%2)*2;px(x,y,4,10-(i%2)*2,cores[k]);px(x+1,y-3,2,3,cores[k]);px(x+1,y-4,2,1,"#c9a24a");px(x+1,y+2,1,4,"rgba(255,220,200,.25)")}
+  // quadro-negro com riscos de giz na direita
+  px(136,4,36,20,"#4a2a16");px(137,5,34,18,"#18221e");
+  for(i=0;i<3;i++){for(k=0;k<4;k++)px(140+i*10+k*2,8,1,5,"#8a958c");px(139+i*10,11,9,1,"#8a958c")}
+  for(k=0;k<3;k++)px(140+k*2,16,1,5,"#8a958c");px(160,18,6,1,"#6a756c");
+  // relógio
+  px(176,2,10,10,"#3a2a18");px(177,3,8,8,"#d9c9a0");px(181,4,1,4,"#1a0a0a");px(181,7,3,1,"#1a0a0a");
+  var a=t*.5;px(181+Math.round(Math.cos(a)*3),7+Math.round(Math.sin(a)*3),1,1,"#a81720");   // o ponteiro dos segundos anda
+  // prateleira da direita com garrafas
+  px(134,41,42,2,"#3a1c12");px(134,43,42,1,"#1a0a08");
+  for(i=0;i<6;i++){k=(i+2)%5;x=136+i*7;y=30+(i%3);px(x,y,4,11-(i%3),cores[k]);px(x+1,y-3,2,3,cores[k]);px(x+1,y-4,2,1,"#c9a24a");px(x+1,y+2,1,4,"rgba(255,220,200,.25)")}
+}
 function cenaFundo(t,pisc){
   var i;
-  g.fillStyle="#050507";g.fillRect(0,0,195,92);
-  neonGato(t);
-  // parede: prateleiras e garrafas quase invisíveis
-  for(i=0;i<7;i++){px(8+i*9,30-(i%3)*3,4,10+(i%3)*3,"#0d0709");px(9+i*9,27-(i%3)*3,2,3,"#0d0709");px(128+i*9,31-(i%2)*4,4,9+(i%2)*4,"#0d0709");px(129+i*9,28-(i%2)*4,2,3,"#0d0709")}
-  px(4,40,66,2,"#120a0c");px(124,40,66,2,"#120a0c");
+  g.fillStyle="#0a0607";g.fillRect(0,0,195,92);
+  fundoDetalhes(t);neonGato(t);
   // cone de luz
-  for(i=0;i<5;i++){g.fillStyle="rgba(255,70,40,"+(.035*pisc)+")";g.beginPath();g.moveTo(97-10,4);g.lineTo(97+10,4);g.lineTo(97+48+i*9,92);g.lineTo(97-48-i*9,92);g.fill()}
+  for(i=0;i<5;i++){g.fillStyle="rgba(255,70,40,"+(.035*pisc)+")";g.beginPath();g.moveTo(97-14,-4);g.lineTo(97+14,-4);g.lineTo(97+48+i*9,92);g.lineTo(97-48-i*9,92);g.fill()}
 }
 var MESA_ARTE=null;   // arte da mesa (mesa_arte.js); sem ela, a mesa desenhada por código
 function mesaCarrega(src){var im=new Image();im.onload=function(){MESA_ARTE=im};im.src=src}
@@ -2756,17 +2773,11 @@ function fumaca(t){   // fumaça do cigarro no cinzeiro (a ponta acesa fica em x
     g.fillStyle="rgba(170,160,170,"+(.32*(1-f))+")";g.fillRect(Math.round(x),Math.round(y),f>.5?2:1,f>.5?2:1)}
   if(Math.floor(t*3)%2)px(166,56,1,1,"#ffb347");                     // a brasa respira
 }
-function cenaLuz(pisc){   // a luminária fica 4 px mais alta, para não cobrir a cabeça de quem senta
-  g.save();g.translate(0,-4);
-  // luminária
-  px(96,0,2,5,"#2a1a1a");g.fillStyle="#5a0f14";g.beginPath();g.moveTo(84,10);g.lineTo(110,10);g.lineTo(104,4);g.lineTo(90,4);g.fill();px(84,10,27,1,"#a81720");
-  px(94,11,7,2,pisc<1?"#c9781f":"#ffd23e");g.fillStyle="rgba(255,120,60,"+(.18*pisc)+")";g.beginPath();g.arc(97,12,9,0,7);g.fill();
-  g.restore();
-}
+function cenaLuz(pisc){}   // a luminária saiu da cena: a luz vem de cima, de fora do quadro
 function cadeiraVazia(){   // a cadeira do adversário, esperando o próximo duelo
   var c="#4a2414",e="#2c140c";
-  px(83,20,29,4,c);px(83,20,29,1,"#6a3a22");px(83,20,3,38,c);px(109,20,3,38,c);px(86,23,1,35,e);px(108,23,1,35,e);
-  px(91,26,3,31,c);px(101,26,3,31,c);px(83,38,29,2,e);
+  px(83,12,29,4,c);px(83,12,29,1,"#6a3a22");px(83,12,3,46,c);px(109,12,3,46,c);px(86,15,1,43,e);px(108,15,1,43,e);
+  px(91,18,3,39,c);px(101,18,3,39,c);px(83,32,29,2,e);
 }
 // mesa vazia: o topo das fases de meta (canvas de 195×92 do jogo; t em segundos)
 function pintaVazia(cvx,t){
