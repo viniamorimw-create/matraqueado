@@ -2955,6 +2955,7 @@ async function confere(){
   }
   J.rod++;
   if(J.rod>=RODADAS){fim(J.eu.tot===J.ele.tot?"empate":(J.eu.tot>J.ele.tot?"eu":"ele"),false);return}
+  if(dif()>limite()){if(perde==="eu"){giraBomba();await espera(800);if(f!==ficha)return}explode(perde);return;}
   J.vez="eu";vendo="eu";giraBomba();J.nova=null;ocupado=false;desenha();
 }
 function explode(quem){
