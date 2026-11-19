@@ -779,7 +779,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
         <li>Uma noite no KAT4 House em 15 fases: 3 blocos de metas (fases 1 a 4, 6 a 9 e 11 a 13) e 4 duelos (fases 5 e 10 contra rivais, 14 e 15 contra os chefes).</li>
         <li><b>Blocos:</b> a mesma cartela atravessa o bloco inteiro; cada fase joga algumas rodadas nela. A meta é o total do bloco ao fim da fase. Ficou abaixo, a noitada acaba.</li>
         <li><b>Caça-níquel:</b> no meio e no fim de cada bloco (fases 2, 4, 7, 9, 12 e 13) e depois de cada duelo vencido.</li>
-        <li><b>Jogo da velha:</b> três casas em linha na grade (de pé, deitada ou diagonal) com o valor máximo valem +10. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem. Vale também nos duelos, para você e para o adversário.</li>
+        <li><b>Jogo da velha:</b> três casas em linha na grade (de pé, deitada ou diagonal) com o valor máximo valem +10. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem; a coluna do meio só fecha com o General também. Vale também nos duelos, para você e para o adversário.</li>
         <li><b>Duelo:</b> cada um com a sua cartela. Depois que os dois jogam a rodada, a bomba confere a diferença de pontos: passou do limite, estoura em quem está atrás. Se não estourar antes, no fim vem o último tapa: a bomba vai para quem terminou atrás e detona. Perder encerra a noitada; vencer dá a caça-níquel, turbinada se a bomba estourar do outro lado.</li>
         <li>As suas relíquias valem nos duelos. Os adversários das últimas fases jogam com um bônus nos pontos.</li>
         <li><b>Dados coloridos:</b> o verde duplica a face dele, o vermelho, quando cai 1, vale 1 ou 6 (o que render mais) e o azul completa a Seguida. <b>Combo de cores:</b> dois ou mais dados coloridos com a mesma face, numa anotação que pontua, rendem +5 por dado.</li>
@@ -1546,11 +1546,11 @@ function desenhaTabela(){
   sincTotal();
 }
 function riscaVelha(bz,sc){   // traço de pincel vermelho por cima das linhas feitas (como o jogo da velha no giz)
-  Array.prototype.forEach.call(bz.children,function(el,k){if(k<9&&sc[ORDEM[k]])el.classList.add("cheia")});
+  Array.prototype.forEach.call(bz.children,function(el,k){if(k<10&&sc[ORDEM[k]])el.classList.add("cheia")});
   var ls=linhasDe(sc,ORDEM);if(!bz||!ls.length)return;
   var r=bz.getBoundingClientRect(),cs=bz.children,h='';if(!r.width)return;
   ls.forEach(function(l,n){
-    var a=cs[l[0]].getBoundingClientRect(),b=cs[l[2]].getBoundingClientRect();
+    var a=cs[l[0]].getBoundingClientRect(),b=cs[l[l.length-1]].getBoundingClientRect();
     var x1=a.left+a.width/2-r.left,y1=a.top+a.height/2-r.top,x2=b.left+b.width/2-r.left,y2=b.top+b.height/2-r.top,dx=(x2-x1)*.12,dy=(y2-y1)*.12;
     h+='<line x1="'+(x1-dx)+'" y1="'+(y1-dy)+'" x2="'+(x2+dx)+'" y2="'+(y2+dy)+'"/>';
   });
@@ -1583,13 +1583,13 @@ var INI_BLOCO={1:1,6:1,11:1},SLOT_FASES={2:1,4:1,7:1,9:1,12:1,13:1};
 var CHEFES={14:1,15:1};
 // jogo da velha: linhas da grade 3x3 (posições de ORDEM). VELHA = pontos por linha; LIN_ESP = linhas que um bom jogador
 // fecha em média até a rodada k (simulação com o cérebro do X1, sem mirar nas linhas)
-var VELHA=10,LINHAS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-var LIN_ESP=[0,0,.004,.014,.036,.075,.145,.258,.391,.527];   // com a regra do valor máximo (quase só a coluna do meio sai)
+var VELHA=10,LINHAS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7,9],[2,5,8],[0,4,8],[2,4,6]];   // a coluna do meio (Full, Seguida, Quadrada) também exige o General
+var LIN_ESP=[0,0,0,.001,.003,.008,.022,.047,.091,.144];   // com a regra do valor máximo (quase só a coluna do meio sai)
 // a casa só conta para a velha com o valor máximo: casa de número com os 5 dados naquela face; Full, Seguida e Quadrada valem se pontuarem
 function casaCheia(id,d,p){if(!(p>0))return false;var n=+(/^u(\d)$/.exec(id)||[])[1];return n?d.filter(function(v){return v===n}).length===5:true}
 function linhasDe(ch,ord){return LINHAS.filter(function(l){return l.every(function(k){return ch[ord[k]]})})}
 function velhaGanho(ch,id){   // linhas que a casa id acabou de fechar
-  var k=ORDEM.indexOf(id);if(k<0||k>8||!ch[id])return 0;
+  var k=ORDEM.indexOf(id);if(k<0||!ch[id])return 0;
   return LINHAS.filter(function(l){return l.indexOf(k)>=0&&l.every(function(j){return ch[ORDEM[j]]})}).length*VELHA;
 }
 // Modo Noitada: fases de duelo, com a bomba do X1, no lugar da meta. rod = rodadas; l0 = limite inicial da bomba (cai até 25);
@@ -1808,7 +1808,7 @@ function abrePainelFase(){
   else if(R.cred>0)l.push("Você começa com <b>+"+R.cred+" pontos</b> da caça-níquel.");
   if(R.fase===1){
     l.push("A cartela atravessa o bloco: as casas que você usa agora não voltam nas próximas fases. Ficou abaixo da meta no fim de uma fase, a noitada acaba. São "+FASES+" fases: 3 blocos de metas e 4 duelos.");
-    l.push("<b>Jogo da velha:</b> três casas em linha (de pé, deitada ou na diagonal) com o <b>valor máximo</b> valem <b>+"+VELHA+"</b>. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem. As casas que contam ficam com borda vermelha.");
+    l.push("<b>Jogo da velha:</b> três casas em linha (de pé, deitada ou na diagonal) com o <b>valor máximo</b> valem <b>+"+VELHA+"</b>. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem, mas a coluna do meio só fecha com o General também. As casas que contam ficam com borda vermelha.");
   }
   var m=R.mald&&MALD[R.mald];
   if(m){
@@ -2588,11 +2588,11 @@ function desenhaDados(rolando){
 }
 // a cartela segue o desenho da cartela do jogo: 3 x 3, General embaixo e a faixa do Total
 function riscaVelha(bz,sc){   // traço vermelho por cima das linhas feitas
-  if(bz)Array.prototype.forEach.call(bz.children,function(el,k){if(k<9&&feitaPos(sc,k))el.classList.add("cheia")});
+  if(bz)Array.prototype.forEach.call(bz.children,function(el,k){if(k<10&&feitaPos(sc,k))el.classList.add("cheia")});
   var ls=linhasDe(sc);if(!bz||!ls.length)return;
   var r=bz.getBoundingClientRect(),cs=bz.children,h='';if(!r.width)return;
   ls.forEach(function(l){
-    var a=cs[l[0]].getBoundingClientRect(),b=cs[l[2]].getBoundingClientRect();
+    var a=cs[l[0]].getBoundingClientRect(),b=cs[l[l.length-1]].getBoundingClientRect();
     var x1=a.left+a.width/2-r.left,y1=a.top+a.height/2-r.top,x2=b.left+b.width/2-r.left,y2=b.top+b.height/2-r.top,dx=(x2-x1)*.12,dy=(y2-y1)*.12;
     h+='<line x1="'+(x1-dx)+'" y1="'+(y1-dy)+'" x2="'+(x2+dx)+'" y2="'+(y2+dy)+'"/>';
   });
@@ -2994,12 +2994,12 @@ function valor(q,ci){                          // pontos de uma casa para quem e
   if(q==="ele"&&CFG.forca&&p>0)p=Math.round(p*(1+CFG.forca));
   return p;
 }
-var LINHAS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+var LINHAS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7,9],[2,5,8],[0,4,8],[2,4,6]];   // coluna do meio exige o General
 function feitaPos(ch,k){return !!ch[CATS[ORDEM[k]].id]}
 function linhasDe(sc){return LINHAS.filter(function(l){return l.every(function(k){return feitaPos(sc,k)})})}
 function anota(q,ci){
   var p=valor(q,ci),k=ORDEM.indexOf(ci),v=E().velha||0,ch=J[q].ch||(J[q].ch={});J[q].sc[CATS[ci].id]=p;J[q].tot+=p;J.nova=q+CATS[ci].id;somAnota(p>0);
-  if(p>0&&k<9&&(ci>5||J.dados.filter(function(x){return x===ci+1}).length===5))ch[CATS[ci].id]=true;   // valor máximo: 5 dados na face (ou combinação que pontuou)
+  if(p>0&&(ci>5||J.dados.filter(function(x){return x===ci+1}).length===5))ch[CATS[ci].id]=true;   // valor máximo: 5 dados na face (ou combinação que pontuou)
   J.velha=v&&ch[CATS[ci].id]?v*LINHAS.filter(function(l){return l.indexOf(k)>=0&&l.every(function(j){return feitaPos(ch,j)})}).length:0;   // jogo da velha
   J[q].tot+=J.velha;
   return p;
@@ -3077,7 +3077,7 @@ function fim(vence,bomba){
   $("de-novo").onclick=CFG.aoFim?function(){var cb=CFG.aoFim,res={vence:vence==="eu",bomba:bomba&&!J.ultimo,eu:J.eu.tot,ele:J.ele.tot,rod:Math.min(J.rod+1,RODADAS)};fechar();cb(res)}:novo;
 }
 function regras(){
-  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. No fim vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona'+(CFG.aoFim?' (empate não salva)':'')+'.</li>'+(CFG.forca?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>Seus bônus e itens da noitada valem no duelo.</li>':'')+(E().velha?'<li><b>Jogo da velha:</b> três casas em linha com o valor máximo valem +'+E().velha+', para os dois (número: 5 dados iguais; Full, Seguida e Quadrada: pontuou).</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li></ul><button type="button" id="ok">VOLTAR</button>';
+  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. No fim vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona'+(CFG.aoFim?' (empate não salva)':'')+'.</li>'+(CFG.forca?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>Seus bônus e itens da noitada valem no duelo.</li>':'')+(E().velha?'<li><b>Jogo da velha:</b> três casas em linha com o valor máximo valem +'+E().velha+', para os dois (número: 5 dados iguais; Full, Seguida e Quadrada: pontuou; a coluna do meio também exige o General).</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li></ul><button type="button" id="ok">VOLTAR</button>';
   $("tela").hidden=false;$("ok").onclick=function(){$("tela").hidden=true};
 }
 
