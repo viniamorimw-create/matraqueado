@@ -657,6 +657,11 @@ button.res:active{background:#1e2942}
 #tst button.on{background:#e3b341;color:#000}
 #tst input{font:16px monospace;width:90px;padding:4px}
 #tst small{color:#cfc8b2}
+.surv .etiquetas{max-width:312px;gap:8px;height:17px;line-height:17px;margin:3px auto 0}   /* FICA alinhado embaixo de cada dado */
+.surv .dados{padding-top:8px}
+.surv .bonus{justify-content:center;gap:14px}
+@media (max-height:650px){.surv .etiquetas{max-width:262px}}
+@media (max-height:720px){.surv .mesa{gap:3px}.surv .casa{min-height:33px;padding-top:1px}.surv .casa.general{min-height:31px}.surv .casa strong{font-size:16px}.surv .casa b{font-size:19px;min-height:16px}.surv .bonus,.surv .chip,.surv .slot{min-height:24px}.surv .acao{height:42px}}
 .dica.fora{margin:0 12px}
 @media (max-height:800px) and (min-height:651px){.cena-n{height:min(calc(min(100vw,430px)*.472),18vh)}}   /* mesma altura da cena do duelo */
 
