@@ -9,7 +9,7 @@ REGRAS IMPLEMENTADAS
 - 1 jogador na tela. O código já suporta 2 jogadores na mesma tela (alternando a vez), mas o seletor "Jogadores" está
   escondido na tela inicial (atributo hidden). 10 rodadas, até 3 lances por rodada; tocar no dado marca "fica".
 - Casas: Ás, Duque, Terno, Quadra, Quina, Sena = soma dos dados daquele número.
-- Full 10 (15 de boca), Seguida 20 (25), Quadrada 30 (35), General 50 (100 de boca).
+- Full 15 (20 de boca), Seguida 20 (25), Quadrada 25 (30), General 50 (100 de boca).
 - "De boca": a jogada saiu num lance em que os 5 dados foram rolados juntos (sem nenhum "fica"), em qualquer lance da rodada.
 - Riscar: casa em que os dados não pontuam pode ser riscada (vale 0 e fica eliminada).
 - Noitada (nov/2026): 15 fases em 3 blocos de metas (a cartela atravessa o bloco, RODADAS acumuladas, meta acumulada, jogo da velha +10) e duelos em 5, 10, 14 e 15. Texto antigo: meta mínima por fase; bateu = libera AVANÇAR e, ao fim, a caça-níquel de
@@ -768,9 +768,9 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
       <h3>As casas</h3>
       <dl>
         <dt>Ás, Duque, Terno, Quadra, Quina, Sena</dt><dd>Soma dos dados 1, 2, 3, 4, 5 ou 6. Três dados 5 na Quina valem 15.</dd>
-        <dt>Full</dt><dd>3 iguais + 2 iguais. 10 pontos, 15 de boca.</dd>
+        <dt>Full</dt><dd>3 iguais + 2 iguais. 15 pontos, 20 de boca.</dd>
         <dt>Seguida</dt><dd>1-2-3-4-5 ou 2-3-4-5-6. 20 pontos, 25 de boca.</dd>
-        <dt>Quadrada</dt><dd>4 iguais. 30 pontos, 35 de boca.</dd>
+        <dt>Quadrada</dt><dd>4 iguais. 25 pontos, 30 de boca.</dd>
         <dt>General</dt><dd>5 iguais. 50 pontos, 100 de boca.</dd>
       </dl>
       <h3>De boca</h3>
@@ -780,7 +780,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
         <li>Sena, Quina e Quadra são as casas de número que mais rendem. Guarde os dados 6, 5 e 4.</li>
         <li>Na hora de riscar, o Ás é o que menos dói: vale no máximo 5.</li>
         <li>O General é o mais difícil de sair. Se a partida está no fim e ele não veio, risque sem dó.</li>
-        <li>Saiu um par e uma trinca de boca? Anote o Full na hora, são 15 garantidos.</li>
+        <li>Saiu um par e uma trinca de boca? Anote o Full na hora, são 20 garantidos.</li>
         <li>Com quatro dados em sequência, role só o que sobra para tentar a Seguida.</li>
       </ul>
       <h3>Modo Noitada</h3>
@@ -822,14 +822,14 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
 var X1=(function(){
   var CATS=[{id:"u1",nome:"Ás"},{id:"u2",nome:"Duque"},{id:"u3",nome:"Terno"},{id:"u4",nome:"Quadra"},{id:"u5",nome:"Quina"},{id:"u6",nome:"Sena"},
             {id:"full",nome:"Full"},{id:"seq",nome:"Seguida"},{id:"quadra",nome:"Quadrada"},{id:"general",nome:"General"}];
-  var BASE=[2,5,8,11,13.5,16.5,8,9,9,4];
+  var BASE=[2,5,8,11,13.5,16.5,12,9,7.5,4];
   function conta(d){var c=[0,0,0,0,0,0],i;for(i=0;i<5;i++)c[d[i]-1]++;return c}
   function pontosC(ci,c,boca){
     var max=Math.max.apply(null,c),b5=boca?5:0;
     if(ci<6)return (ci+1)*c[ci];
-    if(ci===6)return (c.indexOf(3)>=0&&c.indexOf(2)>=0)?10+b5:0;
+    if(ci===6)return (c.indexOf(3)>=0&&c.indexOf(2)>=0)?15+b5:0;
     if(ci===7)return (max===1&&(c[0]===0||c[5]===0))?20+b5:0;
-    if(ci===8)return max>=4?30+b5:0;
+    if(ci===8)return max>=4?25+b5:0;
     return max>=5?(boca?100:50):0;
   }
   function pontos(ci,d,boca){return pontosC(ci,conta(d),boca)}
@@ -882,9 +882,9 @@ var CATS=[
   {id:"u4",nome:"Quadra",desc:"soma dos 4",n:4},
   {id:"u5",nome:"Quina",desc:"soma dos 5",n:5},
   {id:"u6",nome:"Sena",desc:"soma dos 6",n:6},
-  {id:"full",nome:"Full",desc:"3 + 2 iguais · 10 (15 de boca)"},
+  {id:"full",nome:"Full",desc:"3 + 2 iguais · 15 (20 de boca)"},
   {id:"seq",nome:"Seguida",desc:"1–5 ou 2–6 · 20 (25 de boca)"},
-  {id:"quadra",nome:"Quadrada",desc:"4 iguais · 30 (35 de boca)"},
+  {id:"quadra",nome:"Quadrada",desc:"4 iguais · 25 (30 de boca)"},
   {id:"general",nome:"General",desc:"5 iguais · 50 (100 de boca)"}
 ];
 var ORDEM=["u1","full","u4","u2","seq","u5","u3","quadra","u6","general"];
@@ -1450,8 +1450,8 @@ function pontosBase(cat,d,boca){
   }
   if(cat.n)v=cat.n*cc[cat.n]*(m&&cat.n===1?m.as:1);
   else switch(cat.id){
-    case "quadra":v=mc>=4?30+b5:0;break;
-    case "full":v=(c.indexOf(3)>0&&c.indexOf(2)>0)?(m?m.full:10)+b5:0;break;
+    case "quadra":v=mc>=4?25+b5:0;break;
+    case "full":v=(c.indexOf(3)>0&&c.indexOf(2)>0)?(m?m.full:15)+b5:0;break;
     case "seq":v=temSeq(c,d,m)?20+b5:0;break;
     case "general":v=mc>=5?(boca?(m?m.genB:100):(m?m.gen:50)):0;break;
   }
@@ -1611,8 +1611,8 @@ var DUELOS={5:{look:0,nome:"Rival 1",rod:6,l0:60,pensa:0,forca:0},
 function limitesDuelo(D){var out=[],i;for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5);return out}                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
 var SLOT_PESOS={n:{c:.50,i:.30,r:.15,l:.05},t:{c:.25,i:.35,r:.28,l:.12}};   // raridade de cada rolo: normal / turbinada (folga >= MARGEM_TURBO)
 var RAR_COR={c:"#cfc8b2",i:"#5fb36a",r:"#4aa3e0",l:"#e3b341"},RAR_NOME={c:"Comum",i:"Incomum",r:"Rara",l:"Lendária"},RAR_ORDEM=["c","i","r","l"],PROX={c:"i",i:"r",r:"l",l:"l"};
-var E3=[18.5,35.7,51.5,66,79,90.5,100.7,109.4,116.6,121.7];
-var EL={2:[14.3,27.5,39.7,50.7,60.5,69.1,76.5,82.8,87.8,91.4],3:E3,4:[22.5,43.3,62.3,79.5,95,108.9,121.2,132,141,147.7]};   // pontos esperados (jogador perfeito) em k rodadas, por número de lances
+var E3=[17.6,34.3,49.8,64.4,77.6,89.5,100.2,109.5,117.0,122.0];
+var EL={2:[13.6,26.4,38.4,49.5,59.5,68.4,76.1,82.8,88.1,91.7],3:E3,4:[21.4,41.5,60.3,77.6,93.4,107.7,120.6,132.1,141.5,148.1]};   // pontos esperados (jogador perfeito) em k rodadas, por número de lances
 // preço de cada bônus em pontos esperados na fase, por número de rodadas k=1..10 (programação dinâmica; dados gêmeos por Monte Carlo)
 var PRECO={
   as3:[0.1,0.2,0.4,0.8,1.3,2,2.7,3.5,4.1,4.3],
@@ -1723,7 +1723,7 @@ function bonusPor(id){for(var i=0;i<BONUS.length;i++)if(BONUS[i].id===id)return 
 function mistura(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 function recalcMods(){
   if(!R){M=null;return}
-  var m={dobra:{},bocaPct:0,gor:0,genB:100,gen:50,full:10,as:1,seqc:false,lance:false,consol:false,rolext:false,gem:[],verm:null,azul:null,cores:[]},ng=0;   // cores: índices dos dados coloridos, na ordem em que as relíquias chegaram
+  var m={dobra:{},bocaPct:0,gor:0,genB:100,gen:50,full:15,as:1,seqc:false,lance:false,consol:false,rolext:false,gem:[],verm:null,azul:null,cores:[]},ng=0;   // cores: índices dos dados coloridos, na ordem em que as relíquias chegaram
   R.relics.forEach(function(id){
     var b=bonusPor(id);if(!b)return;
     if(b.nb)m.bocaPct+=b.nb;
@@ -2519,20 +2519,20 @@ var TUTO=[
   {t:"Até 3 lances",h:function(){return '<p>Toque em JOGAR para lançar os dados. Depois, toque nos que quer <b>guardar</b>: eles ficam marcados com "fica" e não rolam de novo.</p><div id="tuto-demo"></div>'},
    depois:function(){tutoDemoNovo();tutoDemoPinta()}},
   {t:"Anote numa casa",h:function(){
-    var L=[[[6,6,6,2,4],"Ás a Sena","soma dos dados do número","18"],[[3,3,3,5,5],"Full","3 iguais + 2 iguais","10"],
-           [[2,3,4,5,6],"Seguida","1 a 5 ou 2 a 6","20"],[[4,4,4,4,1],"Quadrada","4 iguais","30"],[[1,1,1,1,1],"General","5 iguais","50"]];
+    var L=[[[6,6,6,2,4],"Ás a Sena","soma dos dados do número","18"],[[3,3,3,5,5],"Full","3 iguais + 2 iguais","15"],
+           [[2,3,4,5,6],"Seguida","1 a 5 ou 2 a 6","20"],[[4,4,4,4,1],"Quadrada","4 iguais","25"],[[1,1,1,1,1],"General","5 iguais","50"]];
     return '<p>Quando terminar os lances, toque numa casa livre da cartela. Exemplos:</p><div class="tuto-lista">'+
       L.map(function(x){return '<div class="tuto-linha">'+tutoMini(x[0])+'<strong>'+x[1]+'<small>'+x[2]+'</small></strong><em>'+x[3]+'</em></div>'}).join("")+
       '</div><p>No primeiro exemplo, três 6 na Sena valem 18.</p>'}},
   {t:"Cada casa, uma vez",h:function(){
-    var C=[["Ás","3"],["Duque","6"],["Terno","—"],["Quadra","12"],["Quina","X"],["Sena","18"],["Full","10"],["Seguida","—"],["Quadrada","30"],["General","—"]];
+    var C=[["Ás","3"],["Duque","6"],["Terno","—"],["Quadra","12"],["Quina","X"],["Sena","18"],["Full","15"],["Seguida","—"],["Quadrada","25"],["General","—"]];
     return '<div class="tuto-cartela" aria-hidden="true">'+C.map(function(x){return '<span class="'+(x[1]==="X"?"risc":x[1]==="—"?"livre":"")+'">'+x[0]+'<b>'+x[1]+'</b></span>'}).join("")+'</div>'+
       '<p>São 10 rodadas para 10 casas, e cada casa só pode ser usada uma vez.</p>'+
       '<p>Se nada servir, <b>risque</b> uma casa: ela vale zero e fica fechada até o fim. Vale mais riscar uma casa difícil, como o General, do que gastar a Sena com pouco.</p>'}},
   {t:"De boca vale mais",h:function(){
     return '<div class="tuto-boca"><span class="tuto-selo">5 dados<br>no copo</span>'+tutoMini([2,3,4,5,6])+'</div>'+
       '<p>Se Full, Seguida ou Quadrada sair num lance em que você rolou os <b>5 dados juntos</b>, sem guardar nenhum, vale 5 pontos a mais. O General de boca vale 100.</p><p>Vale no primeiro lance e também no segundo ou no terceiro, se você rolar os 5 de novo.</p>'+
-      '<div class="tuto-lista">'+[["Full","15"],["Seguida","25"],["Quadrada","35"],["General","100"]].map(function(x){return '<div class="tuto-linha" style="grid-template-columns:1fr auto"><strong>'+x[0]+' de boca</strong><em>'+x[1]+'</em></div>'}).join("")+'</div>'}},
+      '<div class="tuto-lista">'+[["Full","20"],["Seguida","25"],["Quadrada","30"],["General","100"]].map(function(x){return '<div class="tuto-linha" style="grid-template-columns:1fr auto"><strong>'+x[0]+' de boca</strong><em>'+x[1]+'</em></div>'}).join("")+'</div>'}},
   {t:"Dois modos",h:function(){
     return '<div class="tuto-modos">'+
       '<div class="tuto-modo px"><b>MODO CLÁSSICO</b>Uma cartela, 10 rodadas. Faça o máximo de pontos e tente bater seu recorde.</div>'+
@@ -2584,7 +2584,7 @@ function start(d){
   if(!R&&!S.fim&&S.scores.every(completo))S=novoEstado(S.jogadores);
   if(!Array.isArray(S.db)||S.db.length!==S.jogadores){S.db=S.scores.map(function(){return {}});S.boca=false}
   if(!R)S.scores.forEach(function(sc){        // migração de partidas antigas (não vale para o survival: lá Full 25, Quadrada x2 etc. são válidos)
-    if(sc.quadra>0&&sc.quadra!==30&&sc.quadra!==35)sc.quadra=30;
+    if(sc.quadra>0&&sc.quadra!==25&&sc.quadra!==30)sc.quadra=25;
     if(sc.full===25)sc.full=10;else if(sc.full===30)sc.full=15;
     if(sc.general===55)sc.general=100;
     if(sc.seq===30)sc.seq=20;else if(sc.seq===35)sc.seq=25;
