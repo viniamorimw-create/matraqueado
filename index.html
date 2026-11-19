@@ -3019,17 +3019,18 @@ function desenhaCena(now){
   var dd=J.ele.tot-J.eu.tot,L2=limite(),est={abre:CENA.pisca>0?Math.abs(CENA.pisca-.08)/.08:1,
       humor:J.fim?(J.fim==="ele"?"calmo":"bravo"):(J.vez==="ele"&&dd<-.6*L2)?"tenso":dd<-.4*L2?"bravo":dd>.4*L2?"calmo":"normal",
       ox:Math.round(Math.sin(CENA.ang)*2),morto:CENA.morto==="ele",t:t};
-  passantes(t,CFG.look===0?0:-1);cadeira();
+  passantes(t,CFG.look===0?0:-1);
   var C=CHG[CFG.look],ch=CENA.chega,ec=ch&&C?t-ch.t0:9,CH_A=2.4,CH_Q=.14,CH_F=CH_A+CH_Q*C_N(C);   // chegada: anda CH_A s pelo salão e senta quadro a quadro
   g.imageSmoothingEnabled=false;
   if(ec<CH_A){   // vem do fundo do salão até a mesa, crescendo com a perspectiva
     var u=Math.min(1,ec/CH_A),k=.6+.4*u*u,W=Math.round(C.c.aw*k),H=Math.round(C.c.ah*k),q=Math.floor(ec*30/3.2)%6,x=Math.round(195+(97-W/2-195)*u);
     g.save();g.beginPath();g.rect(0,0,195,58);g.clip();g.drawImage(C.img,q*C.c.aw,0,C.c.aw,C.c.ah,x,62-H,W,H);g.restore();
-  }else if(ec<CH_F){   // sentando: desce 3 px para a borda de baixo do quadro ficar sempre atrás do tampo, e corta tudo abaixo da borda da mesa
+    cadeira();   // vem pelo salão, por trás da cadeira
+  }else if(ec<CH_F){cadeira();   // sentando: desce 3 px para a borda de baixo do quadro ficar sempre atrás do tampo, e corta tudo abaixo da borda da mesa
     var f=C.c.senta[Math.min(C.c.senta.length-1,Math.floor((ec-CH_A)/CH_Q))];
     g.save();g.beginPath();g.rect(0,0,195,58);g.clip();g.drawImage(C.img,f[0],f[1],f[2],f[3],f[4],f[5]+3,f[2],f[3]);g.restore();
   }
-  else rivalPinta(CFG.look,est);
+  else{cadeira();rivalPinta(CFG.look,est)}
   cenaMesa(pisc);fumaca(t);
   if(ec>=CH_F)rivalNaMesa(CFG.look,est);
   // dados dele do outro lado da mesa (pequenos; os que valem aparecem grandes embaixo da cena)
