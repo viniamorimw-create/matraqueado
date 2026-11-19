@@ -12,7 +12,7 @@ REGRAS IMPLEMENTADAS
 - Full 10 (15 de boca), Seguida 20 (25), Quadrada 30 (35), General 50 (100 de boca).
 - "De boca": a jogada saiu num lance em que os 5 dados foram rolados juntos (sem nenhum "fica"), em qualquer lance da rodada.
 - Riscar: casa em que os dados não pontuam pode ser riscada (vale 0 e fica eliminada).
-- Survival: 10 fases com 3 a 10 rodadas cada (RODADAS); meta mínima por fase; bateu = libera AVANÇAR e, ao fim, a caça-níquel de
+- Noitada (nov/2026): 15 fases em 3 blocos de metas (a cartela atravessa o bloco, RODADAS acumuladas, meta acumulada, jogo da velha +10) e duelos em 5, 10, 14 e 15. Texto antigo: meta mínima por fase; bateu = libera AVANÇAR e, ao fim, a caça-níquel de
   3 rolos oferece 3 bônus (você escolhe 1); errou = fim da run. Chefes nas fases 5 e 10 (1 lance a menos). Folga de +60% turbina a máquina (mais raros).
 - 666: exatamente três seis lado a lado (dados 1-2-3, 2-3-4 ou 3-4-5) ficam vermelhos e soltam um diabinho (vale nos dois modos).
 - Maldições (survival): da fase 3 em diante cada fase sorteia 1 maldição (MALD): Imposto, Mão curta, Casa trancada, Pedágio,
@@ -186,7 +186,9 @@ button:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
 .fim p{margin:0;font-size:15px}
 .fim button{align-self:flex-start;background:var(--pergaminho);color:var(--tinta);border:3px solid var(--tinta);font-weight:700;padding:8px 14px}
 .cab{padding:6px 12px;font-size:14px;font-weight:700;border-bottom:3px solid var(--tinta)}
-.bozo{display:grid;grid-template-columns:1fr 1.15fr 1fr;padding:10px 10px 0}
+.velha{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.velha line{stroke:rgba(168,23,32,.8);stroke-width:9;stroke-linecap:round}
+.bozo{position:relative;display:grid;grid-template-columns:1fr 1.15fr 1fr;padding:10px 10px 0}
 .casa{min-height:80px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:2px;text-align:center;background:none;border:0 solid var(--tinta);color:var(--tinta);font-family:var(--f-corpo)}
 .casa strong{font-size:17px;font-weight:700}
 .casa small{font-size:12px;font-weight:700;line-height:1;color:var(--vinho);text-transform:uppercase}
@@ -700,7 +702,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
   <div class="col">
     <div class="capa px"><canvas class="banner" width="841" height="250" role="img" aria-label="KAT4 House"></canvas><div class="tit">MATRAQUEADO</div></div>
     <button class="rolar px modo" id="ini-comecar" type="button">MODO CLÁSSICO<small>10 rodadas, uma cartela</small></button>
-    <button class="rolar px modo sv" id="ini-survival" type="button">MODO NOITADA<small>10 fases: metas, duelos e chefes</small></button>
+    <button class="rolar px modo sv" id="ini-survival" type="button">MODO NOITADA<small>15 fases: blocos de metas, duelos e chefes</small></button>
     <button class="opc px cont" id="ini-cont" type="button" hidden><span>Continuar partida</span><small id="ini-cont-d"></small></button>
     <div class="sep" aria-hidden="true"></div>
     <div class="opc px" hidden><span id="ini-rot">Jogadores</span>
@@ -773,11 +775,12 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
       </ul>
       <h3>Modo Noitada</h3>
       <ul>
-        <li>Uma noite no KAT4 House em 10 fases. As fases 1, 2, 3, 6 e 7 têm uma meta de pontos; as fases 4, 8 e 9 são duelos, e as fases 5 e 10 são os chefes, também em duelo.</li>
-        <li><b>Meta:</b> bateu, escolhe 1 bônus na caça-níquel. Errou, a noitada acaba.</li>
+        <li>Uma noite no KAT4 House em 15 fases: 3 blocos de metas (fases 1 a 4, 6 a 9 e 11 a 13) e 4 duelos (fases 5 e 10 contra rivais, 14 e 15 contra os chefes).</li>
+        <li><b>Blocos:</b> a mesma cartela atravessa o bloco inteiro; cada fase joga algumas rodadas nela. A meta é o total do bloco ao fim da fase. Ficou abaixo, a noitada acaba.</li>
+        <li><b>Caça-níquel:</b> no meio e no fim de cada bloco (fases 2, 4, 7, 9, 12 e 13) e depois de cada duelo vencido.</li>
+        <li><b>Jogo da velha:</b> três casas pontuadas em linha na grade (de pé, deitada ou diagonal) valem +10 na hora. Casa riscada quebra a linha. Vale também nos duelos, para você e para o adversário.</li>
         <li><b>Duelo:</b> cada um com a sua cartela. Depois que os dois jogam a rodada, a bomba confere a diferença de pontos: passou do limite, estoura em quem está atrás. Se não estourar, vence quem terminar na frente. Perder encerra a noitada; vencer dá a caça-níquel, turbinada se a bomba estourar do outro lado.</li>
         <li>As suas relíquias valem nos duelos. Os adversários das últimas fases jogam com um bônus nos pontos.</li>
-        <li><b>Embalo:</b> a partir da 3ª casa pontuada seguida, cada anotação rende +2 pontos. Riscar apaga o embalo.</li>
         <li><b>Dados coloridos:</b> o verde duplica a face dele, o vermelho, quando cai 1, vale 1 ou 6 (o que render mais) e o azul completa a Seguida. <b>Combo de cores:</b> dois ou mais dados coloridos com a mesma face, numa anotação que pontua, rendem +5 por dado.</li>
         <li><b>Maldições:</b> da fase 3 em diante, cada fase traz uma maldição (toque na placa vermelha para ler). A meta fica um pouco menor e vencer a fase dá uma opção a mais na caça-níquel.</li>
       </ul>
@@ -1314,14 +1317,13 @@ function efeitoAnotar(cat,p,boca,o,emb,antes){
     tremer(forte);moedas(o,Math.min(16,4+Math.floor(p/4)));if(forte>=2)soco();
     if(cat.id==="general")festa();
     else if(!cat.n)faixa(cat.nome.toUpperCase()+"!",boca?"de boca":"");
-    else if(R&&S.emb===3)faixa("EMBALO!","+"+EMB_PTS+" por anotação");
     if(forte===3){clarao("#e3b341");chuva(OURO,80)}
-    if(emb)setTimeout(function(){pop(o.x,o.y-30,"+"+emb+" embalo","f")},220);
+    if(emb)setTimeout(function(){pop(o.x,o.y-34,"+"+emb+" VELHA!","g");faixa("VELHA!","+"+emb+" pela linha","o");clarao("#a81720");chuva(["#a81720","#ff252d","#fff6dc"],50)},420);
   }
   if(R&&antes<R.alvo&&pontosFase()>=R.alvo)setTimeout(metaBatida,forte>1?750:300);
 }
 function festa(){var f=$("festa");f.hidden=true;void f.offsetWidth;f.hidden=false;setTimeout(function(){f.hidden=true},1900)}   // "GENERAL!" em neon
-function metaBatida(){if(!R)return;somGeneral();faixa("META BATIDA!",S.fim?"":"pode avançar","o");clarao("#e3b341");chuva(OURO,110);tremer(2)}
+function metaBatida(){if(!R)return;somGeneral();faixa("META BATIDA!","","o");clarao("#e3b341");chuva(OURO,110);tremer(2)}
 // destaque quando a rolagem já mostra uma jogada forte na mesa
 function efeitoRolagem(){
   if(!fxOk())return;
@@ -1491,14 +1493,13 @@ function desenhaMesa(){
     p+='<div class="placa fase px'+(pf>=R.alvo?' vez':'')+'" aria-label="Pontos '+pf+', meta '+R.alvo+'"><span>'+(R.chefe?"Chefe ":"Fase ")+R.fase+'/'+FASES+'</span><b id="fase-b">'+pf+'/'+R.alvo+'</b><i class="barra"><i id="fase-bar"></i></i></div>';
     p+='<div class="placa rodada px"><span>Rodada</span><b>'+Math.min((S.rod||0)+1,R.k)+'/'+R.k+'</b></div>';
     if(R.mald&&MALD[R.mald])p+='<button type="button" class="placa mald px" id="btn-mald" aria-label="Maldição: '+MALD[R.mald].nome+'"><span>Maldição</span><b>'+MALD[R.mald].curto+'</b></button>';
-    if((S.emb||0)>=2)p+='<div class="placa emb px'+(S.emb>=3?' fogo':'')+'"><span>Embalo</span><b>×'+S.emb+'</b></div>';
   }else{
     for(var i=0;i<S.jogadores;i++)p+='<button type="button" data-j="'+i+'" class="placa px'+(i===S.vez&&!S.fim?' vez':'')+(S.jogadores>1&&i===vendo?' vendo':'')+'" aria-label="Ver cartela de '+esc(nomeJog(i))+'"><span>'+esc(nomeJog(i))+'</span><b>'+total(S.scores[i])+'</b></button>';
     p+='<div class="placa rodada px"><span>Rodada</span><b>'+(S.fim?CATS.length:rodada())+'/'+CATS.length+'</b></div>';
   }
   $("placas").innerHTML=p;
   $("tent").textContent=S.fim?0:resta;
-  av.hidden=!(R&&!S.fim&&!rolando&&pontosFase()>=R.alvo);   // meta batida: libera o AVANÇAR
+  av.hidden=true;   // a cartela atravessa o bloco: não dá para encerrar a fase antes
   if(S.fim){
     if(R){
       b.textContent="FASE "+R.fase;b.disabled=true;
@@ -1540,8 +1541,20 @@ function desenhaTabela(){
   });
   h+='</div><div class="total"><span>Total</span><b id="tot-b">'+(R&&vendo===0?pontosFase():total(sc))+'</b></div>';
   $("tabela").innerHTML=h;
+  if(R)riscaVelha($("tabela").querySelector(".bozo"),sc);
   sincTotal();
 }
+function riscaVelha(bz,sc){   // traço de pincel vermelho por cima das linhas feitas (como o jogo da velha no giz)
+  var ls=linhasDe(sc,ORDEM);if(!bz||!ls.length)return;
+  var r=bz.getBoundingClientRect(),cs=bz.children,h='';if(!r.width)return;
+  ls.forEach(function(l,n){
+    var a=cs[l[0]].getBoundingClientRect(),b=cs[l[2]].getBoundingClientRect();
+    var x1=a.left+a.width/2-r.left,y1=a.top+a.height/2-r.top,x2=b.left+b.width/2-r.left,y2=b.top+b.height/2-r.top,dx=(x2-x1)*.12,dy=(y2-y1)*.12;
+    h+='<line x1="'+(x1-dx)+'" y1="'+(y1-dy)+'" x2="'+(x2+dx)+'" y2="'+(y2+dy)+'"/>';
+  });
+  bz.insertAdjacentHTML("beforeend",'<svg class="velha" width="'+r.width+'" height="'+r.height+'" aria-hidden="true">'+h+'</svg>');
+}
+window.addEventListener("resize",function(){if(R&&S&&!$("tabela").hidden)desenhaTabela()});
 function textoFim(){
   var tot=S.scores.map(total),max=Math.max.apply(null,tot),venc=[];
   tot.forEach(function(t,i){if(t===max)venc.push(nomeJog(i))});
@@ -1554,24 +1567,34 @@ function desenha(){
   document.body.classList.toggle("mald",!!(R&&R.mald));
   document.querySelector(".cartela").classList.toggle("neb",!!(R&&R.mald==="neblina"&&!S.fim));
   desenhaMesa();desenhaTabela();desenhaBonus();
-  fogoLiga(!!R&&!S.fim&&(S.emb||0)>=3);
+  fogoLiga(false);
 }
 
 /* ---------- modo survival ---------- */
 // Uma run são FASES fases. Cada fase é uma cartela com RODADAS[n] rodadas e uma meta mínima: bateu, pode avançar na hora (ou seguir
 // jogando para sobrar pontos) e escolhe 1 de 3 bônus sorteados numa caça-níquel; errou, a run acaba.
 // Os números abaixo (rodadas, metas, taxa, raridades) foram calibrados por simulação com o cálculo exato das regras do jogo.
-var FASES=10,TAXA=0.7,F1=0.5,F10=1.0,MARGEM_TURBO=0.6,MAX_ITENS=3;
-var RODADAS=[3,4,4,5,6,7,8,9,10,10];          // rodadas de cada fase: começa curto e cresce com a dificuldade
-var CHEFES={5:1,10:1};
+var FASES=15,TAXA=0.7,F1=0.5,F10=1.0,MARGEM_TURBO=0.6,MAX_ITENS=3;
+// a cartela atravessa o bloco: RODADAS = rodadas acumuladas do bloco ao fim de cada fase (0 nas fases de duelo)
+var RODADAS=[3,6,8,10,0,3,6,8,10,0,4,7,10,0,0];
+var INI_BLOCO={1:1,6:1,11:1},SLOT_FASES={2:1,4:1,7:1,9:1,12:1,13:1};
+var CHEFES={14:1,15:1};
+// jogo da velha: linhas da grade 3x3 (posições de ORDEM). VELHA = pontos por linha; LIN_ESP = linhas que um bom jogador
+// fecha em média até a rodada k (simulação com o cérebro do X1, sem mirar nas linhas)
+var VELHA=10,LINHAS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+var LIN_ESP=[0,0,.09,.39,.95,1.73,2.75,3.91,5.06,5.78];
+function linhasDe(sc,ord){return LINHAS.filter(function(l){return l.every(function(k){return sc[ord[k]]>0})})}
+function velhaGanho(sc,id){   // linhas que a casa id acabou de fechar
+  var k=ORDEM.indexOf(id);if(k<0||k>8||!(sc[id]>0))return 0;
+  return LINHAS.filter(function(l){return l.indexOf(k)>=0&&l.every(function(j){return sc[ORDEM[j]]>0})}).length*VELHA;
+}
 // Modo Noitada: fases de duelo, com a bomba do X1, no lugar da meta. rod = rodadas; l0 = limite inicial da bomba (cai até 25);
 // pensa = quanto o adversário guarda casas boas para depois (0 = só pensa na rodada); forca = bônus nos pontos dele.
 // Nomes genéricos e números provisórios (a simulação de balanceamento ainda vai ajustar). O visual de cada um: rivalPinta(), no bloco do X1.
-var DUELOS={4:{look:0,nome:"Rival 1",rod:6,l0:60,pensa:0,forca:0},
-            5:{look:1,nome:"Chefe 1",rod:6,l0:60,pensa:1,forca:.1},
-            8:{look:2,nome:"Rival 2",rod:8,l0:60,pensa:1,forca:.2},
-            9:{look:3,nome:"Rival 3",rod:8,l0:60,pensa:.5,forca:.3},
-            10:{look:4,nome:"Chefe final",rod:10,l0:50,pensa:1,forca:.45}};
+var DUELOS={5:{look:0,nome:"Rival 1",rod:6,l0:60,pensa:0,forca:0},
+            10:{look:2,nome:"Rival 2",rod:8,l0:60,pensa:1,forca:.2},
+            14:{look:1,nome:"Chefe 1",rod:8,l0:55,pensa:1,forca:.3},
+            15:{look:4,nome:"Chefe final",rod:10,l0:50,pensa:1,forca:.45}};
 function limitesDuelo(D){var out=[],i;for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5);return out}                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
 var SLOT_PESOS={n:{c:.50,i:.30,r:.15,l:.05},t:{c:.25,i:.35,r:.28,l:.12}};   // raridade de cada rolo: normal / turbinada (folga >= MARGEM_TURBO)
 var RAR_COR={c:"#cfc8b2",i:"#5fb36a",r:"#4aa3e0",l:"#e3b341"},RAR_NOME={c:"Comum",i:"Incomum",r:"Rara",l:"Lendária"},RAR_ORDEM=["c","i","r","l"],PROX={c:"i",i:"r",r:"l",l:"l"};
@@ -1659,7 +1682,7 @@ var R=null,M=null,modoItem=-1,painelCb=[];   // R: a run (null = modo clássico)
 // (k=1..10), estimada por simulação. A meta cai COMP x custo: a maldição ainda aperta, e vencer dá 1 opção a mais na caça-níquel.
 var COMP=0.6,EMB_PTS=2,FASE_MALD=3;
 var MALD={
-  imposto:{nome:"Imposto",curto:"IMPOSTO",desc:"Os pontos da fase valem 15% a menos.",custo:.15},
+  imposto:{nome:"Imposto",curto:"IMPOSTO",desc:"Os pontos feitos nesta fase valem 15% a menos.",custo:.15},
   mao3:{nome:"Mão curta",curto:"MÃO CURTA",desc:'Só dá para marcar "fica" em 3 dados por vez.',custo:[.03,.03,.03,.03,.03,.04,.05,.06,.065,.07]},
   casa:{nome:"Casa trancada",curto:"TRANCA",desc:"Uma casa da cartela fica trancada nesta fase.",custo:[.075,.075,.075,.08,.085,.09,.095,.105,.11,.11]},
   pedagio:{nome:"Pedágio",curto:"PEDÁGIO",desc:"Cada casa riscada tira 10 pontos da fase.",custo:[0,0,0,0,0,.005,.015,.035,.07,.13]},
@@ -1667,14 +1690,15 @@ var MALD={
   neblina:{nome:"Neblina",curto:"NEBLINA",desc:"A cartela não mostra quanto cada casa vale. Faça a conta antes de tocar.",custo:0}
 };
 var CASAS_TRANCA=["u6","u5","quadra","seq","full"];
+function trancaveis(){return CASAS_TRANCA.filter(function(id){return !S||S.scores[0][id]==null})}
 function sorteiaMald(){
   if(R.fase<FASE_MALD)return null;
   var ids=Object.keys(MALD).filter(function(id){
-    return id!==R.maldAnt&&!(id==="casa"&&R.k>9)&&!(id==="pedagio"&&R.k<7);   // tranca precisa sobrar casa; pedágio só pesa em fase longa
+    return id!==R.maldAnt&&!(id==="casa"&&(R.k>9||!trancaveis().length))&&!(id==="pedagio"&&R.k<7);   // tranca precisa sobrar casa; pedágio só pesa em fase longa
   });
   return ids[Math.floor(Math.random()*ids.length)];
 }
-function custoMald(){var c=R.mald&&MALD[R.mald]?MALD[R.mald].custo:0;return typeof c==="number"?c:c[R.k-1]}
+function custoMald(){var c=R.mald&&MALD[R.mald]?MALD[R.mald].custo:0;return typeof c==="number"?c:c[Math.max(0,R.k-kAnt()-1)]}
 function painelMald(){
   var m=MALD[R.mald];if(!m)return;
   var l=[m.desc];
@@ -1708,20 +1732,20 @@ function recalcMods(){
 function maxJog(){var n=MAX_JOGADAS;if(R){if(M&&M.lance)n++;if(R.chefe)n--}return n+((S&&S.extra)||0)}
 function poder(){var t=0,k=R.k-1;R.relics.concat(R.itens).forEach(function(id){if(PRECO[id])t+=PRECO[id][k]});return t}
 // ajuste fino da meta por fase, vindo do teste de balanceamento: o começo era fácil demais e o chefe final era mais fácil que a fase 9
-var AJ_META=[1.2, 1.14, 1, 1, 1, 1, 1, 1, 1, 1.08];
-function calcMeta(){
-  var k=R.k-1,f=F1+(F10-F1)*(R.fase-1)/(FASES-1),m=f*E3[k]+TAXA*poder();
-  if(R.chefe){var l=3+(M&&M.lance?1:0);m*=EL[l-1][k]/EL[l][k]}
-  m*=1-COMP*custoMald();
+var AJ_META=[1.15,1.1,1,1, 1, 1,1,1,1, 1, 1,1,1.05, 1,1];
+function kAnt(){return INI_BLOCO[R.fase]?0:RODADAS[R.fase-2]}   // rodadas do bloco já jogadas antes desta fase
+function espBloco(n){return n>0?E3[n-1]+VELHA*LIN_ESP[n-1]:0}
+function calcMeta(){   // meta = total do bloco ao fim desta fase; a maldição só pesa nos pontos esperados desta fase
+  var f=F1+(F10-F1)*(R.fase-1)/(FASES-1),m=f*espBloco(R.k)+TAXA*poder();
+  m-=COMP*custoMald()*f*(espBloco(R.k)-espBloco(kAnt()));
   m*=AJ_META[R.fase-1]||1;
   return Math.max(5,Math.round(m/5)*5);
 }
+function brutoFase(){var t=total(S.scores[0])+(S.extraPts||0),f=1+((M&&M.gor)||0);return f!==1?Math.round(t*f):t}
 function pontosFase(){
-  var t=total(S.scores[0])+(S.extraPts||0);
-  var f=1+((M&&M.gor)||0);
-  if(R&&R.mald==="imposto")f*=.85;               // maldição Imposto
-  if(f!==1)t=Math.round(t*f);
-  return t+(R?R.cred:0);
+  var t=brutoFase();
+  if(R&&R.mald==="imposto"&&R.base!=null&&t>R.base)t=R.base+Math.round((t-R.base)*.85);   // maldição Imposto: só o que entra nesta fase
+  return t+(S.velha||0)+(R?R.cred:0);
 }
 function nomeCasa(c){if(!M)return c.nome;if(c.id==="u1"&&M.as>1)return c.nome+" ×"+M.as;return M.dobra[c.id]?c.nome+" ×2":c.nome}
 function listaBonus(){return R.relics.length?R.relics.map(function(id){return bonusPor(id).nome}).join(", "):"nenhum bônus"}
@@ -1756,25 +1780,31 @@ function checa666(antes){
 
 /* run: início, fases, fim */
 function novaRun(){
-  R={v:2,fase:1,k:0,relics:[],itens:[],cred:0,credProx:0,alvo:0,chefe:false,rext:false,cedo:false,estado:"jogando",slot:null,hist:[],mald:null,maldAnt:null,maldCasa:null};
+  R={v:3,fase:1,k:0,relics:[],itens:[],cred:0,credProx:0,alvo:0,chefe:false,rext:false,cedo:false,estado:"jogando",slot:null,hist:[],mald:null,maldAnt:null,maldCasa:null};
   recalcMods();comecaFase(true);
 }
 function comecaFase(mostra){
   R.chefe=!!CHEFES[R.fase];R.k=RODADAS[R.fase-1];R.duelo=DUELOS[R.fase]?{res:null}:null;
-  R.maldAnt=R.mald||null;R.mald=R.duelo?null:sorteiaMald();R.maldCasa=R.mald==="casa"?CASAS_TRANCA[Math.floor(Math.random()*CASAS_TRANCA.length)]:null;
-  R.alvo=calcMeta();R.cred=R.credProx;R.credProx=0;R.rext=false;R.cedo=false;R.estado=R.duelo?"duelo":"jogando";R.slot=null;
-  S=novoEstado(1,[]);vendo=0;modoItem=-1;
+  var novo=!S||R.duelo||INI_BLOCO[R.fase];
+  if(novo)S=novoEstado(1,[]);
+  else{S.fim=false;S.vez=0;S.boca=false;S.guardado=[false,false,false,false,false];S.jogadas=0;S.extra=0;S.carta=null}
+  R.maldAnt=R.mald||null;R.mald=R.duelo?null:sorteiaMald();
+  var tv=trancaveis();R.maldCasa=R.mald==="casa"?tv[Math.floor(Math.random()*tv.length)]:null;
+  R.cred=novo?R.credProx:(R.cred||0)+R.credProx;R.credProx=0;R.base=R.duelo?null:brutoFase();
+  R.alvo=R.duelo?0:calcMeta();R.rext=false;R.cedo=false;R.estado=R.duelo?"duelo":"jogando";R.slot=null;
+  vendo=0;modoItem=-1;
   desenha();salvaRun();
   if(mostra)abrePainelFase();
 }
 function abrePainelFase(){
   if(R.duelo){abrePainelDuelo();return}
-  var l=["Meta: <b>"+R.alvo+" pontos</b> em <b>"+R.k+" rodadas</b>."];
-  if(R.chefe)l.push("<b>Chefe:</b> 1 lance a menos por rodada, com a meta reduzida na proporção.");
-  if(R.cred>0)l.push("Você começa com <b>+"+R.cred+" pontos</b> da caça-níquel.");
+  var ka=kAnt(),nr=R.k-ka,fb=faseDoBloco();
+  var l=["<b>Bloco "+fb.b+"</b>, fase "+fb.i+" de "+fb.n+": jogue <b>"+nr+" rodada"+(nr>1?"s":"")+"</b> e chegue a <b>"+R.alvo+" pontos</b> no total do bloco."];
+  if(ka)l.push("A cartela continua a mesma do bloco: você está com <b>"+pontosFase()+"</b> pontos e "+(10-ka)+" casas livres.");
+  else if(R.cred>0)l.push("Você começa com <b>+"+R.cred+" pontos</b> da caça-níquel.");
   if(R.fase===1){
-    l.push("Bateu a meta, o botão AVANÇAR libera: avance na hora ou siga jogando. Passar com folga turbina a caça-níquel. Errou a meta, a noitada acaba. São "+FASES+" fases: metas e duelos.");
-    l.push("<b>Embalo:</b> da 3ª casa pontuada seguida em diante, cada anotação rende +"+EMB_PTS+" pontos. Riscar apaga o embalo.");
+    l.push("A cartela atravessa o bloco: as casas que você usa agora não voltam nas próximas fases. Ficou abaixo da meta no fim de uma fase, a noitada acaba. São "+FASES+" fases: 3 blocos de metas e 4 duelos.");
+    l.push("<b>Jogo da velha:</b> três casas pontuadas em linha (de pé, deitada ou na diagonal) valem <b>+"+VELHA+"</b> na hora. Casa riscada quebra a linha.");
   }
   var m=R.mald&&MALD[R.mald];
   if(m){
@@ -1782,10 +1812,11 @@ function abrePainelFase(){
     if(R.fase===FASE_MALD)l.push("Daqui em diante toda fase traz uma maldição. A meta já vem um pouco menor por causa dela, e vencer dá uma opção a mais na caça-níquel.");
   }
   abrePainel((R.chefe?"Chefe ":"Fase ")+R.fase+" / "+FASES,l,[{txt:"COMEÇAR",cb:function(){
-    faixa(R.chefe?"CHEFE":"FASE "+R.fase,"meta "+R.alvo+" em "+R.k+" rodadas");tremer(1);
+    faixa("FASE "+R.fase,"meta "+R.alvo+" até a rodada "+R.k);tremer(1);
     if(m)setTimeout(function(){if(!R)return;faixa(m.nome.toUpperCase(),"maldição da fase","m");clarao("#4a0c0c");tremer(2);somDiabo()},1250);
   }}]);
 }
+function faseDoBloco(){var b=R.fase<6?1:R.fase<11?2:3,i0=b===1?1:b===2?6:11,n=b===3?3:4;return {b:b,i:R.fase-i0+1,n:n}}
 var cenaN=false;
 function cenaNoite(){   // anima a mesa vazia (X1UI.pintaVazia, no bloco do X1) enquanto a noitada está na tela
   var c=$("cena-n");c.hidden=!R;
@@ -1813,7 +1844,7 @@ function abrirDuelo(){
 // tudo o que a noitada dá ao jogador, levado para o duelo: quarto lance, dados coloridos, itens, rolamento extra, combo de cores, consolação e gorjeta
 function extDuelo(){
   return {
-    lances:3+(M&&M.lance?1:0),
+    lances:3+(M&&M.lance?1:0),velha:VELHA,
     classeDado:function(i,v,lancou){var cl="";if(!M)return cl;
       M.gem.forEach(function(x){if(x.i===i){cl+=" m-gem";if(lancou&&v===x.f)cl+=" dup"}});
       if(M.verm===i){cl+=" m-verm";if(lancou&&v===1)cl+=" vale6"}if(M.azul===i)cl+=" m-azul";return cl},
@@ -1842,8 +1873,16 @@ function fimDeFase(){
     if(!R)return;
     if(pts<R.alvo)encerraRun(false,pts);
     else if(R.fase>=FASES)encerraRun(true,pts);
-    else abrirSlot(false);
+    else if(SLOT_FASES[R.fase])abrirSlot(false);
+    else passaFase(pts);
   },600);
+}
+function passaFase(pts){
+  R.estado="passou";salvaRun();
+  var prox=R.fase+1,du=DUELOS[prox];
+  abrePainel("Fase "+R.fase+" superada",["Você está com <b>"+pts+"</b> pontos no bloco (meta "+R.alvo+").",
+    du?"Agora a cartela fecha e vem o duelo contra <b>"+du.nome+"</b>.":"Próxima fase: a mesma cartela, com a meta mais alta."],
+    [{txt:"PRÓXIMA FASE",cb:function(){if(!R)return;R.fase++;comecaFase(true)}}]);
 }
 function melhor(){try{return parseInt(localStorage.getItem("general5-surv-melhor"),10)||0}catch(e){return 0}}
 function encerraRun(venceu,pts){
@@ -1885,13 +1924,14 @@ function encerraCedo(){
 
 /* salvar e retomar a run (localStorage) */
 function salvaRun(){if(!R)return;try{localStorage.setItem("general5-run-v2",JSON.stringify({R:R,S:S}))}catch(e){}marca("s")}
-function lerRun(){try{var d=JSON.parse(localStorage.getItem("general5-run-v2"));return d&&d.R&&d.R.v===2&&d.R.fase&&valido(d.S)?d:null}catch(e){return null}}
+function lerRun(){try{var d=JSON.parse(localStorage.getItem("general5-run-v2"));return d&&d.R&&d.R.v===3&&d.R.fase&&valido(d.S)?d:null}catch(e){return null}}
 function limpaRun(){try{localStorage.removeItem("general5-run-v2")}catch(e){}}
 function retomarRun(){
   var d=lerRun();if(!d)return;
   cancelaCena();R=d.R;S=d.S;recalcMods();modoItem=-1;vendo=0;fecharInicio();desenha();marca("s");
   if(R.estado==="slot"&&R.slot)abrirSlot(true);
   else if(R.estado==="duelo")abrePainelDuelo();
+  else if(R.estado==="passou")passaFase(pontosFase());
   else if(S.fim)fimDeFase();
 }
 
@@ -2277,8 +2317,8 @@ function anotar(id){
   sc[id]=pontos(cat,S.dados,S.boca);
   if(R&&M&&M.consol&&sc[id]===0)S.extraPts=(S.extraPts||0)+5;   // Consolação: riscar dá +5
   if(R){
-    if(sc[id]>0){S.emb=(S.emb||0)+1;if(S.emb>=3){embGanho=EMB_PTS;S.extraPts=(S.extraPts||0)+EMB_PTS}}   // Embalo
-    else{S.emb=0;if(R.mald==="pedagio")S.extraPts=(S.extraPts||0)-10}                                    // maldição Pedágio
+    if(sc[id]===0&&R.mald==="pedagio")S.extraPts=(S.extraPts||0)-10;   // maldição Pedágio
+    embGanho=velhaGanho(sc,id);if(embGanho)S.velha=(S.velha||0)+embGanho;   // jogo da velha
   }
   var combo=R&&sc[id]>0?comboCores(antigos):0;if(combo)S.extraPts=(S.extraPts||0)+combo;   // combo de cores
   if(S.boca&&!cat.n&&sc[id]>0)S.db[S.vez][id]=true;
@@ -2428,7 +2468,7 @@ var TUTO=[
   {t:"Dois modos",h:function(){
     return '<div class="tuto-modos">'+
       '<div class="tuto-modo px"><b>MODO CLÁSSICO</b>Uma cartela, 10 rodadas. Faça o máximo de pontos e tente bater seu recorde.</div>'+
-      '<div class="tuto-modo px"><b>MODO NOITADA</b>Uma noite no bar em 10 fases. Algumas pedem uma meta de pontos; outras são duelos contra os frequentadores, com uma bomba que explode em quem fica muito para trás. Cada fase vencida dá um bônus na caça-níquel.</div>'+
+      '<div class="tuto-modo px"><b>MODO NOITADA</b>Uma noite no bar em 15 fases. Blocos de metas numa cartela que atravessa várias fases, com jogo da velha valendo pontos, e duelos contra os frequentadores, com uma bomba que explode em quem fica muito para trás. Bônus na caça-níquel pelo caminho.</div>'+
       '</div>'}},
   {t:"Pronto!",h:function(){return tutoMesa([6,6,6,6,6])+
     '<p>É isso. Comece pelo Modo clássico para pegar o jeito.</p>'+
@@ -2494,7 +2534,7 @@ function start(d){
    O cérebro do adversário e a pontuação estão no objeto X1 (script anterior). Ainda sem relíquias, maldições ou itens. */
 var X1UI=(function(audioDoJogo,efeitosOk){
 var host=document.getElementById("x1"),raiz=host.attachShadow({mode:"open"}),ficha=0,rodando=false;
-raiz.innerHTML="<style>:host{--preto:#09090d;--neon:#ff252d;--vermelho:#a81720;--vinho:#580f18;--creme:#f1d9a8;--ouro:#d49a48;--marinho:#101827;\n  --f-display:\"Cinco\",\"Jersey 10\",\"Courier New\",monospace;--f-corpo:\"CincoCorpo\",\"Digitos\",\"Pixelify Sans\",\"Courier New\",monospace}\n*{box-sizing:border-box}\n:host{position:fixed;inset:0;z-index:60;display:block;background:#050507;color:var(--creme);font-family:var(--f-corpo);font-size:14px;-webkit-tap-highlight-color:transparent;overflow:hidden}\n:host([hidden]){display:none}\nbutton{font:inherit;color:inherit;cursor:pointer}\n/* cantos em degrau, iguais aos do jogo */\n.px{clip-path:polygon(4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px),0 4px,4px 4px)}\n.app{height:100%;min-height:520px;max-width:430px;margin:0 auto;display:flex;flex-direction:column;gap:6px;position:relative;padding-bottom:6px;font-size:16px;\n  background:#5d161d center/cover;image-rendering:pixelated}\n#cena{flex:none;min-height:96px;height:min(calc(min(100vw,430px)*.472),22vh);display:block;width:100%;object-fit:contain;object-position:50% 100%;image-rendering:pixelated;background:#050507;border-bottom:3px solid var(--preto)}\n/* barra creme com Sair e Regras, como no jogo */\n.topo{flex:none;display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0 12px;padding:3px 5px;background:var(--preto);border:4px solid var(--vinho);box-shadow:inset 0 0 0 2px #3a0d12}\n.mini-btn{flex:none;background:var(--marinho);color:var(--creme);border:3px solid var(--ouro);min-height:36px;padding:4px 8px;font-family:var(--f-corpo);font-size:15px;font-weight:700;line-height:1.3}\n.tit{flex:1;min-width:0;margin:0;display:flex;align-items:center;justify-content:center;gap:4px;font-family:var(--f-display);font-weight:400;font-size:28px;line-height:1;color:var(--vermelho)}\n.tit .placa-m{flex:1;min-width:0;height:36px;background:var(--placa,none) center/contain no-repeat}\n.tit b{flex:none;font-weight:400;letter-spacing:1px}\n.mesa{flex:none;display:flex;flex-direction:column;gap:6px;padding:2px 12px 4px}\n/* placas */\n.placas{display:flex;gap:8px}\n.placa{flex:1;min-width:0;position:relative;text-align:center;background:var(--marinho);color:var(--creme);border:3px solid #7a5a2c;padding:4px 6px 2px}\n.placa span{display:block;font-size:13px;line-height:1.3;color:#b9975c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.placa b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;line-height:.9}\n.placa.vez{border-color:var(--ouro)}\n.placa.vez span{color:#f0b64a}\n.placa.vendo{background:#1b2740}\nbutton.placa:active{background:#22304e}\n.placa.rodada{flex:none;border-color:var(--creme);padding-left:8px;padding-right:8px}\n.placa.rodada span{color:var(--creme)}\n.placa.bomba{flex:1.25;border-color:var(--neon);padding-bottom:7px}\n.placa.bomba span{color:#ff8a7a}\n.placa .barra{position:absolute;left:0;right:0;bottom:0;height:5px;background:#0c1222;display:block}\n.placa .barra i{display:block;height:100%;background:var(--ouro)}\n.placa.bomba.perigo b{color:#ff8a7a}\n.placa.bomba.perigo .barra i{background:var(--neon);animation:pisca .4s steps(1) infinite}\n@keyframes pisca{50%{background:#fff6dc}}\n/* dados, iguais aos do jogo */\n.dados,.etiquetas{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;max-width:310px;margin:0 auto}\n.dados{padding-top:8px}\n.dado{position:relative;aspect-ratio:1;padding:10%;background:#f3dcb4;border:3px solid #3a0d12;box-shadow:inset -3px -3px 0 #d9bb8a,inset 2px 2px 0 #fff3d6,0 4px 0 #1a0508;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr)}\n.dado i{margin:17%}\n.dado i.on{background:var(--preto)}\n.dado.guardado{background:#fff3d6;border-color:var(--preto);box-shadow:inset -3px -3px 0 #d9bb8a,inset 2px 2px 0 #fff,0 0 0 3px var(--neon),0 0 12px rgba(255,37,45,.6)}\n.dado.m-gem{background:#c6f0d6;border-color:#14502c;box-shadow:inset -5px -5px 0 #7cc79a}\n.dado.m-verm{background:#f6b9b0;border-color:#5e0f0c;box-shadow:inset -4px -4px 0 #d77a6e,inset 2px 2px 0 #ffe1dc,0 4px 0 #1a0508}\n.dado.m-azul{background:#b9d8f6;border-color:#12305a;box-shadow:inset -4px -4px 0 #7aa9d8,inset 2px 2px 0 #e3f1ff,0 4px 0 #1a0508}\n.dado.carta-par{background:#e2d4f7;border-color:#3b1f6b;box-shadow:inset -5px -5px 0 #a98ad8}\n.dado.carta-alto{background:#cfe3f8;border-color:#1f3f6b;box-shadow:inset -5px -5px 0 #8ab4d8}\n.dado.carta-ouro{background:#f7e3a1;border-color:#6b4a0f;box-shadow:inset -5px -5px 0 #d8b24a}\n.dado.guardado.m-gem,.dado.guardado.m-verm,.dado.guardado.m-azul,.dado.guardado.carta-par,.dado.guardado.carta-alto,.dado.guardado.carta-ouro{box-shadow:0 0 0 3px var(--neon),0 0 12px rgba(255,37,45,.6)}\n.dado.dup::after,.dado.vale6::after{position:absolute;right:1px;top:-1px;font-family:var(--f-display);font-size:16px;line-height:1;background:#fff6dc;padding:0 3px}\n.dado.dup::after{content:\"×2\";color:#14502c}\n.dado.vale6::after{content:\"ou 6\";color:#5e0f0c}\n.dado.alvo{outline:3px dashed var(--ouro);outline-offset:2px}\n.itens{display:flex;gap:6px;justify-content:center;margin-top:4px}\n.itens:empty{display:none}\n.item{min-width:48px;min-height:28px;padding:0 6px;background:var(--marinho);color:var(--creme);border:3px solid var(--ouro);font-family:var(--f-display);font-size:18px;line-height:1}\n.item.ativo{background:var(--ouro);color:var(--preto)}\n.item.usado{opacity:.4;border-style:dashed}\n.cx .ops{display:flex;flex-wrap:wrap;gap:6px}\n.cx .ops button{flex:1 0 54px;width:auto}\n.dado.vazio{background:rgba(9,9,13,.4);border-color:rgba(9,9,13,.7);box-shadow:none}\n.dado.rola{animation:rola .12s steps(2) infinite}\n@keyframes rola{50%{transform:translateY(-4px) rotate(8deg)}}\n.etiquetas{margin-top:6px;height:13px;font-family:var(--f-display);font-size:16px;line-height:13px;letter-spacing:1px;text-transform:uppercase;text-align:center;color:#ff6a70;text-shadow:2px 2px 0 var(--preto)}\n/* copo, botão de rolar e tentativas */\n.acao{display:flex;align-items:stretch;gap:10px;height:50px}\n.copo-btn{flex:none;width:56px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:center}\n.copo-btn canvas{width:52px;height:56px;image-rendering:pixelated}\n.rolar{flex:1;min-width:0;background:var(--creme);color:var(--preto);border:4px solid #3a0d12;box-shadow:inset 0 0 0 3px #e48a70,inset 0 0 8px rgba(255,37,45,.18);font-family:var(--f-display);font-size:30px;line-height:1;letter-spacing:2px;padding:4px 8px 6px}\n.rolar::after{content:\"\";display:inline-block;width:27px;height:24px;margin-left:10px;vertical-align:-3px;background:var(--pata,none) center/contain no-repeat;image-rendering:pixelated}\n.rolar:disabled{opacity:.5}\n.rolar:not(:disabled):active{transform:translateY(2px)}\n.tent{flex:none;width:98px;text-align:center;background:var(--marinho);color:var(--creme);border:3px solid var(--creme);padding:4px 6px 2px}\n.tent span{display:block;font-size:13px;line-height:1.3}\n.tent b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;line-height:.9}\n.dica{margin:0;min-height:30px;display:flex;align-items:center;justify-content:center;background:var(--marinho);color:var(--creme);border:3px solid #2a3550;padding:4px 8px;font-size:13px;line-height:1.3;text-align:center}\n.dica span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.dica b{color:#ff8a7a}\n/* cartela creme, igual à do jogo */\n.cartela{flex:1 0 auto;margin:0 12px;display:flex;flex-direction:column;background:var(--creme);color:var(--preto);border:4px solid #3a0d12}\n.cartela.dele{background:#ebcf9c}\n.bozo{flex:1;display:grid;grid-template-columns:1fr 1.15fr 1fr;grid-template-rows:1fr 1fr 1fr auto;padding:6px 8px 0}\n.casa{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:40px;padding:2px 2px 5px;background:none;border:0 solid #2a0a0e;color:var(--preto)}\n.casa.linha,.casa.fundo{border-bottom-width:3px}\n.casa.meio{border-left-width:3px;border-right-width:3px}\n.casa.general{grid-column:1/4;min-height:38px}\n.casa strong{font-family:var(--f-display);font-weight:400;font-size:20px;line-height:.95;letter-spacing:.5px}\n.casa b{display:flex;align-items:center;font-family:var(--f-display);font-weight:400;font-size:26px;line-height:.9;min-height:22px}\n.casa.feita{background:#e3c688}\n.cartela.dele .casa.feita{background:#d9b877}\n.casa.riscada strong{text-decoration:line-through 3px var(--vinho);color:#8a7350}\n.casa.riscada b{color:var(--vinho)}\n.casa.pode b{color:var(--vermelho)}\n.casa.pode b.x{font-size:14px;letter-spacing:1px;text-transform:uppercase;color:#a8895c}\nbutton.casa.pode:active{background:#fff3d6}\n.casa.nova b{animation:carimbo .35s steps(4) 1}\n@keyframes carimbo{0%{transform:scale(2.2)}100%{transform:none}}\n.total{flex:none;display:flex;align-items:center;justify-content:space-between;margin-top:4px;padding:0 14px;background:var(--vermelho);color:var(--creme)}\n.total span{font-family:var(--f-display);font-size:24px;line-height:1.3}\n.total b{font-family:var(--f-display);font-weight:400;font-size:30px;line-height:1.05}\n/* avisos, tremor e telas */\n.aviso{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);z-index:20;pointer-events:none;white-space:nowrap;font-family:var(--f-display);font-size:44px;letter-spacing:2px;line-height:1;color:var(--creme);\n  text-shadow:3px 3px 0 #000,0 0 14px var(--neon);animation:aviso .9s steps(12) 1 forwards}\n.aviso.p{font-size:26px;color:#ffb347;text-shadow:2px 2px 0 #000}\n@keyframes aviso{0%{transform:translate(-50%,-50%) scale(.3);opacity:1}15%{transform:translate(-50%,-55%) scale(1.25)}30%{transform:translate(-50%,-60%) scale(1)}80%{opacity:1}100%{transform:translate(-50%,-110%);opacity:0}}\n#flash{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0;background:#fff}\n#flash.on{animation:flash .7s steps(8) 1}\n@keyframes flash{0%{opacity:1}100%{opacity:0}}\n.app.treme{animation:treme .5s steps(1) 1}\n.app.tapa{animation:tapa .16s steps(1) 1}\n@keyframes treme{0%{transform:translate(-7px,5px)}14%{transform:translate(7px,-6px)}28%{transform:translate(-6px,-4px)}42%{transform:translate(6px,5px)}56%{transform:translate(-4px,4px)}70%{transform:translate(4px,-3px)}84%{transform:translate(-2px,2px)}100%{transform:none}}\n@keyframes tapa{0%{transform:translate(4px,0)}50%{transform:translate(-3px,0)}100%{transform:none}}\n.tela{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,5,7,.86)}\n.tela[hidden]{display:none}\n.cx{width:100%;max-width:360px;background:#0c0c12;border:3px solid var(--neon);padding:14px;text-align:center}\n.cx h2{margin:0 0 6px;font-family:var(--f-display);font-weight:400;font-size:44px;line-height:.95;letter-spacing:2px;color:var(--neon);text-shadow:0 0 10px rgba(255,37,45,.8)}\n.cx h2.bom{color:var(--ouro);text-shadow:0 0 10px rgba(212,154,72,.7)}\n.cx p{margin:6px 0;font-size:14px;line-height:1.35}\n.cx ul{margin:6px 0;padding-left:18px;text-align:left;font-size:13px;line-height:1.35}\n.cx .placar{font-family:var(--f-display);font-size:30px;letter-spacing:2px;color:var(--creme)}\n.cx button{margin-top:10px;width:100%;min-height:46px;background:var(--creme);color:var(--preto);border:4px solid #3a0d12;box-shadow:inset 0 0 0 3px #e48a70;font-family:var(--f-display);font-size:28px;letter-spacing:2px}\n@media (max-height:800px){\n  .app{gap:4px}.mesa{gap:4px}\n  #cena{height:min(calc(min(100vw,430px)*.472),18vh)}\n  .itens{margin-top:2px}.item{min-height:24px;font-size:16px;border-width:2px}\n  .dica{min-height:26px;padding:2px 8px}\n  .casa{min-height:36px;padding-bottom:4px}.casa.general{min-height:32px}.casa strong{font-size:17px}.casa b{font-size:21px;min-height:17px}\n}\n@media (max-height:650px){#cena{height:min(calc(min(100vw,430px)*.472),14vh);min-height:72px}}\n@media (max-height:620px){\n  .app{gap:4px;padding-bottom:4px}\n  #cena{min-height:72px}\n  .topo{padding:1px 5px}.mini-btn{min-height:30px;padding:2px 8px}.tit .placa-m{height:30px}.tit{font-size:24px}\n  .mesa{gap:4px;padding-top:0;padding-bottom:2px}\n  .placa b,.tent b{font-size:22px}\n  .dados,.etiquetas{max-width:265px}.dados{padding-top:4px}.etiquetas{margin-top:3px}\n  .acao{height:46px}.rolar{font-size:26px}.copo-btn{width:46px}.copo-btn canvas{width:39px;height:42px}\n  .dica{min-height:24px;padding:2px 8px}\n  .casa{min-height:34px;padding-bottom:4px}.casa.general{min-height:30px}.casa strong{font-size:17px}.casa b{font-size:20px;min-height:16px}.casa.pode b.x{font-size:12px}\n  .total span{font-size:20px}.total b{font-size:24px}\n}\n@media (prefers-reduced-motion:reduce){.dado.rola,.app.treme,.app.tapa,.placa.bomba.perigo .barra i{animation:none}}\n</style><div class=\"app\" id=\"app\">\n  <canvas id=\"cena\" width=\"195\" height=\"92\" role=\"img\" aria-label=\"Mesa de bar escura, com o adversário do outro lado e a bomba no meio\"></canvas>\n  <header class=\"topo px\">\n    <button class=\"mini-btn px\" id=\"btn-sair\" type=\"button\">Sair</button>\n    <h1 class=\"tit\"><span class=\"placa-m\" role=\"img\" aria-label=\"Matraqueado\"></span><b id=\"tag-fase\">X1</b></h1>\n    <button class=\"mini-btn px\" id=\"btn-regras\" type=\"button\">Regras</button>\n  </header>\n  <section class=\"mesa\" aria-label=\"Mesa de dados\">\n    <div class=\"placas\" id=\"placas\"></div>\n    <div class=\"dados\" id=\"dados\" aria-live=\"polite\"></div>\n    <div class=\"etiquetas\" id=\"etiquetas\" aria-hidden=\"true\"></div>\n    <div class=\"itens px\" id=\"itens\"></div>\n    <div class=\"acao\">\n      <button type=\"button\" class=\"copo-btn\" id=\"btn-copo\" aria-label=\"Rolar os dados\"><canvas id=\"copo\" width=\"26\" height=\"28\" aria-hidden=\"true\"></canvas></button>\n      <button class=\"rolar px\" id=\"btn-rolar\" type=\"button\">JOGAR</button>\n      <div class=\"tent px\"><span>Tentativas</span><b id=\"tent\">3</b></div>\n    </div>\n    <p class=\"dica px\" id=\"dica\" aria-live=\"polite\"></p>\n  </section>\n  <section class=\"cartela px\" id=\"cartela\" aria-label=\"Cartela de pontos\"></section>\n</div>\n<div id=\"flash\" aria-hidden=\"true\"></div>\n<div class=\"tela\" id=\"tela\" hidden><div class=\"cx\" id=\"cx\"></div></div>\n";
+raiz.innerHTML="<style>:host{--preto:#09090d;--neon:#ff252d;--vermelho:#a81720;--vinho:#580f18;--creme:#f1d9a8;--ouro:#d49a48;--marinho:#101827;\n  --f-display:\"Cinco\",\"Jersey 10\",\"Courier New\",monospace;--f-corpo:\"CincoCorpo\",\"Digitos\",\"Pixelify Sans\",\"Courier New\",monospace}\n*{box-sizing:border-box}\n:host{position:fixed;inset:0;z-index:60;display:block;background:#050507;color:var(--creme);font-family:var(--f-corpo);font-size:14px;-webkit-tap-highlight-color:transparent;overflow:hidden}\n:host([hidden]){display:none}\nbutton{font:inherit;color:inherit;cursor:pointer}\n/* cantos em degrau, iguais aos do jogo */\n.px{clip-path:polygon(4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px),0 4px,4px 4px)}\n.app{height:100%;min-height:520px;max-width:430px;margin:0 auto;display:flex;flex-direction:column;gap:6px;position:relative;padding-bottom:6px;font-size:16px;\n  background:#5d161d center/cover;image-rendering:pixelated}\n#cena{flex:none;min-height:96px;height:min(calc(min(100vw,430px)*.472),22vh);display:block;width:100%;object-fit:contain;object-position:50% 100%;image-rendering:pixelated;background:#050507;border-bottom:3px solid var(--preto)}\n/* barra creme com Sair e Regras, como no jogo */\n.topo{flex:none;display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0 12px;padding:3px 5px;background:var(--preto);border:4px solid var(--vinho);box-shadow:inset 0 0 0 2px #3a0d12}\n.mini-btn{flex:none;background:var(--marinho);color:var(--creme);border:3px solid var(--ouro);min-height:36px;padding:4px 8px;font-family:var(--f-corpo);font-size:15px;font-weight:700;line-height:1.3}\n.tit{flex:1;min-width:0;margin:0;display:flex;align-items:center;justify-content:center;gap:4px;font-family:var(--f-display);font-weight:400;font-size:28px;line-height:1;color:var(--vermelho)}\n.tit .placa-m{flex:1;min-width:0;height:36px;background:var(--placa,none) center/contain no-repeat}\n.tit b{flex:none;font-weight:400;letter-spacing:1px}\n.mesa{flex:none;display:flex;flex-direction:column;gap:6px;padding:2px 12px 4px}\n/* placas */\n.placas{display:flex;gap:8px}\n.placa{flex:1;min-width:0;position:relative;text-align:center;background:var(--marinho);color:var(--creme);border:3px solid #7a5a2c;padding:4px 6px 2px}\n.placa span{display:block;font-size:13px;line-height:1.3;color:#b9975c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.placa b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;line-height:.9}\n.placa.vez{border-color:var(--ouro)}\n.placa.vez span{color:#f0b64a}\n.placa.vendo{background:#1b2740}\nbutton.placa:active{background:#22304e}\n.placa.rodada{flex:none;border-color:var(--creme);padding-left:8px;padding-right:8px}\n.placa.rodada span{color:var(--creme)}\n.placa.bomba{flex:1.25;border-color:var(--neon);padding-bottom:7px}\n.placa.bomba span{color:#ff8a7a}\n.placa .barra{position:absolute;left:0;right:0;bottom:0;height:5px;background:#0c1222;display:block}\n.placa .barra i{display:block;height:100%;background:var(--ouro)}\n.placa.bomba.perigo b{color:#ff8a7a}\n.placa.bomba.perigo .barra i{background:var(--neon);animation:pisca .4s steps(1) infinite}\n@keyframes pisca{50%{background:#fff6dc}}\n/* dados, iguais aos do jogo */\n.dados,.etiquetas{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;max-width:310px;margin:0 auto}\n.dados{padding-top:8px}\n.dado{position:relative;aspect-ratio:1;padding:10%;background:#f3dcb4;border:3px solid #3a0d12;box-shadow:inset -3px -3px 0 #d9bb8a,inset 2px 2px 0 #fff3d6,0 4px 0 #1a0508;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr)}\n.dado i{margin:17%}\n.dado i.on{background:var(--preto)}\n.dado.guardado{background:#fff3d6;border-color:var(--preto);box-shadow:inset -3px -3px 0 #d9bb8a,inset 2px 2px 0 #fff,0 0 0 3px var(--neon),0 0 12px rgba(255,37,45,.6)}\n.dado.m-gem{background:#c6f0d6;border-color:#14502c;box-shadow:inset -5px -5px 0 #7cc79a}\n.dado.m-verm{background:#f6b9b0;border-color:#5e0f0c;box-shadow:inset -4px -4px 0 #d77a6e,inset 2px 2px 0 #ffe1dc,0 4px 0 #1a0508}\n.dado.m-azul{background:#b9d8f6;border-color:#12305a;box-shadow:inset -4px -4px 0 #7aa9d8,inset 2px 2px 0 #e3f1ff,0 4px 0 #1a0508}\n.dado.carta-par{background:#e2d4f7;border-color:#3b1f6b;box-shadow:inset -5px -5px 0 #a98ad8}\n.dado.carta-alto{background:#cfe3f8;border-color:#1f3f6b;box-shadow:inset -5px -5px 0 #8ab4d8}\n.dado.carta-ouro{background:#f7e3a1;border-color:#6b4a0f;box-shadow:inset -5px -5px 0 #d8b24a}\n.dado.guardado.m-gem,.dado.guardado.m-verm,.dado.guardado.m-azul,.dado.guardado.carta-par,.dado.guardado.carta-alto,.dado.guardado.carta-ouro{box-shadow:0 0 0 3px var(--neon),0 0 12px rgba(255,37,45,.6)}\n.dado.dup::after,.dado.vale6::after{position:absolute;right:1px;top:-1px;font-family:var(--f-display);font-size:16px;line-height:1;background:#fff6dc;padding:0 3px}\n.dado.dup::after{content:\"×2\";color:#14502c}\n.dado.vale6::after{content:\"ou 6\";color:#5e0f0c}\n.dado.alvo{outline:3px dashed var(--ouro);outline-offset:2px}\n.itens{display:flex;gap:6px;justify-content:center;margin-top:4px}\n.itens:empty{display:none}\n.item{min-width:48px;min-height:28px;padding:0 6px;background:var(--marinho);color:var(--creme);border:3px solid var(--ouro);font-family:var(--f-display);font-size:18px;line-height:1}\n.item.ativo{background:var(--ouro);color:var(--preto)}\n.item.usado{opacity:.4;border-style:dashed}\n.cx .ops{display:flex;flex-wrap:wrap;gap:6px}\n.cx .ops button{flex:1 0 54px;width:auto}\n.dado.vazio{background:rgba(9,9,13,.4);border-color:rgba(9,9,13,.7);box-shadow:none}\n.dado.rola{animation:rola .12s steps(2) infinite}\n@keyframes rola{50%{transform:translateY(-4px) rotate(8deg)}}\n.etiquetas{margin-top:6px;height:13px;font-family:var(--f-display);font-size:16px;line-height:13px;letter-spacing:1px;text-transform:uppercase;text-align:center;color:#ff6a70;text-shadow:2px 2px 0 var(--preto)}\n/* copo, botão de rolar e tentativas */\n.acao{display:flex;align-items:stretch;gap:10px;height:50px}\n.copo-btn{flex:none;width:56px;padding:0;border:0;background:none;display:flex;align-items:center;justify-content:center}\n.copo-btn canvas{width:52px;height:56px;image-rendering:pixelated}\n.rolar{flex:1;min-width:0;background:var(--creme);color:var(--preto);border:4px solid #3a0d12;box-shadow:inset 0 0 0 3px #e48a70,inset 0 0 8px rgba(255,37,45,.18);font-family:var(--f-display);font-size:30px;line-height:1;letter-spacing:2px;padding:4px 8px 6px}\n.rolar::after{content:\"\";display:inline-block;width:27px;height:24px;margin-left:10px;vertical-align:-3px;background:var(--pata,none) center/contain no-repeat;image-rendering:pixelated}\n.rolar:disabled{opacity:.5}\n.rolar:not(:disabled):active{transform:translateY(2px)}\n.tent{flex:none;width:98px;text-align:center;background:var(--marinho);color:var(--creme);border:3px solid var(--creme);padding:4px 6px 2px}\n.tent span{display:block;font-size:13px;line-height:1.3}\n.tent b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;line-height:.9}\n.dica{margin:0;min-height:30px;display:flex;align-items:center;justify-content:center;background:var(--marinho);color:var(--creme);border:3px solid #2a3550;padding:4px 8px;font-size:13px;line-height:1.3;text-align:center}\n.dica span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.dica b{color:#ff8a7a}\n/* cartela creme, igual à do jogo */\n.cartela{flex:1 0 auto;margin:0 12px;display:flex;flex-direction:column;background:var(--creme);color:var(--preto);border:4px solid #3a0d12}\n.cartela.dele{background:#ebcf9c}\n.velha{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}\n.velha line{stroke:rgba(168,23,32,.8);stroke-width:9;stroke-linecap:round}\n.bozo{position:relative;flex:1;display:grid;grid-template-columns:1fr 1.15fr 1fr;grid-template-rows:1fr 1fr 1fr auto;padding:6px 8px 0}\n.casa{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:40px;padding:2px 2px 5px;background:none;border:0 solid #2a0a0e;color:var(--preto)}\n.casa.linha,.casa.fundo{border-bottom-width:3px}\n.casa.meio{border-left-width:3px;border-right-width:3px}\n.casa.general{grid-column:1/4;min-height:38px}\n.casa strong{font-family:var(--f-display);font-weight:400;font-size:20px;line-height:.95;letter-spacing:.5px}\n.casa b{display:flex;align-items:center;font-family:var(--f-display);font-weight:400;font-size:26px;line-height:.9;min-height:22px}\n.casa.feita{background:#e3c688}\n.cartela.dele .casa.feita{background:#d9b877}\n.casa.riscada strong{text-decoration:line-through 3px var(--vinho);color:#8a7350}\n.casa.riscada b{color:var(--vinho)}\n.casa.pode b{color:var(--vermelho)}\n.casa.pode b.x{font-size:14px;letter-spacing:1px;text-transform:uppercase;color:#a8895c}\nbutton.casa.pode:active{background:#fff3d6}\n.casa.nova b{animation:carimbo .35s steps(4) 1}\n@keyframes carimbo{0%{transform:scale(2.2)}100%{transform:none}}\n.total{flex:none;display:flex;align-items:center;justify-content:space-between;margin-top:4px;padding:0 14px;background:var(--vermelho);color:var(--creme)}\n.total span{font-family:var(--f-display);font-size:24px;line-height:1.3}\n.total b{font-family:var(--f-display);font-weight:400;font-size:30px;line-height:1.05}\n/* avisos, tremor e telas */\n.aviso{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);z-index:20;pointer-events:none;white-space:nowrap;font-family:var(--f-display);font-size:44px;letter-spacing:2px;line-height:1;color:var(--creme);\n  text-shadow:3px 3px 0 #000,0 0 14px var(--neon);animation:aviso .9s steps(12) 1 forwards}\n.aviso.p{font-size:26px;color:#ffb347;text-shadow:2px 2px 0 #000}\n@keyframes aviso{0%{transform:translate(-50%,-50%) scale(.3);opacity:1}15%{transform:translate(-50%,-55%) scale(1.25)}30%{transform:translate(-50%,-60%) scale(1)}80%{opacity:1}100%{transform:translate(-50%,-110%);opacity:0}}\n#flash{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0;background:#fff}\n#flash.on{animation:flash .7s steps(8) 1}\n@keyframes flash{0%{opacity:1}100%{opacity:0}}\n.app.treme{animation:treme .5s steps(1) 1}\n.app.tapa{animation:tapa .16s steps(1) 1}\n@keyframes treme{0%{transform:translate(-7px,5px)}14%{transform:translate(7px,-6px)}28%{transform:translate(-6px,-4px)}42%{transform:translate(6px,5px)}56%{transform:translate(-4px,4px)}70%{transform:translate(4px,-3px)}84%{transform:translate(-2px,2px)}100%{transform:none}}\n@keyframes tapa{0%{transform:translate(4px,0)}50%{transform:translate(-3px,0)}100%{transform:none}}\n.tela{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,5,7,.86)}\n.tela[hidden]{display:none}\n.cx{width:100%;max-width:360px;background:#0c0c12;border:3px solid var(--neon);padding:14px;text-align:center}\n.cx h2{margin:0 0 6px;font-family:var(--f-display);font-weight:400;font-size:44px;line-height:.95;letter-spacing:2px;color:var(--neon);text-shadow:0 0 10px rgba(255,37,45,.8)}\n.cx h2.bom{color:var(--ouro);text-shadow:0 0 10px rgba(212,154,72,.7)}\n.cx p{margin:6px 0;font-size:14px;line-height:1.35}\n.cx ul{margin:6px 0;padding-left:18px;text-align:left;font-size:13px;line-height:1.35}\n.cx .placar{font-family:var(--f-display);font-size:30px;letter-spacing:2px;color:var(--creme)}\n.cx button{margin-top:10px;width:100%;min-height:46px;background:var(--creme);color:var(--preto);border:4px solid #3a0d12;box-shadow:inset 0 0 0 3px #e48a70;font-family:var(--f-display);font-size:28px;letter-spacing:2px}\n@media (max-height:800px){\n  .app{gap:4px}.mesa{gap:4px}\n  #cena{height:min(calc(min(100vw,430px)*.472),18vh)}\n  .itens{margin-top:2px}.item{min-height:24px;font-size:16px;border-width:2px}\n  .dica{min-height:26px;padding:2px 8px}\n  .casa{min-height:36px;padding-bottom:4px}.casa.general{min-height:32px}.casa strong{font-size:17px}.casa b{font-size:21px;min-height:17px}\n}\n@media (max-height:650px){#cena{height:min(calc(min(100vw,430px)*.472),14vh);min-height:72px}}\n@media (max-height:620px){\n  .app{gap:4px;padding-bottom:4px}\n  #cena{min-height:72px}\n  .topo{padding:1px 5px}.mini-btn{min-height:30px;padding:2px 8px}.tit .placa-m{height:30px}.tit{font-size:24px}\n  .mesa{gap:4px;padding-top:0;padding-bottom:2px}\n  .placa b,.tent b{font-size:22px}\n  .dados,.etiquetas{max-width:265px}.dados{padding-top:4px}.etiquetas{margin-top:3px}\n  .acao{height:46px}.rolar{font-size:26px}.copo-btn{width:46px}.copo-btn canvas{width:39px;height:42px}\n  .dica{min-height:24px;padding:2px 8px}\n  .casa{min-height:34px;padding-bottom:4px}.casa.general{min-height:30px}.casa strong{font-size:17px}.casa b{font-size:20px;min-height:16px}.casa.pode b.x{font-size:12px}\n  .total span{font-size:20px}.total b{font-size:24px}\n}\n@media (prefers-reduced-motion:reduce){.dado.rola,.app.treme,.app.tapa,.placa.bomba.perigo .barra i{animation:none}}\n</style><div class=\"app\" id=\"app\">\n  <canvas id=\"cena\" width=\"195\" height=\"92\" role=\"img\" aria-label=\"Mesa de bar escura, com o adversário do outro lado e a bomba no meio\"></canvas>\n  <header class=\"topo px\">\n    <button class=\"mini-btn px\" id=\"btn-sair\" type=\"button\">Sair</button>\n    <h1 class=\"tit\"><span class=\"placa-m\" role=\"img\" aria-label=\"Matraqueado\"></span><b id=\"tag-fase\">X1</b></h1>\n    <button class=\"mini-btn px\" id=\"btn-regras\" type=\"button\">Regras</button>\n  </header>\n  <section class=\"mesa\" aria-label=\"Mesa de dados\">\n    <div class=\"placas\" id=\"placas\"></div>\n    <div class=\"dados\" id=\"dados\" aria-live=\"polite\"></div>\n    <div class=\"etiquetas\" id=\"etiquetas\" aria-hidden=\"true\"></div>\n    <div class=\"itens px\" id=\"itens\"></div>\n    <div class=\"acao\">\n      <button type=\"button\" class=\"copo-btn\" id=\"btn-copo\" aria-label=\"Rolar os dados\"><canvas id=\"copo\" width=\"26\" height=\"28\" aria-hidden=\"true\"></canvas></button>\n      <button class=\"rolar px\" id=\"btn-rolar\" type=\"button\">JOGAR</button>\n      <div class=\"tent px\"><span>Tentativas</span><b id=\"tent\">3</b></div>\n    </div>\n    <p class=\"dica px\" id=\"dica\" aria-live=\"polite\"></p>\n  </section>\n  <section class=\"cartela px\" id=\"cartela\" aria-label=\"Cartela de pontos\"></section>\n</div>\n<div id=\"flash\" aria-hidden=\"true\"></div>\n<div class=\"tela\" id=\"tela\" hidden><div class=\"cx\" id=\"cx\"></div></div>\n";
 function $(id){return raiz.getElementById(id)}
 var CATS=X1.CATS,RODADAS=8,LIMITES=[60,55,50,45,40,35,30,25];   // limite da diferença em cada rodada
 // CFG: o duelo da vez. No Modo Noitada cada fase de duelo passa o seu (rodadas, limites, adversário, força, relíquias do jogador)
@@ -2543,6 +2583,16 @@ function desenhaDados(rolando){
   $("dados").innerHTML=h;$("etiquetas").innerHTML=e;
 }
 // a cartela segue o desenho da cartela do jogo: 3 x 3, General embaixo e a faixa do Total
+function riscaVelha(bz,sc){   // traço vermelho por cima das linhas feitas
+  var ls=linhasDe(sc);if(!bz||!ls.length)return;
+  var r=bz.getBoundingClientRect(),cs=bz.children,h='';if(!r.width)return;
+  ls.forEach(function(l){
+    var a=cs[l[0]].getBoundingClientRect(),b=cs[l[2]].getBoundingClientRect();
+    var x1=a.left+a.width/2-r.left,y1=a.top+a.height/2-r.top,x2=b.left+b.width/2-r.left,y2=b.top+b.height/2-r.top,dx=(x2-x1)*.12,dy=(y2-y1)*.12;
+    h+='<line x1="'+(x1-dx)+'" y1="'+(y1-dy)+'" x2="'+(x2+dx)+'" y2="'+(y2+dy)+'"/>';
+  });
+  bz.insertAdjacentHTML("beforeend",'<svg class="velha" width="'+r.width+'" height="'+r.height+'" aria-hidden="true">'+h+'</svg>');
+}
 function desenhaCartela(){
   var q=J[vendo],meu=vendo==="eu",pode=meu&&J.vez==="eu"&&J.lances>0&&!ocupado&&!J.fim,h='<div class="bozo">',k,ci,c,v,p,cl;
   for(k=0;k<10;k++){
@@ -2553,6 +2603,7 @@ function desenhaCartela(){
     else h+='<div class="'+cl+'"><strong>'+c.nome+'</strong><b></b></div>';
   }
   $("cartela").innerHTML=h+'</div><div class="total"><span>'+(meu?"Total":"Total de "+nomeR())+'</span><b>'+q.tot+'</b></div>';
+  if(E().velha)riscaVelha($("cartela").querySelector(".bozo"),q.sc);
   $("cartela").className="cartela px"+(meu?"":" dele");
 }
 // placas: você, a bomba (diferença / limite, com a barra enchendo), ele e a rodada. Tocar em "Você" ou "Ele" troca a cartela à mostra
@@ -2938,13 +2989,22 @@ function valor(q,ci){                          // pontos de uma casa para quem e
   if(q==="ele"&&CFG.forca&&p>0)p=Math.round(p*(1+CFG.forca));
   return p;
 }
-function anota(q,ci){var p=valor(q,ci);J[q].sc[CATS[ci].id]=p;J[q].tot+=p;J.nova=q+CATS[ci].id;somAnota(p>0);return p}
+var LINHAS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+function feitaPos(sc,k){return sc[CATS[ORDEM[k]].id]>0}
+function linhasDe(sc){return LINHAS.filter(function(l){return l.every(function(k){return feitaPos(sc,k)})})}
+function anota(q,ci){
+  var p=valor(q,ci),k=ORDEM.indexOf(ci),v=E().velha||0;J[q].sc[CATS[ci].id]=p;J[q].tot+=p;J.nova=q+CATS[ci].id;somAnota(p>0);
+  J.velha=v&&p>0&&k<9?v*LINHAS.filter(function(l){return l.indexOf(k)>=0&&l.every(function(j){return feitaPos(J[q].sc,j)})}).length:0;   // jogo da velha
+  J[q].tot+=J.velha;
+  return p;
+}
 async function anotar(ci){
   var f=ficha;
   if(J.vez!=="eu"||ocupado||J.lances===0||J.fim||J.eu.sc[CATS[ci].id]!=null)return;
   ocupado=true;
   var p=anota("eu",ci),x=E().extraAoAnotar?E().extraAoAnotar(CATS[ci].id,p,J.dados.slice()):null;
-  if(x&&x.pts){J.eu.tot+=x.pts;aviso((p?"+"+p:"X")+" +"+x.pts+" "+x.txt,"")}else aviso(p?"+"+p:"X",p?"":"p");
+  var tx=(p?"+"+p:"X")+(J.velha?" +"+J.velha+" velha!":"");
+  if(x&&x.pts){J.eu.tot+=x.pts;aviso(tx+" +"+x.pts+" "+x.txt,"")}else aviso(tx,p?"":"p");
   J.dados=[0,0,0,0,0];J.guard=[false,false,false,false,false];J.lances=0;J.extra=0;J.carta=null;J.modo=-1;desenha();
   await espera(650);if(f!==ficha)return;
   J.vez="ele";giraBomba();desenha();
@@ -2969,7 +3029,7 @@ async function vezDele(){
     await espera(750);if(f!==ficha)return;
     rest--;
   }
-  var p=anota("ele",r.casa);aviso((p?"+"+p+" ":"riscou ")+CATS[r.casa].nome,"p");
+  var p=anota("ele",r.casa);aviso((p?"+"+p+" ":"riscou ")+CATS[r.casa].nome+(J.velha?" +"+J.velha+" velha!":""),"p");
   desenha();
   await espera(1100);if(f!==ficha)return;
   J.dados=[0,0,0,0,0];J.guard=[false,false,false,false,false];CENA.dadosDele=null;
@@ -3004,7 +3064,7 @@ function fim(vence,bomba){
   $("de-novo").onclick=CFG.aoFim?function(){var cb=CFG.aoFim,res={vence:vence==="eu",bomba:bomba,eu:J.eu.tot,ele:J.ele.tot,rod:Math.min(J.rod+1,RODADAS)};fechar();cb(res)}:novo;
 }
 function regras(){
-  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. Se a bomba não estourar, escapa quem estiver na frente; empate não salva ninguém.</li>'+(CFG.forca?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>As suas relíquias da noitada valem no duelo.</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li></ul><button type="button" id="ok">VOLTAR</button>';
+  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. Se a bomba não estourar, escapa quem estiver na frente; empate não salva ninguém.</li>'+(CFG.forca?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>Seus bônus e itens da noitada valem no duelo.</li>':'')+(E().velha?'<li><b>Jogo da velha:</b> três casas pontuadas em linha valem +'+E().velha+', para os dois.</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li></ul><button type="button" id="ok">VOLTAR</button>';
   $("tela").hidden=false;$("ok").onclick=function(){$("tela").hidden=true};
 }
 
