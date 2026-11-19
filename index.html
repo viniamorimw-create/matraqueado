@@ -660,8 +660,8 @@ button.res:active{background:#1e2942}
 .dica.fora{margin:0 12px}
 @media (max-height:800px) and (min-height:651px){.cena-n{height:min(calc(min(100vw,430px)*.472),18vh)}}   /* mesma altura da cena do duelo */
 
-.placa.fase.trilhada{padding-bottom:24px}
-.placa .bat{position:absolute;left:8px;right:8px;bottom:13px;height:9px;display:flex;gap:2px}
+.placa.fase.trilhada{padding-bottom:15px}
+.placa .bat{position:absolute;left:8px;right:8px;bottom:4px;height:9px;display:flex;gap:2px}
 .placa .bat i{flex:1;display:block;border:1px solid #2a3550;background:#0a0f1c}
 .placa .bat i.r{background:#c0503a;border-color:#c0503a}.placa .bat i.r.fraco{background:#7a2a2a;border-color:#7a2a2a}
 .placa .bat i.b{background:#d08a4a;border-color:#d08a4a;box-shadow:0 0 4px rgba(208,138,74,.6)}
@@ -1647,7 +1647,7 @@ function blocosMaq(v){   // cada zona acende proporcionalmente aos pontos dentro
   return h;
 }
 function rotMaq(v){return '<s class="m'+(v>=R.alvo?' ok':'')+'">meta '+R.alvo+'</s> · <s class="p'+(v>=alvoPrata()?' ok':'')+'">prata '+alvoPrata()+'</s> · <s class="o'+(v>=alvoOuro()?' ok':'')+'">ouro '+alvoOuro()+'</s>'}
-function trilhoMaq(pf){return '<i class="bat" id="fase-bat" aria-hidden="true">'+blocosMaq(pf)+'</i><i class="br" id="fase-br" aria-hidden="true">'+rotMaq(pf)+'</i>'}
+function trilhoMaq(pf){return '<i class="bat" id="fase-bat" aria-hidden="true">'+blocosMaq(pf)+'</i>'}   // sem legenda: só os blocos
 function nivelSlot(s){return s&&s.nivel!=null?s.nivel:(s&&s.turbo?1:0)}   // raridade de cada rolo: normal / turbinada (folga >= MARGEM_TURBO)
 var RAR_COR={c:"#cfc8b2",i:"#5fb36a",r:"#4aa3e0",l:"#e3b341"},RAR_NOME={c:"Comum",i:"Incomum",r:"Rara",l:"Lendária"},RAR_ORDEM=["c","i","r","l"],PROX={c:"i",i:"r",r:"l",l:"l"};
 var E3=[17.6,34.3,49.8,64.4,77.6,89.5,100.2,109.5,117.0,122.0];
