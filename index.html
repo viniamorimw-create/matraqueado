@@ -2221,7 +2221,7 @@ function pintaSlot(t,flash){
   // linha de pagamento
   var ym=REEL_Y+Math.floor(REEL_H/2);
   g.fillStyle="#ff252d";g.fillRect(REEL_X[0]-4,ym-1,3,3);g.fillRect(REEL_X[2]+REEL_W+1,ym-1,3,3);
-  if(fim){g.fillStyle=flash?"rgba(255,246,220,.9)":"rgba(255,37,45,.55)";for(i=0;i<3;i++)g.fillRect(REEL_X[i],ym,REEL_W,1)}
+  if(fim){g.fillStyle=flash?"rgba(255,246,220,.9)":"rgba(255,37,45,.7)";g.fillRect(REEL_X[0]-4,ym,REEL_X[2]+REEL_W+8-REEL_X[0],1)}   // linha inteira, de uma marca à outra
   // alavanca: desce rápido (o quadro do meio só de passagem) e volta
   var q=t>0&&t<420?(t<50?0:t<100?1:t<300?2:t<350?1:0):0,A=G.alavanca;
   g.drawImage(maqImg("a"),q*A.w,0,A.w,A.h,A.x,A.y,A.w,A.h);
