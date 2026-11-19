@@ -779,7 +779,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
         <li><b>Blocos:</b> a mesma cartela atravessa o bloco inteiro; cada fase joga algumas rodadas nela. A meta é o total do bloco ao fim da fase. Ficou abaixo, a noitada acaba.</li>
         <li><b>Caça-níquel:</b> no meio e no fim de cada bloco (fases 2, 4, 7, 9, 12 e 13) e depois de cada duelo vencido.</li>
         <li><b>Jogo da velha:</b> três casas pontuadas em linha na grade (de pé, deitada ou diagonal) valem +10 na hora. Casa riscada quebra a linha. Vale também nos duelos, para você e para o adversário.</li>
-        <li><b>Duelo:</b> cada um com a sua cartela. Depois que os dois jogam a rodada, a bomba confere a diferença de pontos: passou do limite, estoura em quem está atrás. Se não estourar, vence quem terminar na frente. Perder encerra a noitada; vencer dá a caça-níquel, turbinada se a bomba estourar do outro lado.</li>
+        <li><b>Duelo:</b> cada um com a sua cartela. Depois que os dois jogam a rodada, a bomba confere a diferença de pontos: passou do limite, estoura em quem está atrás. Se não estourar antes, no fim vem o último tapa: a bomba vai para quem terminou atrás e detona. Perder encerra a noitada; vencer dá a caça-níquel, turbinada se a bomba estourar do outro lado.</li>
         <li>As suas relíquias valem nos duelos. Os adversários das últimas fases jogam com um bônus nos pontos.</li>
         <li><b>Dados coloridos:</b> o verde duplica a face dele, o vermelho, quando cai 1, vale 1 ou 6 (o que render mais) e o azul completa a Seguida. <b>Combo de cores:</b> dois ou mais dados coloridos com a mesma face, numa anotação que pontua, rendem +5 por dado.</li>
         <li><b>Maldições:</b> da fase 3 em diante, cada fase traz uma maldição (toque na placa vermelha para ler). A meta fica um pouco menor e vencer a fase dá uma opção a mais na caça-níquel.</li>
@@ -1831,7 +1831,7 @@ function abrePainelDuelo(){
   l.push("Depois que os dois jogam a rodada, a bomba confere a diferença de pontos. Passou do limite, estoura em quem está atrás. O limite começa em <b>"+L[0]+"</b> e cai até <b>"+L[L.length-1]+"</b>.");
   if(D.forca)l.push(D.nome+" joga com <b>+"+Math.round(D.forca*100)+"%</b> nos pontos. As suas relíquias também valem no duelo.");
   else if(R.relics.length)l.push("As suas relíquias valem no duelo.");
-  l.push("Se a bomba não estourar, vence quem estiver na frente no fim; empate não salva. Perder o duelo encerra a noitada.");
+  l.push("Na última rodada vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona (empate não salva). Perder o duelo encerra a noitada.");
   abrePainel("Fase "+R.fase+" / "+FASES+(R.fase>=FASES?": chefe final":R.chefe?": chefe":": duelo"),l,[{txt:"COMEÇAR DUELO",cb:abrirDuelo}]);
 }
 function abrirDuelo(){
@@ -3045,7 +3045,13 @@ async function confere(){
     explode(perde);return;
   }
   J.rod++;
-  if(J.rod>=RODADAS){fim(J.eu.tot===J.ele.tot?"empate":(J.eu.tot>J.ele.tot?"eu":"ele"),false);return}
+  if(J.rod>=RODADAS){
+    if(J.eu.tot===J.ele.tot&&!CFG.aoFim){fim("empate",false);return}
+    var per=J.eu.tot>J.ele.tot?"ele":"eu";J.ultimo=true;
+    await espera(500);if(f!==ficha)return;
+    CENA.alvo+=per==="eu"?Math.PI:2*Math.PI;somTapa();treme("tapa");aviso("ÚLTIMO TAPA!","p");   // a bomba vai para quem ficou atrás
+    await espera(1100);if(f!==ficha)return;explode(per);return;
+  }
   if(dif()>limite()){if(perde==="eu"){giraBomba();await espera(800);if(f!==ficha)return}explode(perde);return;}
   J.vez="eu";vendo="eu";giraBomba();J.nova=null;ocupado=false;desenha();
 }
@@ -3057,14 +3063,15 @@ function explode(quem){
 function fim(vence,bomba){
   J.fim=vence;ocupado=true;vendo="eu";desenha();
   var t=vence==="eu"?(bomba?"BUM!":"ESCAPOU"):vence==="ele"?(bomba?"BUM!":"NÃO DEU"):"EMPATE",
-      s=vence==="eu"?(bomba?"A bomba estourou do lado de "+nomeR()+". Você abriu mais de "+limite()+" pontos de diferença.":"As "+RODADAS+" rodadas acabaram e você estava na frente."):
+      s=J.ultimo?(vence==="eu"?"Último tapa: as rodadas acabaram com você na frente e a bomba detonou do lado de "+nomeR()+".":"Último tapa: as rodadas acabaram com "+nomeR()+(J.eu.tot===J.ele.tot?" empatado (empate não salva)":" na frente")+" e a bomba detonou na sua mão."):
+      vence==="eu"?(bomba?"A bomba estourou do lado de "+nomeR()+". Você abriu mais de "+limite()+" pontos de diferença.":"As "+RODADAS+" rodadas acabaram e você estava na frente."):
         vence==="ele"?(bomba?"A bomba estourou na sua mão. "+nomeR()+" abriu mais de "+limite()+" pontos de diferença.":"As "+RODADAS+" rodadas acabaram e "+nomeR()+" estava na frente."):"As "+RODADAS+" rodadas acabaram empatadas. A bomba falhou.";
   $("cx").innerHTML='<h2'+(vence==="eu"?' class="bom"':'')+'>'+t+'</h2><p>'+s+'</p><p class="placar">VOCÊ '+J.eu.tot+' × '+J.ele.tot+' '+nomeR().toUpperCase()+'</p><p>Rodada '+Math.min(J.rod+1,RODADAS)+' de '+RODADAS+'.</p><button type="button" id="de-novo">'+(CFG.aoFim?"CONTINUAR":"DE NOVO")+'</button>';
   $("tela").hidden=false;
-  $("de-novo").onclick=CFG.aoFim?function(){var cb=CFG.aoFim,res={vence:vence==="eu",bomba:bomba,eu:J.eu.tot,ele:J.ele.tot,rod:Math.min(J.rod+1,RODADAS)};fechar();cb(res)}:novo;
+  $("de-novo").onclick=CFG.aoFim?function(){var cb=CFG.aoFim,res={vence:vence==="eu",bomba:bomba&&!J.ultimo,eu:J.eu.tot,ele:J.ele.tot,rod:Math.min(J.rod+1,RODADAS)};fechar();cb(res)}:novo;
 }
 function regras(){
-  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. Se a bomba não estourar, escapa quem estiver na frente; empate não salva ninguém.</li>'+(CFG.forca?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>Seus bônus e itens da noitada valem no duelo.</li>':'')+(E().velha?'<li><b>Jogo da velha:</b> três casas pontuadas em linha valem +'+E().velha+', para os dois.</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li></ul><button type="button" id="ok">VOLTAR</button>';
+  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. No fim vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona'+(CFG.aoFim?' (empate não salva)':'')+'.</li>'+(CFG.forca?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>Seus bônus e itens da noitada valem no duelo.</li>':'')+(E().velha?'<li><b>Jogo da velha:</b> três casas pontuadas em linha valem +'+E().velha+', para os dois.</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li></ul><button type="button" id="ok">VOLTAR</button>';
   $("tela").hidden=false;$("ok").onclick=function(){$("tela").hidden=true};
 }
 
