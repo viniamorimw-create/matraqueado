@@ -2894,7 +2894,7 @@ function cadeiraVazia(){   // a cadeira do adversário, esperando o próximo due
 }
 // mesa vazia: o topo das fases de meta (canvas de 195×92 do jogo; t em segundos)
 function pintaVazia(cvx,t){
-  var g0=g,pisc=Math.sin(t*23)>.86?0.82:1;g=cvx.getContext("2d");
+  var g0=g,pisc=1;g=cvx.getContext("2d");
   cenaFundo(t,pisc);
   var gr=g.createLinearGradient(0,20,0,57);gr.addColorStop(0,"rgba(5,5,7,0)");gr.addColorStop(1,"rgba(5,5,7,.4)");g.fillStyle=gr;g.fillRect(70,20,56,37);
   cenaMesa(pisc);fumaca(t);
@@ -2910,7 +2910,7 @@ function desenhaCena(now){
   var dt=Math.min(.05,(now-(CENA.ult||now))/1000);CENA.ult=now;CENA.t+=dt;
   // mola do braço
   CENA.vel+=(CENA.alvo-CENA.ang)*60*dt;CENA.vel*=Math.pow(.02,dt);CENA.ang+=CENA.vel*dt;
-  var x,y,i,t=CENA.t,pisc=Math.sin(t*23)>.86?0.82:1;      // a luminária falha de leve
+  var x,y,i,t=CENA.t,pisc=1;      // sem luminária: luz constante
   cenaFundo(t,pisc);
   // o adversário da vez, desenhado inteiro (rivalPinta: logo acima de desenhaCena)
   CENA.proxPisca-=dt;if(CENA.proxPisca<=0){CENA.pisca=.16;CENA.proxPisca=2+Math.random()*4}
