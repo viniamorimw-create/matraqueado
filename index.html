@@ -1315,7 +1315,7 @@ function pintaTotal(){
   if(e){e.textContent=v;e.className=vis.t?"sobe":""}
   if(!R)return;
   e=$("fase-b");if(e)e.textContent=v+"/"+R.alvo;
-  e=$("fase-bar");if(e){if(SLOT_FASES[R.fase]){e.style.width=pctMaq(v)+"%";e.className=classeMaq(v)}else{e.style.width=Math.max(0,Math.min(100,100*v/R.alvo))+"%";e.className=v>=R.alvo?"ok":v>=.8*R.alvo?"perto":""}}
+  e=$("fase-bar");if(e){if(R.alvo){e.style.width=pctMaq(v)+"%";e.className=classeMaq(v)}else{e.style.width=Math.max(0,Math.min(100,100*v/R.alvo))+"%";e.className=v>=R.alvo?"ok":v>=.8*R.alvo?"perto":""}}
 }
 function passoTotal(){
   var d=vis.alvo-vis.v,a;vis.t=0;
@@ -1521,7 +1521,7 @@ function desenhaMesa(){
   var resta=maxJog()-S.jogadas,b=$("btn-rolar"),p="",av=$("btn-avancar");
   if(R){                                        // survival: uma placa com fase, meta e pontos
     var pf=pontosFase();
-    p+='<div class="placa fase px'+(pf>=R.alvo?' vez':'')+(SLOT_FASES[R.fase]?' trilhada':'')+'" aria-label="Pontos '+pf+', meta '+R.alvo+'"><span>'+(R.chefe?"Chefe ":"Fase ")+R.fase+'/'+FASES+'</span><b id="fase-b">'+pf+'/'+R.alvo+'</b>'+(SLOT_FASES[R.fase]?trilhoMaq(pf):'<i class="barra"><i id="fase-bar"></i></i>')+'</div>';
+    p+='<div class="placa fase px'+(pf>=R.alvo?' vez':'')+(R.alvo?' trilhada':'')+'" aria-label="Pontos '+pf+', meta '+R.alvo+'"><span>'+(R.chefe?"Chefe ":"Fase ")+R.fase+'</span><b id="fase-b">'+pf+'/'+R.alvo+'</b>'+(R.alvo?trilhoMaq(pf):'<i class="barra"><i id="fase-bar"></i></i>')+'</div>';
     p+='<div class="placa rodada px"><span>Rodada</span><b>'+Math.min((S.rod||0)+1,R.k)+'/'+R.k+'</b></div>';
     if(R.mald&&MALD[R.mald])p+='<button type="button" class="placa mald px" id="btn-mald" aria-label="Maldição: '+MALD[R.mald].nome+'"><span>Maldição</span><b>'+MALD[R.mald].curto+'</b></button>';
   }else{
@@ -1860,7 +1860,7 @@ function abrePainelFase(){
     l.push('<b style="color:#a81c1f">Maldição: '+m.nome+'.</b> '+m.desc+(R.mald==="casa"?" Desta vez: <b>"+CATS.filter(function(c){return c.id===R.maldCasa})[0].nome+"</b>.":""));
     if(R.fase===FASE_MALD)l.push("Daqui em diante toda fase traz uma maldição. A meta já vem um pouco menor por causa dela, e vencer dá uma opção a mais na caça-níquel.");
   }
-  abrePainel((R.chefe?"Chefe ":"Fase ")+R.fase+" / "+FASES,l,[{txt:"COMEÇAR",cb:function(){
+  abrePainel((R.chefe?"Chefe ":"Fase ")+R.fase,l,[{txt:"COMEÇAR",cb:function(){
     faixa("FASE "+R.fase,"meta "+R.alvo+" até a rodada "+R.k);tremer(1);
     if(m)setTimeout(function(){if(!R)return;faixa(m.nome.toUpperCase(),"maldição da fase","m");clarao("#4a0c0c");tremer(2);somDiabo()},1250);
   }}]);
