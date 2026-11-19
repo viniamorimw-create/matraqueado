@@ -2815,10 +2815,10 @@ function cadeiraVazia(){   // a cadeira do adversário, esperando o próximo due
 // mesa vazia: o topo das fases de meta (canvas de 195×92 do jogo; t em segundos)
 function pintaVazia(cvx,t){
   var g0=g,pisc=Math.sin(t*23)>.86?0.82:1;g=cvx.getContext("2d");
-  cenaFundo(t,pisc);cadeiraVazia();
+  cenaFundo(t,pisc);
   var gr=g.createLinearGradient(0,20,0,57);gr.addColorStop(0,"rgba(5,5,7,0)");gr.addColorStop(1,"rgba(5,5,7,.4)");g.fillStyle=gr;g.fillRect(70,20,56,37);
   cenaMesa(pisc);fumaca(t);
-  px(140,72,13,14,"#1a0c08");px(139,71,15,3,"#3a1a10");px(142,77,9,2,"#a81720");                       // o copo de couro do jogador
+  // o copo saiu da mesa
   cenaLuz(pisc);
   g=g0;
 }
@@ -2844,7 +2844,6 @@ function desenhaCena(now){
   // dados dele do outro lado da mesa (pequenos; os que valem aparecem grandes embaixo da cena)
   g.save();g.translate(0,4);if(CENA.dadosDele)for(i=0;i<5;i++){px(70+i*12,55,7,6,"#d9bb86");px(70+i*12,60,7,1,"#8a6a40");var v=CENA.dadosDele[i];if(v%2)px(73+i*12,57,1,1,"#1a0a0e");if(v>1){px(71+i*12,56,1,1,"#1a0a0e");px(75+i*12,59,1,1,"#1a0a0e")}if(v>3){px(75+i*12,56,1,1,"#1a0a0e");px(71+i*12,59,1,1,"#1a0a0e")}if(v===6){px(71+i*12,57,1,1,"#1a0a0e");px(75+i*12,58,1,1,"#1a0a0e")}}g.restore();
   // copo de couro: fica do lado de quem joga
-  if(!J.fim){if(J.vez==="eu"){px(140,72,13,14,"#1a0c08");px(139,71,15,3,"#3a1a10");px(142,77,9,2,"#a81720")}else{px(128,55,7,7,"#1a0c08");px(127,54,9,2,"#3a1a10")}}
   // mecanismo: base, haste, braço e bomba. ang = 0 aponta para ele (longe), PI aponta para você (perto)
   var a=CENA.ang,prof=(1-Math.cos(a))/2,tx=97+40*Math.sin(a),ty=60-8*Math.cos(a)+8*prof,rb=4+6*prof,frente=prof>.5;
   function bomba(){
