@@ -3036,7 +3036,7 @@ function desenhaCena(now){
   cenaMesa(pisc);fumaca(t);
   if(ec>=CH_F)rivalNaMesa(CFG.look,est);
   // dados dele do outro lado da mesa (pequenos; os que valem aparecem grandes embaixo da cena)
-  g.save();g.translate(0,4);if(CENA.dadosDele)for(i=0;i<5;i++){px(70+i*12,55,7,6,"#d9bb86");px(70+i*12,60,7,1,"#8a6a40");var v=CENA.dadosDele[i];if(v%2)px(73+i*12,57,1,1,"#1a0a0e");if(v>1){px(71+i*12,56,1,1,"#1a0a0e");px(75+i*12,59,1,1,"#1a0a0e")}if(v>3){px(75+i*12,56,1,1,"#1a0a0e");px(71+i*12,59,1,1,"#1a0a0e")}if(v===6){px(71+i*12,57,1,1,"#1a0a0e");px(75+i*12,58,1,1,"#1a0a0e")}}g.restore();
+  g.save();g.translate(0,4);if(false&&CENA.dadosDele)for(i=0;i<5;i++){px(70+i*12,55,7,6,"#d9bb86");px(70+i*12,60,7,1,"#8a6a40");var v=CENA.dadosDele[i];if(v%2)px(73+i*12,57,1,1,"#1a0a0e");if(v>1){px(71+i*12,56,1,1,"#1a0a0e");px(75+i*12,59,1,1,"#1a0a0e")}if(v>3){px(75+i*12,56,1,1,"#1a0a0e");px(71+i*12,59,1,1,"#1a0a0e")}if(v===6){px(71+i*12,57,1,1,"#1a0a0e");px(75+i*12,58,1,1,"#1a0a0e")}}g.restore();
   // copo de couro: fica do lado de quem joga
   // mecanismo: base, haste, braço e bomba. ang = 0 aponta para ele (longe), PI aponta para você (perto)
   var a=CENA.ang,prof=(1-Math.cos(a))/2,tx=97+40*Math.sin(a),ty=60-8*Math.cos(a)+8*prof,rb=4+6*prof,frente=prof>.5;
