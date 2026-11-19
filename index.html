@@ -810,7 +810,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
       <ul>
         <li>Uma noite no KAT4 House em 15 fases: 3 blocos de metas (fases 1 a 4, 6 a 9 e 11 a 13) e 4 duelos (fases 5 e 10 contra rivais, 14 e 15 contra os chefes).</li>
         <li><b>Blocos:</b> a mesma cartela atravessa o bloco inteiro; cada fase joga algumas rodadas nela. A meta é o total do bloco ao fim da fase. Ficou abaixo, a noitada acaba.</li>
-        <li><b>Caça-níquel:</b> no meio e no fim de cada bloco (fases 2, 4, 7, 9, 12 e 13) e depois de cada duelo vencido. Bateu a meta: máquina de <b>bronze</b>. Passou 20% da meta: <b>prata</b> (mais raras). Passou 40%: <b>ouro</b> (muito mais raras e lendárias). No duelo, vitória dá prata e a bomba estourando no rival dá ouro.</li>
+        <li><b>Caça-níquel:</b> no meio e no fim de cada bloco (fases 2, 4, 7, 9, 12 e 13) e depois de cada duelo vencido. Bateu a meta: máquina de <b>bronze</b>. Passou 20% da meta: <b>prata</b> (mais raras). Passou 40%: <b>ouro</b> (muito mais raras e lendárias). No duelo, vitória dá prata e a bomba estourando no rival dá ouro. Nas fases sem caça-níquel, a casa dá uma gorjeta para a próxima fase: +5 (bronze), +10 (prata) ou +20 (ouro).</li>
         <li><b>Jogo da velha:</b> três casas em linha na grade (de pé, deitada ou diagonal) com o valor máximo valem +10. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem; a coluna do meio só fecha com o General também. Vale também nos duelos, para você e para o adversário.</li>
         <li><b>Duelo:</b> cada um com a sua cartela. Depois que os dois jogam a rodada, a bomba confere a diferença de pontos: passou do limite, estoura em quem está atrás. Se não estourar antes, no fim vem o último tapa: a bomba vai para quem terminou atrás e detona. Perder encerra a noitada; vencer dá a caça-níquel, turbinada se a bomba estourar do outro lado.</li>
         <li>As suas relíquias valem nos duelos. Os adversários das últimas fases jogam com um bônus nos pontos.</li>
@@ -1636,6 +1636,7 @@ var DUELOS={5:{look:0,nome:"Rival 1",rod:6,l0:60,pensa:0,forca:0},
 function limitesDuelo(D){var out=[],i;for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5);return out}                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
 var SLOT_PESOS={n:{c:.50,i:.30,r:.15,l:.05},t:{c:.25,i:.35,r:.28,l:.12}};
 var MAQ_PESOS=[{c:.55,i:.30,r:.12,l:.03},{c:.25,i:.40,r:.27,l:.08},{c:.05,i:.30,r:.40,l:.25}];   // bronze, prata, ouro
+var GORJ_CASA=[5,10,20];   // prêmio das fases sem caça-níquel: bronze, prata, ouro
 var MAQ_NOME=["BRONZE","PRATA","OURO"],MAQ_PRATA=1.2,MAQ_OURO=1.4;
 function alvoPrata(){return Math.ceil(R.alvo*MAQ_PRATA)}
 function alvoOuro(){return Math.ceil(R.alvo*MAQ_OURO)}
@@ -1935,10 +1936,12 @@ function fimDeFase(){
   },600);
 }
 function passaFase(pts){
+  if(R.estado!=="passou"){var nv=Math.max(0,nivelMaq(pts));R.gorjCasa=GORJ_CASA[nv];R.credProx=(R.credProx||0)+R.gorjCasa}
   R.estado="passou";salvaRun();
-  var prox=R.fase+1,du=DUELOS[prox];
+  var prox=R.fase+1,du=DUELOS[prox],gj=R.gorjCasa||0;
   abrePainel("Fase "+R.fase+" superada",["Você está com <b>"+pts+"</b> pontos no bloco (meta "+R.alvo+").",
-    du?"Agora a cartela fecha e vem o duelo contra <b>"+du.nome+"</b>.":"Próxima fase: a mesma cartela, com a meta mais alta."],
+    (gj?"Gorjeta da casa"+(gj>GORJ_CASA[0]?" ("+MAQ_NOME[GORJ_CASA.indexOf(gj)].toLowerCase()+")":"")+": <b>+"+gj+" pontos</b> na próxima fase.":""),
+    du?"Agora a cartela fecha e vem o duelo contra <b>"+du.nome+"</b>.":"Próxima fase: a mesma cartela, com a meta mais alta."].filter(Boolean),
     [{txt:"PRÓXIMA FASE",cb:function(){if(!R)return;R.fase++;comecaFase(true)}}]);
 }
 function melhor(){try{return parseInt(localStorage.getItem("general5-surv-melhor"),10)||0}catch(e){return 0}}
