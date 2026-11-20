@@ -1630,9 +1630,9 @@ function velhaGanho(ch,id){   // linhas que a casa id acabou de fechar
 // pensa = quanto o adversário guarda casas boas para depois (0 = só pensa na rodada); forca = bônus nos pontos dele.
 // Nomes genéricos e números provisórios (a simulação de balanceamento ainda vai ajustar). O visual de cada um: rivalPinta(), no bloco do X1.
 var DUELOS={5:{look:0,nome:"Rival 1",rod:6,l0:60,pensa:0,forca:0},
-            10:{look:2,nome:"Rival 2",rod:8,l0:60,pensa:1,forca:.2},
-            14:{look:1,nome:"Chefe 1",rod:8,l0:55,pensa:1,forca:.2},
-            15:{look:4,nome:"Chefe final",rod:10,l0:50,pensa:1,forca:.35}};
+            10:{look:2,nome:"Rival 2",rod:8,l0:60,pensa:1,forca:.3},
+            14:{look:1,nome:"Chefe 1",rod:8,l0:55,pensa:1,forca:.35},
+            15:{look:4,nome:"Chefe final",rod:10,l0:50,pensa:1,forca:.5}};
 function limitesDuelo(D){var out=[],i;for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5);return out}                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
 var SLOT_PESOS={n:{c:.50,i:.30,r:.15,l:.05},t:{c:.25,i:.35,r:.28,l:.12}};
 var MAQ_PESOS=[{c:.55,i:.30,r:.12,l:.03},{c:.25,i:.40,r:.27,l:.08},{c:.05,i:.30,r:.40,l:.25}];   // bronze, prata, ouro
@@ -1790,7 +1790,7 @@ function recalcMods(){
 function maxJog(){var n=MAX_JOGADAS;if(R){if(M&&M.lance)n++;if(R.chefe)n--}return n+((S&&S.extra)||0)}
 function poder(){var t=0,k=R.k-1;R.relics.concat(R.itens).forEach(function(id){if(PRECO[id])t+=PRECO[id][k]});return t}
 // ajuste fino da meta por fase, vindo do teste de balanceamento: o começo era fácil demais e o chefe final era mais fácil que a fase 9
-var AJ_META=[1.15,1.1,1.1,1.1, 1, 1,1,1,1, 1, 1,1,.95, 1,1];   // nov/2026: fases 3-4 um pouco mais duras, fase 13 mais leve
+var AJ_META=[1,1.1,1.1,1.1, 1, .85,1,1,1.1, 1, .85,1,1.05, 1,1];   // nov/2026: início de bloco mais leve (3-4 rodadas de cartela vazia), fim de bloco mais duro
 function kAnt(){return INI_BLOCO[R.fase]?0:RODADAS[R.fase-2]}   // rodadas do bloco já jogadas antes desta fase
 function espBloco(n){return n>0?E3[n-1]+VELHA*LIN_ESP[n-1]:0}
 function calcMeta(){   // meta = total do bloco ao fim desta fase; a maldição só pesa nos pontos esperados desta fase
