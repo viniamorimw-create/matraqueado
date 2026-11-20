@@ -680,9 +680,8 @@ button.res:active{background:#1e2942}
 .placa .br s{text-decoration:none;opacity:.7}.placa .br s.m{color:#f1d9a8}.placa .br s.p{color:#c9d1db}.placa .br s.o{color:#f1c84b}
 .placa .br s.ok{opacity:1;text-shadow:0 0 5px currentColor}
 @media (prefers-reduced-motion:reduce){.placa .bat i.o{animation:none}}
-.placa.fase.trilhada{padding-bottom:25px}
-.placa.fase.trilhada .bat{bottom:13px}
-.placa .cart{position:absolute;left:8px;right:8px;bottom:4px;height:5px;display:flex;gap:2px}
+.surv .placa.rodada{position:relative;padding-bottom:12px}
+.placa .cart{position:absolute;left:6px;right:6px;bottom:4px;height:5px;display:flex;gap:1px}
 .placa .cart i{flex:1;display:block;background:#0a0f1c;border:1px solid #3a4560}
 .placa .cart i.u{background:#8a6a3a;border-color:#8a6a3a}.placa .cart i.a{background:#ffd75a;border-color:#ffd75a}.placa .cart i.f{background:#2a3550;border-color:#2a3550}
 .surv .placa.rodada .selo{display:inline-block;background:#d9a54a;color:#121a2c;font-size:11px;line-height:13px;padding:0 4px;margin-bottom:1px;opacity:1}
@@ -1532,7 +1531,7 @@ function desenhaMesa(){
   if(R){                                        // survival: uma placa com fase, meta e pontos
     var pf=pontosFase();
     p+='<div class="placa fase px'+(pf>=R.alvo?' vez':'')+(R.alvo?' trilhada':'')+'" aria-label="Pontos '+pf+', meta '+R.alvo+'"><span>'+"Meta"+'</span><b id="fase-b">'+pf+'/'+R.alvo+'</b>'+(R.alvo?trilhoMaq(pf):'<i class="barra"><i id="fase-bar"></i></i>')+'</div>';
-    p+='<div class="placa rodada px" aria-label="Fase '+R.fase+', rodada '+Math.min((S.rod||0)+1,10)+' de 10 da cartela"><span class="selo">FASE '+R.fase+'</span><b>'+Math.min((S.rod||0)+1,10)+'/10</b></div>';
+    p+='<div class="placa rodada px" aria-label="Fase '+R.fase+', rodada '+Math.min((S.rod||0)+1,10)+' de 10 da cartela"><span class="selo">FASE '+R.fase+'</span><b>'+Math.min((S.rod||0)+1,10)+'/10</b>'+cartMaq()+'</div>';
     if(R.mald&&MALD[R.mald])p+='<button type="button" class="placa mald px" id="btn-mald" aria-label="Maldição: '+MALD[R.mald].nome+'"><span>Maldição</span><b>'+MALD[R.mald].curto+'</b></button>';
   }else{
     for(var i=0;i<S.jogadores;i++)p+='<button type="button" data-j="'+i+'" class="placa px'+(i===S.vez&&!S.fim?' vez':'')+(S.jogadores>1&&i===vendo?' vendo':'')+'" aria-label="Ver cartela de '+esc(nomeJog(i))+'"><span>'+esc(nomeJog(i))+'</span><b>'+total(S.scores[i])+'</b></button>';
@@ -1662,7 +1661,7 @@ function blocosMaq(v){   // cada zona acende proporcionalmente aos pontos dentro
 }
 function rotMaq(v){return '<s class="m'+(v>=R.alvo?' ok':'')+'">meta '+R.alvo+'</s> · <s class="p'+(v>=alvoPrata()?' ok':'')+'">prata '+alvoPrata()+'</s> · <s class="o'+(v>=alvoOuro()?' ok':'')+'">ouro '+alvoOuro()+'</s>'}
 function cartMaq(){var h='',u=S.rod||0;for(var j=0;j<10;j++)h+='<i class="'+(j<u?'u':j<R.k?'a':'f')+'"></i>';return '<i class="cart" aria-hidden="true">'+h+'</i>'}   // cartela do bloco: usadas · desta fase · próximas fases
-function trilhoMaq(pf){return '<i class="bat" id="fase-bat" aria-hidden="true">'+blocosMaq(pf)+'</i>'+cartMaq()}   // sem legenda: só os blocos
+function trilhoMaq(pf){return '<i class="bat" id="fase-bat" aria-hidden="true">'+blocosMaq(pf)+'</i>'}   // sem legenda: só os blocos
 function nivelSlot(s){return s&&s.nivel!=null?s.nivel:(s&&s.turbo?1:0)}   // raridade de cada rolo: normal / turbinada (folga >= MARGEM_TURBO)
 var RAR_COR={c:"#cfc8b2",i:"#5fb36a",r:"#4aa3e0",l:"#e3b341"},RAR_NOME={c:"Comum",i:"Incomum",r:"Rara",l:"Lendária"},RAR_ORDEM=["c","i","r","l"],PROX={c:"i",i:"r",r:"l",l:"l"};
 var E3=[17.6,34.3,49.8,64.4,77.6,89.5,100.2,109.5,117.0,122.0];
