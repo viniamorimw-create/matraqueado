@@ -1486,7 +1486,7 @@ function pontosBase(cat,d,boca){
     case "general":v=mc>=5?(boca?(m?m.genB:100):(m?m.gen:50)):0;break;
   }
   if(m&&m.dobra[cat.id])v*=2;
-  if(boca&&m&&m.bocaPct)v=Math.round(v*(1+m.bocaPct));
+  if(boca&&m&&m.bocaPct&&/^(full|seq|quadra|general)$/.test(cat.id))v=Math.round(v*(1+m.bocaPct));
   return v;
 }
 function total(sc){var t=0;CATS.forEach(function(c){if(sc[c.id]!=null)t+=sc[c.id]});return t}
@@ -1707,7 +1707,7 @@ var PRECO={
 var BONUS=[
   {id:"as3",t:"rel",r:"c",nome:"Ás ×3",desc:"O Ás vale o triplo.",as3:1},
   {id:"x2_u2",t:"rel",r:"c",nome:"Duque ×2",desc:"O Duque vale o dobro.",x2:"u2"},
-  {id:"nb1",t:"rel",r:"c",nome:"Na boquinha I",desc:"Pontuações de boca valem +25%.",nb:.25},
+  {id:"nb1",t:"rel",r:"c",nome:"Na boquinha I",desc:"Full, Seguida, Quadrada e General de boca valem +25%.",nb:.25},
   {id:"gor5",t:"rel",r:"c",nome:"Gorjeta 5%",desc:"+5% nos pontos da fase.",gor:.05},
   {id:"rolext",t:"rel",r:"c",nome:"Rolamento extra",desc:"Uma vez por fase, ganha +1 lance numa rodada (botão +1/F).",rolext:1},
   {id:"gen75",t:"rel",r:"i",nome:"General 75",desc:"O General vale 75, e 150 de boca.",gen75:1},
@@ -1721,7 +1721,7 @@ var BONUS=[
   {id:"x2_u4",t:"rel",r:"i",nome:"Quadra ×2",desc:"A Quadra vale o dobro.",x2:"u4"},
   {id:"consol",t:"rel",r:"i",nome:"Consolação",desc:"Cada casa riscada (0 pontos) dá +5 pontos na fase.",consol:1},
   {id:"gor10",t:"rel",r:"i",nome:"Gorjeta 10%",desc:"+10% nos pontos da fase.",gor:.10},
-  {id:"nb2",t:"rel",r:"i",nome:"Na boquinha II",desc:"Pontuações de boca valem +40%.",nb:.40},
+  {id:"nb2",t:"rel",r:"i",nome:"Na boquinha II",desc:"Full, Seguida, Quadrada e General de boca valem +40%.",nb:.40},
   {id:"full25",t:"rel",r:"r",nome:"Full 25",desc:"O Full vale 25 (+5 de boca).",full25:1},
   {id:"x2_u5",t:"rel",r:"r",nome:"Quina ×2",desc:"A Quina vale o dobro.",x2:"u5"},
   {id:"x2_general",t:"rel",r:"r",nome:"General ×2",desc:"O General vale o dobro.",x2:"general"},
@@ -1730,7 +1730,7 @@ var BONUS=[
   {id:"gor15",t:"rel",r:"r",nome:"Gorjeta 15%",desc:"+15% nos pontos da fase.",gor:.15},
   {id:"lance",t:"rel",r:"l",nome:"Quarto lance",desc:"Um lance a mais por rodada: 4 em vez de 3.",lance:1},
   {id:"x2_quadra",t:"rel",r:"l",nome:"Quadrada ×2",desc:"A Quadrada vale o dobro.",x2:"quadra"},
-  {id:"nb3",t:"rel",r:"l",nome:"Na boquinha III",desc:"Pontuações de boca valem +60%.",nb:.60},
+  {id:"nb3",t:"rel",r:"l",nome:"Na boquinha III",desc:"Full, Seguida, Quadrada e General de boca valem +60%.",nb:.60},
   {id:"i_extra",t:"item",r:"c",nome:"Lance extra",curto:"+1",desc:"Uso único: ganha mais 1 lance na rodada atual."},
   {id:"i_par",t:"item",r:"i",nome:"Dados pares",curto:"Par",desc:"Carta de uso único: use antes de rolar. Nesta rodada, 9 em cada 10 dados saem pares (2, 4 ou 6).",carta:"par"},
   {id:"i_alto",t:"item",r:"i",nome:"Dados altos",curto:"Alto",desc:"Carta de uso único: use antes de rolar. Nesta rodada, 9 em cada 10 dados saem altos (4, 5 ou 6).",carta:"alto"},
