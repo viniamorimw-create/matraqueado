@@ -1858,21 +1858,14 @@ function comecaFase(mostra){
 function abrePainelFase(){
   if(R.duelo){abrePainelDuelo();return}
   var ka=kAnt(),nr=R.k-ka,fb=faseDoBloco();
-  var l=["<b>Bloco "+fb.b+"</b>, fase "+fb.i+" de "+fb.n+": jogue <b>"+nr+" rodada"+(nr>1?"s":"")+"</b> e chegue a <b>"+R.alvo+" pontos</b> no total do bloco."];
-  if(ka)l.push("A cartela continua a mesma do bloco: você está com <b>"+pontosFase()+"</b> pontos e "+(10-ka)+" casas livres.");
-  else if(R.cred>0)l.push("Você começa com <b>+"+R.cred+" pontos</b> da caça-níquel.");
-  if(R.fase===1){
-    l.push("A cartela atravessa o bloco: as casas que você usa agora não voltam nas próximas fases. Ficou abaixo da meta no fim de uma fase, a noitada acaba. São "+FASES+" fases: 3 blocos de metas e 4 duelos.");
-    l.push("<b>Jogo da velha:</b> três casas em linha (de pé, deitada ou na diagonal) com o <b>valor máximo</b> valem <b>+"+VELHA+"</b>. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem, mas a coluna do meio só fecha com o General também. As casas que contam ficam com borda vermelha.");
-  }
+  var l=[];
   var m=R.mald&&MALD[R.mald];
   if(m){
     l.push('<b style="color:#a81c1f">Maldição: '+m.nome+'.</b> '+m.desc+(R.mald==="casa"?" Desta vez: <b>"+CATS.filter(function(c){return c.id===R.maldCasa})[0].nome+"</b>.":""));
-    if(R.fase===FASE_MALD)l.push("Daqui em diante toda fase traz uma maldição. A meta já vem um pouco menor por causa dela, e vencer dá uma opção a mais na caça-níquel.");
   }
   abrePainel((R.chefe?"Chefe ":"Fase ")+R.fase,l,[{txt:"COMEÇAR",cb:function(){
-    faixa("FASE "+R.fase,"meta "+R.alvo+" até a rodada "+R.k);tremer(1);
-    if(m)setTimeout(function(){if(!R)return;faixa(m.nome.toUpperCase(),"maldição da fase","m");clarao("#4a0c0c");tremer(2);somDiabo()},1250);
+    faixa("FASE "+R.fase,"");tremer(1);
+    if(m)setTimeout(function(){if(!R)return;faixa(m.nome.toUpperCase(),"","m");clarao("#4a0c0c");tremer(2);somDiabo()},1250);
   }}]);
 }
 function faseDoBloco(){var b=R.fase<6?1:R.fase<11?2:3,i0=b===1?1:b===2?6:11,n=b===3?3:4;return {b:b,i:R.fase-i0+1,n:n}}
