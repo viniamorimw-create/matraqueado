@@ -810,7 +810,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
       <ul>
         <li>Uma noite no KAT4 House em 15 fases: 3 blocos de metas (fases 1 a 4, 6 a 9 e 11 a 13) e 4 duelos (fases 5 e 10 contra rivais, 14 e 15 contra os chefes).</li>
         <li><b>Blocos:</b> a mesma cartela atravessa o bloco inteiro; cada fase joga algumas rodadas nela. A meta é o total do bloco ao fim da fase. Ficou abaixo, a noitada acaba.</li>
-        <li><b>Caça-níquel:</b> no meio e no fim de cada bloco (fases 2, 4, 7, 9, 12 e 13) e depois de cada duelo vencido. Bateu a meta: máquina de <b>bronze</b>. Passou 20% da meta: <b>prata</b> (mais raras). Passou 40%: <b>ouro</b> (muito mais raras e lendárias). No duelo, vitória dá prata e a bomba estourando no rival dá ouro. Nas fases sem caça-níquel, a casa dá uma gorjeta para a próxima fase: +5 (bronze), +10 (prata) ou +20 (ouro).</li>
+        <li><b>Caça-níquel:</b> no meio e no fim de cada bloco (fases 2, 4, 7, 9, 12 e 13) e depois de cada duelo vencido. Bateu a meta: máquina de <b>bronze</b>. Passou 20% da meta: <b>prata</b> (mais raras). Passou 40%: <b>ouro</b> (muito mais raras e lendárias). Prata e ouro contam só os pontos feitos na própria fase. No duelo, vitória dá bronze e a bomba estourando no rival dá prata. Nas fases sem caça-níquel, a casa dá uma gorjeta para a próxima fase: +3 (bronze), +5 (prata) ou +10 (ouro).</li>
         <li><b>Jogo da velha:</b> três casas em linha na grade (de pé, deitada ou diagonal) com o valor máximo valem +10. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem; a coluna do meio só fecha com o General também. Vale também nos duelos, para você e para o adversário.</li>
         <li><b>Duelo:</b> cada um com a sua cartela. Depois que os dois jogam a rodada, a bomba confere a diferença de pontos: passou do limite, estoura em quem está atrás. Se não estourar antes, no fim vem o último tapa: a bomba vai para quem terminou atrás e detona. Perder encerra a noitada; vencer dá a caça-níquel, turbinada se a bomba estourar do outro lado.</li>
         <li>As suas relíquias valem nos duelos. Os adversários das últimas fases jogam com um bônus nos pontos.</li>
@@ -1610,7 +1610,7 @@ function desenha(){
 // Uma run são FASES fases. Cada fase é uma cartela com RODADAS[n] rodadas e uma meta mínima: bateu, pode avançar na hora (ou seguir
 // jogando para sobrar pontos) e escolhe 1 de 3 bônus sorteados numa caça-níquel; errou, a run acaba.
 // Os números abaixo (rodadas, metas, taxa, raridades) foram calibrados por simulação com o cálculo exato das regras do jogo.
-var FASES=15,TAXA=0.7,F1=0.5,F10=1.0,MARGEM_TURBO=0.6,MAX_ITENS=3;
+var FASES=15,TAXA=1,F1=0.5,F10=1.0,MARGEM_TURBO=0.6,MAX_ITENS=3;
 // a cartela atravessa o bloco: RODADAS = rodadas acumuladas do bloco ao fim de cada fase (0 nas fases de duelo)
 var RODADAS=[3,6,8,10,0,3,6,8,10,0,4,7,10,0,0];
 var INI_BLOCO={1:1,6:1,11:1},SLOT_FASES={2:1,4:1,7:1,9:1,12:1,13:1};
@@ -1635,11 +1635,13 @@ var DUELOS={5:{look:0,nome:"Rival 1",rod:6,l0:60,pensa:0,forca:0},
             15:{look:4,nome:"Chefe final",rod:10,l0:50,pensa:1,forca:.5}};
 function limitesDuelo(D){var out=[],i;for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5);return out}                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
 var SLOT_PESOS={n:{c:.50,i:.30,r:.15,l:.05},t:{c:.25,i:.35,r:.28,l:.12}};
-var MAQ_PESOS=[{c:.55,i:.30,r:.12,l:.03},{c:.25,i:.40,r:.27,l:.08},{c:.05,i:.30,r:.40,l:.25}];   // bronze, prata, ouro
-var GORJ_CASA=[5,10,20];   // prêmio das fases sem caça-níquel: bronze, prata, ouro
+var MAQ_PESOS=[{c:.60,i:.30,r:.09,l:.01},{c:.35,i:.40,r:.20,l:.05},{c:.15,i:.40,r:.33,l:.12}];   // bronze, prata, ouro (nov/2026: menos raras, a noitada estava fácil)
+var GORJ_CASA=[3,5,10];   // prêmio das fases sem caça-níquel: bronze, prata, ouro
 var MAQ_NOME=["BRONZE","PRATA","OURO"],MAQ_PRATA=1.2,MAQ_OURO=1.4;
-function alvoPrata(){return Math.ceil(R.alvo*MAQ_PRATA)}
-function alvoOuro(){return Math.ceil(R.alvo*MAQ_OURO)}
+// prata e ouro contam os pontos feitos NESTA fase (a folga que veio da fase anterior e os pontos da caça-níquel não valem)
+function precisa(){return Math.max(1,R.alvo-(R.alvoAnt||0))}
+function alvoPrata(){return Math.max(R.alvo+1,(R.inicio||0)+Math.ceil(precisa()*MAQ_PRATA))}
+function alvoOuro(){return Math.max(alvoPrata()+1,(R.inicio||0)+Math.ceil(precisa()*MAQ_OURO))}
 function nivelMaq(pts){return !R||!R.alvo||pts<R.alvo?-1:pts>=alvoOuro()?2:pts>=alvoPrata()?1:0}
 var BAT_Z=[8,3,3,2];   // blocos da bateria: até a meta, meta→prata, prata→ouro, acima do ouro
 function zonasMaq(){var a=R.alvo,p=alvoPrata(),o=alvoOuro();return [[0,a],[a,p],[p,o],[o,Math.ceil(o*1.15)]]}
@@ -1849,7 +1851,7 @@ function comecaFase(mostra){
   R.maldAnt=R.mald||null;R.mald=R.duelo?null:sorteiaMald();
   var tv=trancaveis();R.maldCasa=R.mald==="casa"?tv[Math.floor(Math.random()*tv.length)]:null;
   R.cred=novo?R.credProx:(R.cred||0)+R.credProx;R.credProx=0;R.base=R.duelo?null:brutoFase();
-  R.alvo=R.duelo?0:calcMeta();R.rext=false;R.cedo=false;R.estado=R.duelo?"duelo":"jogando";R.slot=null;
+  var aAnt=novo?0:(R.alvo||0);R.alvo=R.duelo?0:calcMeta();R.alvoAnt=aAnt;R.inicio=R.duelo?0:pontosFase();R.rext=false;R.cedo=false;R.estado=R.duelo?"duelo":"jogando";R.slot=null;
   vendo=0;modoItem=-1;
   desenha();salvaRun();
   if(mostra)abrePainelFase();
@@ -1992,7 +1994,7 @@ function testeFase(f){
       var id=livres.splice(Math.floor(Math.random()*livres.length),1)[0],c=CATS.filter(function(x){return x.id===id})[0],d=[0,0,0,0,0].map(function(){return 1+Math.floor(Math.random()*6)});
       S.scores[0][id]=pontos(c,d,false);
     }
-    S.rod=ka;R.base=brutoFase();R.alvo=calcMeta();
+    S.rod=ka;R.base=brutoFase();R.alvo=calcMeta();R.alvoAnt=Math.round(R.alvo*ka/R.k);R.inicio=pontosFase();   // aproxima a meta anterior do bloco
   }
   desenha();salvaRun();abrePainelFase();
 }
@@ -2287,7 +2289,7 @@ function preparaSlot(){
 }
 function abrirSlot(retomar){
   if(!retomar){
-    var du=R.duelo&&R.duelo.res,pts=du?du.eu:pontosFase(),niv=du?(du.bomba?2:1):Math.max(0,nivelMaq(pts)),turbo=niv>0,w=MAQ_PESOS[niv],esc=[],rs=[],i;
+    var du=R.duelo&&R.duelo.res,pts=du?du.eu:pontosFase(),niv=du?(du.bomba?1:0):Math.max(0,nivelMaq(pts)),turbo=niv>0,w=MAQ_PESOS[niv],esc=[],rs=[],i;
     for(i=0;i<3;i++){var r=sorteiaRar(w);rs.push(r);esc.push(pegaBonus(r,esc))}
     var jack=rs[0]===rs[1]&&rs[1]===rs[2]&&rs[0]!=="c";
     if(jack)esc.push(pegaBonus(PROX[rs[0]],esc));
@@ -2309,7 +2311,7 @@ function setaSlot(){var sl=$("slot"),b=$("sl-seta");b.hidden=sl.hidden||sl.scrol
 $("slot").addEventListener("scroll",setaSlot);window.addEventListener("resize",setaSlot);
 $("sl-seta").addEventListener("click",function(){$("slot").scrollTo({top:$("slot").scrollHeight,behavior:"smooth"})});
 function subSlot(){var s=R.slot;
-  if(s.duelo)return "Duelo vencido: <b>"+s.pts+" × "+s.alvo+"</b>. "+(nivelSlot(s)===2?"A bomba estourou do outro lado: <b>máquina de OURO!</b>":"<b>Máquina de PRATA.</b>");
+  if(s.duelo)return "Duelo vencido: <b>"+s.pts+" × "+s.alvo+"</b>. "+(nivelSlot(s)===1?"A bomba estourou do outro lado: <b>máquina de PRATA!</b>":"<b>Máquina de BRONZE.</b>");
   return "Você fez <b>"+s.pts+"</b> de "+s.alvo+" ("+(s.pts>=s.alvo?"+":"")+Math.round((s.pts/s.alvo-1)*100)+"%)."+" <b>Máquina de "+MAQ_NOME[nivelSlot(s)]+(nivelSlot(s)===2?"!":nivelSlot(s)===1?": mais raras.":".")+"</b>"}
 function somParo(i){toca([196-i*18],0,.07)}
 function giraSlot(){
