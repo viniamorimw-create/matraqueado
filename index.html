@@ -2681,7 +2681,7 @@ function somTique(){bip(1400,.02,.03)}
 
 /* ---------- abertura do chefe final ---------- */
 var INTRO=null,INTRO_FALAS=["Então é você que anda limpando as mesas da minha casa...","Senta. A última rodada é por conta da casa."];
-var IT={escuro:.7,aviso:3.4,chega:3.4,impacto:6.1,placa:6.3,sai:8.7,fala:9.1};   // tempos (s) de cada parte
+var IT={escuro:.7,aviso:3.4,chega:3.4,impacto:6.5,placa:6.7,sai:9.1,fala:9.5};   // tempos (s) de cada parte
 function introInicia(){INTRO={t:0,fala:-1,car:0,espera:0,som:{},fim:-1};ocupado=true;if(CENA.chega)CENA.chega.t0=CENA.t+IT.chega}
 function introSom(k,f){if(INTRO.som[k])return;INTRO.som[k]=1;f()}
 function introPula(){   // toque na cena: pula a parte animada, completa o texto ou passa para a próxima fala
@@ -2712,7 +2712,7 @@ function introCena(dt){
     var n=Math.floor((t-IT.escuro)/.4);introSom("s"+n,function(){bip(n%2?660:880,.22,.05,"square")});
   }
   // passos pesados enquanto ele atravessa o salão
-  if(t>=IT.chega&&t<IT.chega+2.4){var pn=Math.floor((t-IT.chega)/.42);introSom("p"+pn,function(){bip(70,.14,.18,"sine");ruido(.05,.08)})}
+  if(t>=IT.chega&&t<IT.chega+2.6){var pn=Math.floor((t-IT.chega)/.42);introSom("p"+pn,function(){bip(70,.14,.18,"sine");ruido(.05,.08)})}
   // impacto: clarão, tremida e baixo
   if(t>=IT.impacto&&t<IT.impacto+.3){g.fillStyle="rgba(255,246,220,"+(1-(t-IT.impacto)/.3)+")";g.fillRect(0,0,195,92)}
   introSom("i",function(){bip(55,.7,.35,"sine");ruido(.35,.45)});
@@ -3165,20 +3165,18 @@ function desenhaCena(now){
       humor:J.fim?(J.fim==="ele"?"calmo":"bravo"):(J.vez==="ele"&&dd<-.6*L2)?"tenso":dd<-.4*L2?"bravo":dd>.4*L2?"calmo":"normal",
       ox:Math.round(Math.sin(CENA.ang)*2),morto:CENA.morto==="ele",vence:J.fim==="ele",t:t};
   passantes(t,CFG.look<3?CFG.look:-1,true);   // o adversário sentado não passa no salão (linhas 0, 1 e 2 dos figurantes)
-  var C=CHG[CFG.look],ch=CENA.chega,ec=ch&&C?t-ch.t0:9,CH_A=2.4,CH_Q=.14,CH_F=CH_A+CH_Q*(C_N(C)-1);   // chegada: anda CH_A s pelo salão e senta quadro a quadro
+  var C=CHG[CFG.look],ch=CENA.chega,ec=ch&&C?t-ch.t0:9,CH_A=2.6,CH_S=.5,CH_F=CH_A+CH_S;   // chegada: anda CH_A s pelo salão e se funde no busto em CH_S s
   g.imageSmoothingEnabled=false;
   if(ec<0){}   // ainda não entrou (abertura do chefe)
   else if(ec<CH_A){   // vem do fundo do salão até a mesa, crescendo com a perspectiva
-    // vem do fundo do salão até a cadeira: cresce até a escala de quem está sentado (o quadro em pé da sentada tem ~94 px)
-    // e desce na tela conforme chega perto. Longe, passa por trás da cadeira; no fim, já está na frente dela.
-    var u=Math.min(1,ec/CH_A),e=u*u*(3-2*u),pf=C.c.senta[0][5]+3+C.c.senta[0][3],k=.42+(pf/C.c.ah-.42)*e,W=Math.round(C.c.aw*k),H=Math.round(C.c.ah*k),q=Math.floor(ec*30/3.2)%6,
-        x=Math.round(206-W/2+(97-206)*e),pe=Math.round(48+(pf-48)*e),atras=u<.7;
-    if(!atras)cadeira();
+    // cresce pouco (de 60% a 100% de uma altura de 66 px) e fica sempre atrás do balcão: os pés somem atrás do tampo, a cabeça não sai da cena
+    var u=Math.min(1,ec/CH_A),e=u*u*(3-2*u),kf=66/C.c.ah,k=kf*(.6+.4*e),W=Math.round(C.c.aw*k),H=Math.round(C.c.ah*k),q=Math.floor(ec*30/3.4)%6,
+        x=Math.round(204-W/2+(97-204)*e),pe=Math.round(52+12*e);
     g.save();g.beginPath();g.rect(0,0,195,58);g.clip();g.drawImage(C.img,q*C.c.aw,0,C.c.aw,C.c.ah,x,pe-H,W,H);g.restore();
-    if(atras)cadeira();
-  }else if(ec<CH_F){cadeira();   // sentando: desce 3 px para a borda de baixo do quadro ficar sempre atrás do tampo, e corta tudo abaixo da borda da mesa
-    var f=C.c.senta[Math.min(C.c.senta.length-1,1+Math.floor((ec-CH_A)/CH_Q))];   // pula o quadro em pé (a cabeça sairia da cena)
-    g.save();g.beginPath();g.rect(0,0,195,58);g.clip();g.drawImage(C.img,f[0],f[1],f[2],f[3],f[4],f[5]+3,f[2],f[3]);g.restore();
+  }else if(ec<CH_F){   // senta: o corpo em pé desce um pouco e some enquanto o busto aparece no lugar
+    var v=(ec-CH_A)/CH_S,v2=v*v*(3-2*v),kf2=66/C.c.ah,W2=Math.round(C.c.aw*kf2),H2=Math.round(C.c.ah*kf2);
+    g.save();g.globalAlpha=1-v2;g.beginPath();g.rect(0,0,195,58);g.clip();g.drawImage(C.img,0,0,C.c.aw,C.c.ah,Math.round(97-W2/2),Math.round(64+8*v2-H2),W2,H2);g.restore();
+    g.save();g.globalAlpha=v2;rivalPinta(CFG.look,est);g.restore();
   }
   else{cadeira();rivalPinta(CFG.look,est)}
   cenaMesa(pisc);fumaca(t);
