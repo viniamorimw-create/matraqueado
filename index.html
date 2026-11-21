@@ -2850,7 +2850,7 @@ function poderCena(){   // fala do adversário na mesma caixa de diálogo da abe
   var txt=b.txt.slice(0,Math.floor(b.car));
   if(b.dados){
     introTexto(txt,bx+31,by+10,8,"#fff6dc");
-    if(b.car>=b.txt.length)b.dados.forEach(function(v,i){var f=dadoMini(v);if(f)g.drawImage(f,bx+31+i*14,by+17,11,11)});   // os mesmos dados do jogo
+    if(b.car>=b.txt.length)b.dados.forEach(function(v,i){var f=dadoMini(v);if(f)g.drawImage(f,bx+31+i*13,by+16,10,10)});   // os mesmos dados do jogo
   }else introQuebra(txt,bw-38).forEach(function(l,j){introTexto(l,bx+31,by+11+j*8,8,"#fff6dc")});
   g.restore();
 }
