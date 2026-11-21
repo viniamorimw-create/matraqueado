@@ -2807,14 +2807,14 @@ function balao(txt,dados,dur){CENA.balao={txt:txt,dados:dados||null,t0:CENA.t,du
 function poderInicioRodada(){   // chamado quando volta a vez do jogador
   J.prev=null;J.olho=false;J.tranca=-1;
   if(CFG.look===4){var o=GATO_ROD[J.rod];if(!o||J.rod>=RODADAS-1)return;
-    if(o==="prev"){J.prev=maoRuim();balao("Já sei o que vai sair...",J.prev);aviso("PREVISÃO: "+J.prev.join(" "),"p");bip(990,.3,.04,"triangle");bip(1320,.4,.03,"triangle",.15)}
-    if(o==="olho"){J.olho=true;balao("Bonitos esses dados...",null);aviso("O BLACK CAT ESTÁ DE OLHO NOS SEUS DADOS","p");bip(300,.08,.05,"square");bip(240,.12,.05,"square",.1)}
+    if(o==="prev"){J.prev=maoRuim();balao("Conheço esse jogo. Vai cair:",J.prev);aviso("PREVISÃO: "+J.prev.join(" "),"p");bip(990,.3,.04,"triangle");bip(1320,.4,.03,"triangle",.15)}
+    if(o==="olho"){J.olho=true;balao("Esses dados são do bar, né?",null);aviso("O BLACK CAT ESTÁ DE OLHO NOS SEUS DADOS","p");bip(300,.08,.05,"square");bip(240,.12,.05,"square",.1)}
     if(o==="tranca"){var livres=ORDEM.filter(function(ci){return J.eu.sc[CATS[ci].id]==null});
       if(livres.length>=3){var bons=livres.filter(function(ci){return ci>=5});var esc=(bons.length?bons:livres);J.tranca=esc[Math.floor(Math.random()*esc.length)];
-        balao("Essa casa está fechada.",null,2.4);aviso("FECHOU A CONTA: "+CATS[J.tranca].nome.toUpperCase()+" TRANCADA NESTA RODADA","p");somTapa();treme("tapa")}}
+        balao("Regra nova do bar: essa fechou.",null,2.6);aviso("FECHOU A CONTA: "+CATS[J.tranca].nome.toUpperCase()+" TRANCADA NESTA RODADA","p");somTapa();treme("tapa")}}
     return;}
   if(!poder()||!rodadaPoder())return;
-  if(CFG.look===1){J.prev=maoRuim();balao("Vejo nas cartas...",J.prev);aviso("PREVISÃO: "+J.prev.join(" "),"p");bip(990,.3,.04,"triangle");bip(1320,.4,.03,"triangle",.15)}
+  if(CFG.look===1){J.prev=maoRuim();balao("Vejo nos dados...",J.prev);aviso("PREVISÃO: "+J.prev.join(" "),"p");bip(990,.3,.04,"triangle");bip(1320,.4,.03,"triangle",.15)}
   if(CFG.look===2){J.olho=true;balao("Que dados bonitos...",null);aviso("O GUAXINIM ESTÁ DE OLHO NOS SEUS DADOS","p");bip(300,.08,.05,"square");bip(240,.12,.05,"square",.1)}
 }
 function poderRouba(){   // antes de rolar: rouba o melhor dado guardado
@@ -2822,18 +2822,23 @@ function poderRouba(){   // antes de rolar: rouba o melhor dado guardado
   var melhor=-1;for(var i=0;i<5;i++)if(J.guard[i]&&(melhor<0||J.dados[i]>J.dados[melhor]))melhor=i;
   if(melhor<0)return;
   J.olho=false;J.guard[melhor]=false;
-  balao("Esse aqui é meu!",null,1.8);aviso("MÃO LEVE! ROUBOU SEU "+J.dados[melhor],"p");ruido(.08,.2);bip(700,.05,.05,"square");bip(1050,.07,.05,"square",.06);treme("tapa");
+  balao(CFG.look===4?"Quero de volta!":"Esse aqui é meu!",null,1.8);aviso("MÃO LEVE! ROUBOU SEU "+J.dados[melhor],"p");ruido(.08,.2);bip(700,.05,.05,"square");bip(1050,.07,.05,"square",.06);treme("tapa");
 }
 function poderCena(){   // balão de fala do adversário, no alto da cena
   var b=CENA.balao;if(!b)return;
   if((b.dur&&CENA.t-b.t0>b.dur)||J.fim){CENA.balao=null;return}
-  var a=Math.min(1,(CENA.t-b.t0)/.15),w=b.dados?78:Math.min(110,16+b.txt.length*4.2),h=b.dados?24:13,x=Math.round(130-w/2),y=3;
+  // balão à direita do adversário (não cobre o rosto), texto em até 3 linhas, rabinho apontando para ele
+  g.font='7px "Jersey 10","Cinco",monospace';
+  var a=Math.min(1,(CENA.t-b.t0)/.15),w=80,lin=[],at="";
+  b.txt.split(" ").forEach(function(p){var t=at?at+" "+p:p;if(g.measureText(t).width>w-6&&at){lin.push(at);at=p}else at=t});lin.push(at);
+  var h=3+lin.length*7+(b.dados?12:0),x=112,y=3;
   g.save();g.globalAlpha=a;
   g.fillStyle="#fff6dc";g.fillRect(x,y,w,h);g.fillStyle="#1a0a0e";g.fillRect(x,y-1,w,1);g.fillRect(x,y+h,w,1);g.fillRect(x-1,y,1,h);g.fillRect(x+w,y,1,h);
-  g.fillStyle="#fff6dc";g.fillRect(x+10,y+h,4,2);g.fillRect(x+9,y+h+2,3,2);g.fillStyle="#1a0a0e";g.fillRect(x+8,y+h+2,1,2);g.fillRect(x+12,y+h+2,1,2);g.fillRect(x+9,y+h+4,2,1);
-  g.font='7px "Jersey 10","Cinco",monospace';g.textAlign="center";g.textBaseline="top";g.fillStyle="#1a0a0e";g.fillText(b.txt,x+w/2,y+2,w-4);
+  g.fillStyle="#fff6dc";g.fillRect(x-3,y+8,3,3);g.fillRect(x-5,y+10,2,2);g.fillStyle="#1a0a0e";g.fillRect(x-3,y+7,3,1);g.fillRect(x-6,y+10,1,2);g.fillRect(x-5,y+12,4,1);
+  g.textAlign="left";g.textBaseline="top";g.fillStyle="#1a0a0e";lin.forEach(function(l,k){g.fillText(l,x+3,y+2+k*7,w-6)});
+  if(b.dados){x=x+2;y=y+lin.length*7-9}
   if(b.dados)b.dados.forEach(function(v,i){   // dadinhos da previsão
-    var dx=x+5+i*14,dy=y+11,P={1:[[4,4]],2:[[2,2],[6,6]],3:[[2,2],[4,4],[6,6]],4:[[2,2],[6,2],[2,6],[6,6]],5:[[2,2],[6,2],[4,4],[2,6],[6,6]],6:[[2,2],[6,2],[2,4],[6,4],[2,6],[6,6]]};
+    var dx=x+3+i*15,dy=y+12,P={1:[[4,4]],2:[[2,2],[6,6]],3:[[2,2],[4,4],[6,6]],4:[[2,2],[6,2],[2,6],[6,6]],5:[[2,2],[6,2],[4,4],[2,6],[6,6]],6:[[2,2],[6,2],[2,4],[6,4],[2,6],[6,6]]};
     g.fillStyle="#1a0a0e";g.fillRect(dx-1,dy-1,11,11);g.fillStyle="#f3dcb4";g.fillRect(dx,dy,9,9);g.fillStyle="#5a1a6e";
     P[v].forEach(function(q){g.fillRect(dx+q[0]-.5,dy+q[1]-.5,2,2)});
   });
@@ -3338,7 +3343,7 @@ async function rolar(){
   ocupado=true;somRola();J.modo=-1;poderRouba();
   var todos=J.lances===0||J.guard.every(function(g){return !g});   // de boca: os 5 dados rolados juntos
   for(var k=0;k<5;k++){for(var i=0;i<5;i++)if(!J.guard[i])J.dados[i]=sorteiaEu();desenha(true);await espera(90);if(f!==ficha)return}
-  if(J.prev&&J.lances===0){J.dados=J.prev.slice();J.prev=null;balao("Eu disse.",null,1.6)}   // a previsão da coruja se cumpre
+  if(J.prev&&J.lances===0){J.dados=J.prev.slice();J.prev=null;balao(CFG.look===4?"Eu avisei.":"Eu disse.",null,1.6)}   // a previsão da coruja se cumpre
   if(window.TESTE_PROX){for(i=0;i<5;i++)if(!J.guard[i])J.dados[i]=window.TESTE_PROX[i]||J.dados[i];window.TESTE_PROX=null}   // modo de teste
   J.boca=todos;J.lances++;ocupado=false;desenha();
   falaJogada(J.dados,J.boca);
