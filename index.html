@@ -12,12 +12,14 @@ REGRAS IMPLEMENTADAS
 - Full 15 (20 de boca), Seguida 20 (25), Quadrada 25 (30), General 50 (100 de boca).
 - "De boca": a jogada saiu num lance em que os 5 dados foram rolados juntos (sem nenhum "fica"), em qualquer lance da rodada.
 - Riscar: casa em que os dados não pontuam pode ser riscada (vale 0 e fica eliminada).
-- Noitada (nov/2026): 15 fases em 3 blocos de metas (a cartela atravessa o bloco, RODADAS acumuladas, meta acumulada, jogo da velha +10) e duelos em 5, 10, 14 e 15. Texto antigo: meta mínima por fase; bateu = libera AVANÇAR e, ao fim, a caça-níquel de
-  3 rolos oferece 3 bônus (você escolhe 1); errou = fim da run. Chefes nas fases 5 e 10 (1 lance a menos). Folga de +60% turbina a máquina (mais raros).
+- MODO NOITADA (nov/2026): 15 fases. Blocos de metas 1-4, 6-9 e 11-13: a mesma cartela atravessa o bloco (RODADAS acumuladas)
+  e a meta é o total do bloco no fim da fase; errou = fim da noitada. Duelos com bomba nas fases 5 e 10 (rivais), 14 e 15 (chefes).
+  Jogo da velha: linha de 3 casas com o valor máximo vale +10 (também nos duelos).
+  Caça-níquel nas fases 2, 4, 7, 9, 12 e 13 e depois de cada duelo vencido: bronze (bateu), prata (+20% na fase), ouro (+40%);
+  duelo: vitória = bronze, bomba no rival = prata. Fases sem máquina dão gorjeta (+3/+5/+10). Bênçãos e itens valem nos duelos.
 - 666: exatamente três seis lado a lado (dados 1-2-3, 2-3-4 ou 3-4-5) ficam vermelhos e soltam um diabinho (vale nos dois modos).
 - Maldições (survival): da fase 3 em diante cada fase sorteia 1 maldição (MALD): Imposto, Mão curta, Casa trancada, Pedágio,
   Boca seca ou Neblina. A meta cai 60% do custo estimado da maldição (COMP) e vencer a fase dá 1 opção a mais na caça-níquel.
-- Embalo (survival): a partir da 3ª casa pontuada seguida, cada anotação rende +2 pontos (EMB_PTS); riscar zera o embalo.
 - Efeitos de tela: números saltando, tremor, clarão, partículas, faixas e contagem do total. Desligam no menu (Efeitos)
   e respeitam "reduzir movimento" do aparelho.
 - Mesa: no início de cada rodada o campo de dados fica vazio. JOGAR/ROLAR: os dados da mesa (menos os "fica")
@@ -25,14 +27,16 @@ REGRAS IMPLEMENTADAS
   Ao anotar na cartela, os dados voltam ao copo.
 
 DUELOS DO MODO NOITADA
-- Os duelos com bomba (fases 4, 5, 8, 9 e 10) abrem numa tela própria: bloco "MODO X1" no script principal (X1UI.abrir(cfg))
+- Os duelos com bomba (fases 5, 10, 14 e 15) abrem numa tela própria: bloco "MODO X1" no script principal (X1UI.abrir(cfg))
   e o objeto X1 (pontuação e cérebro do adversário) no script anterior. Cada adversário é desenhado em rivalPinta().
+- Último tapa: se a bomba não estourar, no fim ela vai para quem terminou atrás (empate: o jogador perde).
 
 VISUAL (KAT4 House)
 - Bar noturno em pixel art: faixa do KAT4 House no topo, fundo manchado em tons de vinho, botão com a patinha, cartela creme.
 - "Sair" abre a tela inicial (a partida fica guardada); "Menu" abre só Som, Efeitos, Regras e Voltar ao jogo.
 - Tela inicial: só os modos, Continuar partida e "Configurações" (Nome, Som, Efeitos e Regras ficam lá; classe .cfg em #inicio).
-- pintaPano(), pintaGatos(), pintaPata(), pintaFeltro(), pintaCopo(): cenário, mascote e copo desenhados por código.
+- pintaPano(), pintaGatos(), pintaFeltro(): cenário e mascote desenhados por código. Dados, copo e patinha vêm da arte em
+  DADOS_ARTE (folha de faces 6 cores x 6 valores em var(--dados); pintaCopo() e pintaPata() usam essa arte).
 - Faixa animada: bloco "faixa animada". De vez em quando o gato pisca ou mexe a cabeça, o neon falha e um mosquito ronda a lâmpada.
   Para mudar a frequência, altere "cada" em FA_EV (segundos, [mín, máx]).
 
@@ -43,7 +47,7 @@ ONDE ESTÁ CADA COISA (no <script>)
 - rolar(), guardar(), anotar(): ações do jogador.
 - MODO NOITADA (antes Survival): bloco "modo survival" (constantes FASES, TAXA, MARGEM_TURBO, BONUS, DUELOS...). R = a noitada (null no clássico),
   as fases em DUELOS abrem o duelo com bomba (abrirDuelo -> X1UI.abrir -> fimDuelo); as outras são metas, como no Survival.
-  M = efeitos das relíquias lidos por pontos() e maxJog(). comecaFase() / fimDeFase() / encerraRun() conduzem a run;
+  M = efeitos das bênçãos (no código: relics) lidos por pontos() e maxJog(). comecaFase() / fimDeFase() / encerraRun() conduzem a run;
   abrirSlot() / giraSlot() são a caça-níquel; salvaRun() guarda a run no localStorage; diabo() é o 666.
 - ANIMAÇÃO DA JOGADA (copo, mão e dados): T = tempos; planoRolagem() e planoRetorno() montam a linha do
   tempo; poseAtor() e estadoDado() dizem onde cada coisa está em cada instante t; rodaCena() toca;
@@ -319,8 +323,6 @@ button.res{width:100%;font-family:inherit;color:inherit;cursor:pointer;padding:8
 /* ---------- 666, dados modificados, avançar ---------- */
 .dica{display:flex;align-items:center;gap:8px}
 #dica-t{flex:1;min-width:0}
-#btn-avancar{flex:none;background:var(--ouro);color:var(--tinta);border:3px solid var(--tinta);font-family:var(--f-display);font-size:18px;padding:2px 10px;min-height:28px;cursor:pointer}
-#btn-avancar[hidden]{display:none}
 .surv #dica-t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #diabo{position:absolute;left:0;top:0;z-index:25;pointer-events:none;display:none;image-rendering:pixelated}
 .dado.m-gem{background:#c6f0d6;border-color:#14502c;box-shadow:inset -5px -5px 0 #7cc79a}
@@ -424,21 +426,17 @@ body{background:var(--preto)}
 @media (max-height:650px){.banner{height:60px;object-fit:contain;background:#12060a}.casa{min-height:42px;padding-top:3px;justify-content:flex-start}.casa.general{min-height:40px}.casa strong{font-size:19px}.casa b{font-size:23px;min-height:19px}.casa.pode b.x{font-size:14px}.bozo{padding-top:2px}}
 @media (prefers-reduced-motion:reduce){.rolar:not(:disabled){animation:none}}
 
-/* ---------- maldições, embalo e efeitos de tela ---------- */
+/* ---------- maldições e efeitos de tela ---------- */
 .placa{position:relative}
 .placa.fase{padding-bottom:4px}
 .surv .placa.rodada{padding-left:6px;padding-right:6px}
 .placa .barra{position:absolute;left:0;right:0;bottom:0;height:4px;background:#0c1222;display:block}
 .placa .barra i{display:block;height:100%;width:0;background:var(--borda)}
 .placa .barra i.ok{background:var(--ouro)}
-.placa.mald,.placa.emb{flex:0 0 auto;padding-left:6px;padding-right:6px}
-.placa.mald{border-color:#d63a2a}
+.placa.mald{flex:0 0 auto;padding-left:6px;padding-right:6px;border-color:#d63a2a}
 .placa.mald span{color:#ff8a7a}
 .placa.mald b{font-size:18px;line-height:23px;white-space:nowrap}
 button.placa.mald:active{background:#4a0c0c}
-.placa.emb{border-color:var(--ouro)}
-.placa.emb b{color:var(--ouro)}
-.placa.emb.fogo{animation:fogo .5s steps(1) infinite}
 @keyframes fogo{0%{background:var(--marinho)}50%{background:#7a2a10}}
 .mald .mesa{box-shadow:inset 0 0 0 3px #d63a2a,inset 0 0 28px rgba(0,0,0,.6)}
 .cartela{position:relative}
@@ -475,7 +473,7 @@ button.placa.mald:active{background:#4a0c0c}
 .faixa.m{background:#2a0606;border-color:#d63a2a;color:#ff8a7a}
 .faixa.m small{color:#f3e8cf}
 @keyframes faixa{0%{transform:scaleY(0)}10%{transform:scaleY(1.2)}18%{transform:scaleY(1)}82%{transform:scaleY(1);opacity:1}100%{transform:scaleY(0);opacity:0}}
-@media (prefers-reduced-motion:reduce){.cartela.neb::after,.placa.emb.fogo{animation:none}}
+@media (prefers-reduced-motion:reduce){.cartela.neb::after{animation:none}}
 
 /* ---------- menu inicial: modos e continuar ---------- */
 .inicio .rolar.modo{padding:10px 8px 10px}
@@ -722,7 +720,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
   </header>
   <canvas class="banner" width="841" height="250" role="img" aria-label="KAT4 House"></canvas>
   <canvas class="cena-n" id="cena-n" width="195" height="92" aria-hidden="true" hidden></canvas>
-  <p class="dica px fora" id="dica" aria-live="polite"><span id="dica-t"></span><button type="button" id="btn-avancar" hidden>AVANÇAR</button></p>
+  <p class="dica px fora" id="dica" aria-live="polite"><span id="dica-t"></span></p>
 
   <section class="mesa" id="mesa" aria-label="Mesa de dados">
     <div class="placas" id="placas"></div>
@@ -831,7 +829,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
         <li><b>Caça-níquel:</b> no meio e no fim de cada bloco (fases 2, 4, 7, 9, 12 e 13) e depois de cada duelo vencido. Bateu a meta: máquina de <b>bronze</b>. Passou 20% da meta: <b>prata</b> (mais raras). Passou 40%: <b>ouro</b> (muito mais raras e lendárias). Prata e ouro contam só os pontos feitos na própria fase. No duelo, vitória dá bronze e a bomba estourando no rival dá prata. Nas fases sem caça-níquel, a casa dá uma gorjeta para a próxima fase: +3 (bronze), +5 (prata) ou +10 (ouro).</li>
         <li><b>Jogo da velha:</b> três casas em linha na grade (de pé, deitada ou diagonal) com o valor máximo valem +10. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem; a coluna do meio só fecha com o General também. Vale também nos duelos, para você e para o adversário.</li>
         <li><b>Duelo:</b> cada um com a sua cartela. Depois que os dois jogam a rodada, a bomba confere a diferença de pontos: passou do limite, estoura em quem está atrás. Se não estourar antes, no fim vem o último tapa: a bomba vai para quem terminou atrás e detona. Perder encerra a noitada; vencer dá a caça-níquel, turbinada se a bomba estourar do outro lado.</li>
-        <li>As suas relíquias valem nos duelos. Os adversários das últimas fases jogam com um bônus nos pontos.</li>
+        <li>As suas bênçãos valem nos duelos. Os adversários das últimas fases jogam com um bônus nos pontos.</li>
         <li><b>Dados coloridos:</b> o verde duplica a face dele, o vermelho, quando cai 1, vale 1 ou 6 (o que render mais) e o azul completa a Seguida. <b>Combo de cores:</b> dois ou mais dados coloridos com a mesma face, numa anotação que pontua, rendem +5 por dado.</li>
         <li><b>Maldições:</b> da fase 3 em diante, cada fase traz uma maldição (toque na placa vermelha para ler). A meta fica um pouco menor e vencer a fase dá uma opção a mais na caça-níquel.</li>
       </ul>
@@ -1342,14 +1340,6 @@ function faixa(txt,sub,cls){   // faixa que atravessa a tela. cls: o = ouro, m =
   if(sub){s=document.createElement("small");s.textContent=sub;e.appendChild(s)}
   document.body.appendChild(e);setTimeout(function(){e.remove()},1200);
 }
-function fogoLiga(on){   // embalo aceso: brasas subindo do pé da mesa
-  if(on&&fxOk()){
-    if(!FX.fogo)FX.fogo=setInterval(function(){
-      if(document.querySelector(".inicio:not([hidden])"))return;
-      var r=$("mesa").getBoundingClientRect();particulas(r.left+Math.random()*r.width,r.bottom,2,FOGO,{cone:-Math.PI/2,abre:.5,v:130,g:-60,vida:.9});
-    },110);
-  }else if(FX.fogo){clearInterval(FX.fogo);FX.fogo=0}
-}
 // o total conta até o valor novo em vez de trocar de uma vez (e a barra da meta enche junto)
 var vis={v:0,alvo:0,t:0,chave:""};
 function pintaTotal(){
@@ -1561,7 +1551,7 @@ function desenhaDados(){
 }
 function desenhaMesa(){
   desenhaDados();
-  var resta=maxJog()-S.jogadas,b=$("btn-rolar"),p="",av=$("btn-avancar");
+  var resta=maxJog()-S.jogadas,b=$("btn-rolar"),p="";
   if(R){                                        // survival: uma placa com fase, meta e pontos
     var pf=pontosFase();
     p+='<div class="placa fase px'+(pf>=R.alvo?' vez':'')+(R.alvo?' trilhada':'')+'" aria-label="Pontos '+pf+', meta '+R.alvo+'"><span>'+"Meta"+'</span><b id="fase-b">'+pf+'/'+R.alvo+'</b>'+(R.alvo?trilhoMaq(pf):'<i class="barra"><i id="fase-bar"></i></i>')+'</div>';
@@ -1573,7 +1563,6 @@ function desenhaMesa(){
   }
   $("placas").innerHTML=p;
   $("tent").textContent=S.fim?0:resta;
-  av.hidden=true;   // a cartela atravessa o bloco: não dá para encerrar a fase antes
   if(S.fim){
     if(R){
       b.textContent="FASE "+R.fase;b.disabled=true;
@@ -1642,7 +1631,6 @@ function desenha(){
   document.body.classList.toggle("mald",!!(R&&R.mald));
   document.querySelector(".cartela").classList.toggle("neb",!!(R&&R.mald==="neblina"&&!S.fim));
   desenhaMesa();desenhaTabela();desenhaBonus();
-  fogoLiga(false);
 }
 
 /* ---------- modo survival ---------- */
@@ -1780,7 +1768,7 @@ var BONUS=[
 var R=null,M=null,modoItem=-1,painelCb=[];   // R: a run (null = modo clássico) · M: efeitos das relíquias · modoItem: item esperando o dado a ser mudado
 // MALDIÇÕES: da fase 3 em diante, cada fase sorteia uma. custo = fração dos pontos que ela tira de um bom jogador, por nº de rodadas
 // (k=1..10), estimada por simulação. A meta cai COMP x custo: a maldição ainda aperta, e vencer dá 1 opção a mais na caça-níquel.
-var COMP=0.6,EMB_PTS=2,FASE_MALD=3;
+var COMP=0.6,FASE_MALD=3;
 var MALD={
   imposto:{nome:"Imposto",curto:"IMPOSTO",desc:"Os pontos feitos nesta fase valem 15% a menos.",custo:.15},
   mao3:{nome:"Mão curta",curto:"MÃO CURTA",desc:'Só dá para marcar "fica" em 3 dados por vez.',custo:[.03,.03,.03,.03,.03,.04,.05,.06,.065,.07]},
@@ -1891,7 +1879,7 @@ function comecaFase(mostra){
   R.maldAnt=R.mald||null;R.mald=R.duelo?null:sorteiaMald();
   var tv=trancaveis();R.maldCasa=R.mald==="casa"?tv[Math.floor(Math.random()*tv.length)]:null;
   R.cred=novo?R.credProx:(R.cred||0)+R.credProx;R.credProx=0;R.base=R.duelo?null:brutoFase();
-  var aAnt=novo?0:(R.alvo||0);R.alvo=R.duelo?0:calcMeta();R.alvoAnt=aAnt;R.inicio=R.duelo?0:pontosFase();R.rext=false;R.cedo=false;R.estado=R.duelo?"duelo":"jogando";R.slot=null;
+  var aAnt=novo?0:(R.alvo||0);R.alvo=R.duelo?0:calcMeta();R.alvoAnt=aAnt;R.inicio=R.duelo?0:pontosFase();R.rext=false;R.estado=R.duelo?"duelo":"jogando";R.slot=null;
   vendo=0;modoItem=-1;
   desenha();salvaRun();
   if(mostra)abrePainelFase();
@@ -1922,8 +1910,8 @@ function abrePainelDuelo(){
   var D=DUELOS[R.fase],L=limitesDuelo(D),l=[];
   l.push("Duelo contra <b>"+D.nome+"</b>: <b>"+D.rod+" rodadas</b>, cada um com a sua cartela.");
   l.push("Depois que os dois jogam a rodada, a bomba confere a diferença de pontos. Passou do limite, estoura em quem está atrás. O limite começa em <b>"+L[0]+"</b> e cai até <b>"+L[L.length-1]+"</b>.");
-  if(D.forca)l.push(D.nome+" joga com <b>+"+Math.round(D.forca*100)+"%</b> nos pontos. As suas relíquias também valem no duelo.");
-  else if(R.relics.length)l.push("As suas relíquias valem no duelo.");
+  if(D.forca)l.push(D.nome+" joga com <b>+"+Math.round(D.forca*100)+"%</b> nos pontos. As suas bênçãos também valem no duelo.");
+  else if(R.relics.length)l.push("As suas bênçãos valem no duelo.");
   l.push("Na última rodada vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona (empate não salva). Perder o duelo encerra a noitada.");
   abrePainel("Fase "+R.fase+" / "+FASES+(R.fase>=FASES?": chefe final":R.chefe?": chefe":": duelo"),l,[{txt:"COMEÇAR DUELO",cb:abrirDuelo}]);
 }
@@ -1988,7 +1976,6 @@ function encerraRun(venceu,pts){
   limpaRun();
   if(venceu){somFim();clarao("#e3b341");chuva(OURO,160);setTimeout(function(){chuva(OURO,120)},500)}
   else{somAnota(0);clarao("#4a0c0c");tremer(3)}
-  fogoLiga(false);
   var du=R.duelo&&R.duelo.res,D=DUELOS[R.fase];
   abrePainel(venceu?"Noitada completa!":"Noitada encerrada",[
     venceu?"Você venceu as "+FASES+" fases e o chefe final.":
@@ -1997,25 +1984,6 @@ function encerraRun(venceu,pts){
     "Fases vencidas: <b>"+feitas+" de "+FASES+"</b>. Melhor noitada: "+melhor()+".",
     "Bônus: "+listaBonus()+"."],
     [{txt:"NOVA NOITADA",cb:novaRun},{txt:"MENU",cls:"opc",cb:function(){abrirInicio(false)}}]);
-}
-// meta batida: libera o botão AVANÇAR (encerra a fase na hora; as rodadas que sobram não contam)
-$("btn-avancar").addEventListener("click",function(){
-  if(!R||S.fim||rolando)return;
-  var pts=pontosFase();
-  abrePainel("Avançar agora?",["Você fez <b>"+pts+"</b> de "+R.alvo+" (+"+Math.round((pts/R.alvo-1)*100)+"%).",
-    "Seguir jogando não tira pontos, e uma folga de +"+Math.round(MARGEM_TURBO*100)+"% turbina a caça-níquel."],
-    [{txt:"AVANÇAR",cb:encerraCedo},{txt:"CONTINUAR JOGANDO",cls:"opc"}]);
-});
-function encerraCedo(){
-  if(!R||S.fim||rolando)return;
-  var antigos=S.dados.slice(),tinha=S.jogadas>0;
-  R.cedo=true;S.guardado=[false,false,false,false,false];S.jogadas=0;S.extra=0;S.carta=null;modoItem=-1;S.fim=true;
-  if(semMovimento()||!tinha){desenha();posAnotar();return}
-  rolando=true;cenaAtiva=true;
-  desenha();
-  var g=geoCena(),p=planoRetorno(antigos,g);
-  $("etiquetas").innerHTML="<span></span><span></span><span></span><span></span><span></span>";
-  rodaCena(p.dur,function(t){aplicaDados(t,p,g)},function(){cenaAtiva=false;rolando=false;desenha();posAnotar()});
 }
 
 
@@ -2049,7 +2017,7 @@ function testeAbre(){
   h+='<h3>Ações</h3><div class="gr"><button type="button" data-ac="pts">+50 pontos</button><button type="button" data-ac="slot">Caça-níquel agora</button><button type="button" data-ac="vence">Vencer duelo</button><button type="button" data-ac="perde">Perder duelo</button><button type="button" data-ac="limpa">Tirar bônus</button></div>';
   h+='<h3>Ganhar bônus</h3><div class="gr">';
   BONUS.forEach(function(b){var tem=R&&(R.relics.indexOf(b.id)>=0);h+='<button type="button" data-bn="'+b.id+'" class="'+(tem?"on":"")+'" style="border-color:'+RAR_COR[b.r]+'">'+b.nome+'</button>'});
-  h+='</div><small>Relíquias ficam acesas quando já estão com você. Itens vão para a barra de itens. Precisa estar numa noitada.</small>';
+  h+='</div><small>Bênçãos ficam acesas quando já estão com você. Itens vão para a barra de itens. Precisa estar numa noitada.</small>';
   $("tst").innerHTML=h;$("tst").hidden=false;
 }
 if(TESTE){
@@ -2383,7 +2351,7 @@ function aplicaBonus(b){
 function mostraSlot(som){
   var h="",s=R.slot,n=SL.esc.length;
   SL.esc.forEach(function(b,k){
-    var tipo=b.t==="rel"?"Relíquia":b.t==="item"?"Item de uso único":"Pontos";
+    var tipo=b.t==="rel"?"Bênção":b.t==="item"?"Item de uso único":"Pontos";
     var selo=(s.jack&&k===3?'<i class="selo">JACKPOT</i>':'')+(s.cx===k?'<i class="selo m">MALDIÇÃO VENCIDA</i>':'');
     var corpo='<small><b>'+RAR_NOME[b.r].toUpperCase()+'</b> · '+tipo+selo+'</small><strong>'+b.nome+'</strong><span>'+b.desc+'</span>';
     var st=' style="--rc:'+RAR_COR[b.r]+';animation-delay:'+(s.pick?0:k*90)+'ms"';
