@@ -2815,7 +2815,7 @@ function poderInicioRodada(){   // chamado quando volta a vez do jogador
         balao("Regra nova do bar: essa fechou.",null,2.6);aviso("FECHOU A CONTA: "+CATS[J.tranca].nome.toUpperCase()+" TRANCADA NESTA RODADA","p");somTapa();treme("tapa")}}
     return;}
   if(!poder()||!rodadaPoder())return;
-  if(CFG.look===1){J.prev=maoRuim();balao("Vejo nos dados...",J.prev);aviso("PREVISÃO: "+J.prev.join(" "),"p");bip(990,.3,.04,"triangle");bip(1320,.4,.03,"triangle",.15)}
+  if(CFG.look===1){J.prev=maoRuim();balao(["As estrelas me dizem que...","Vejo nas cartas: seus dados serão","Os astros não mentem..."][Math.floor(Math.random()*3)],J.prev);aviso("PREVISÃO: "+J.prev.join(" "),"p");bip(990,.3,.04,"triangle");bip(1320,.4,.03,"triangle",.15)}
   if(CFG.look===2){J.olho=true;balao("Que dados bonitos...",null,3);aviso("O GUAXINIM ESTÁ DE OLHO NOS SEUS DADOS","p");bip(300,.08,.05,"square");bip(240,.12,.05,"square",.1)}
 }
 function poderRouba(){   // antes de rolar: rouba o melhor dado guardado
