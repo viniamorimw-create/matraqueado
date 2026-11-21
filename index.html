@@ -1659,7 +1659,7 @@ function velhaGanho(ch,id){   // linhas que a casa id acabou de fechar
 var DUELOS={5:{look:0,nome:"Rival 1",rod:6,l0:60,pensa:0,forca:0},
             10:{look:2,nome:"Rival 2",rod:8,l0:60,pensa:1,forca:.3},
             14:{look:1,nome:"Chefe 1",rod:8,l0:55,pensa:1,forca:.35},
-            15:{look:4,nome:"Chefe final",rod:10,l0:50,pensa:1,forca:.5}};
+            15:{look:4,nome:"Black Cat",rod:10,l0:50,pensa:1,forca:.5}};
 function limitesDuelo(D){var out=[],i;for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5);return out}                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
 var SLOT_PESOS={n:{c:.50,i:.30,r:.15,l:.05},t:{c:.25,i:.35,r:.28,l:.12}};
 var MAQ_PESOS=[{c:.60,i:.30,r:.09,l:.01},{c:.35,i:.40,r:.20,l:.05},{c:.15,i:.40,r:.33,l:.12}];   // bronze, prata, ouro (nov/2026: menos raras, a noitada estava fácil)
@@ -2726,7 +2726,7 @@ function introCena(dt){
     e=t<IT.placa+.3?1-Math.pow(1-(t-IT.placa)/.3,3):t<IT.sai?1:1+Math.pow((t-IT.sai)/.3,2);
     var px0=Math.round(-200+200*e);
     g.fillStyle="rgba(8,5,10,.92)";g.fillRect(px0,30,195,30);g.fillStyle="#e3b341";g.fillRect(px0,30,195,1);g.fillRect(px0,59,195,1);g.fillStyle="#a87a1f";g.fillRect(px0,32,195,1);g.fillRect(px0,57,195,1);
-    introTexto("O GATO",px0+97,32,22,"#ffd23e","center");introTexto("DONO DO KAT4 HOUSE",px0+97,50,8,"#fff6dc","center");
+    introTexto("BLACK CAT",px0+97,32,22,"#ffd23e","center");introTexto("DONO DO KAT4 HOUSE",px0+97,50,8,"#fff6dc","center");
   }
   // fala em caixa de diálogo, letra a letra, com retrato
   if(t>=IT.fala){
@@ -2739,7 +2739,7 @@ function introCena(dt){
     var bx=4,by=58,bw=187,bh=30,sp=SPR[4];
     g.fillStyle="rgba(8,5,10,.95)";g.fillRect(bx,by,bw,bh);g.strokeStyle="#fff6dc";g.lineWidth=1;g.strokeRect(bx+1.5,by+1.5,bw-3,bh-3);
     if(sp&&sp.ok){g.save();g.beginPath();g.rect(bx+4,by+4,22,22);g.clip();g.fillStyle="#2a1612";g.fillRect(bx+4,by+4,22,22);g.drawImage(sp.img,0,0,sp.w,sp.h,bx+4-17,by+4-4,sp.w,sp.h);g.restore();g.strokeStyle="#e3b341";g.strokeRect(bx+3.5,by+3.5,23,23)}
-    introTexto("O GATO",bx+31,by+3,8,"#ffd23e");
+    introTexto("BLACK CAT",bx+31,by+3,8,"#ffd23e");
     introQuebra(txt.slice(0,Math.floor(I.car)),bw-38).forEach(function(l,j){introTexto(l,bx+31,by+11+j*8,8,"#fff6dc")});
     if(I.car>=txt.length&&I.fim<0&&(t*2)%1<.6)introTexto("▼",bx+bw-9,by+bh-10,8,"#ffd23e");
     if(I.fim>=0){I.fim+=dt;if(I.fim>.3){INTRO=null;ocupado=false;if(cv)cv.style.transform="";desenha()}}
