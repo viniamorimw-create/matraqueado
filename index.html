@@ -3018,27 +3018,41 @@ function cadeiraVazia(){   // a cadeira do adversário, esperando o próximo due
 // mesa vazia: o topo das fases de meta (canvas de 195×92 do jogo; t em segundos)
 var AND=null;   // folha dos figurantes: 6 linhas (0 Rival 1, 1 cartomante, 2 ladrão, 3 garçom, 4 frequentadora, 5 senhor) x 6 quadros, andando para a direita
 function andCarrega(src,fw,fh){var im=new Image();im.onload=function(){AND={img:im,fw:fw,fh:fh}};im.src=src}
-var PASS=[],PASS_T=0,PASS_PROX=1.5,PASS_PE=62;   // pés escondidos atrás do tampo (y 57)
+var PASS_ST=[{l:[],t:0,prox:1.5},{l:[],t:0,prox:1.5}],PASS_PE=62;   // um estado para a mesa vazia (jogo) e outro para o duelo: cada cena tem o seu relógio   // pés escondidos atrás do tampo (y 57)
 function andaQuadro(tp,q,x,dir,esc){   // desenha o quadro q da linha tp com o canto esquerdo em x (dir -1 = espelhado; esc = escala, para quem vem chegando perto)
   var fw=AND.fw,fh=AND.fh,k=esc||1,W=Math.round(fw*k),H=Math.round(fh*k);x=Math.round(x);g.imageSmoothingEnabled=false;
   if(dir<0){g.save();g.translate(x+W,0);g.scale(-1,1);g.drawImage(AND.img,q*fw,tp*fh,fw,fh,0,PASS_PE-H,W,H);g.restore()}
   else g.drawImage(AND.img,q*fw,tp*fh,fw,fh,x,PASS_PE-H,W,H);
 }
-function passantes(t,fora){   // gente passando no salão, atrás da mesa. fora = linha que não pode aparecer (o rival que está sentado)
+// duelo = true: alguns param para assistir (de 2 a 4 s ou de 8 a 15 s), de frente para a mesa, nas laterais (o meio fica atrás do adversário).
+// Se a folha tiver 8 colunas, as colunas 6 e 7 são "olhando" (parado de frente) e "reagindo"; senão, usa o 1º quadro da caminhada.
+function passantes(t,fora,duelo){   // gente passando no salão, atrás da mesa. fora = linha que não pode aparecer (o rival que está sentado)
   if(!AND)return;
-  var dt=t-PASS_T;PASS_T=t;if(!(dt>0)||dt>.1)dt=0;
-  PASS_PROX-=dt;
-  if(PASS_PROX<=0){
-    PASS_PROX=3+Math.random()*7;
-    if(PASS.length<2){
+  var st=PASS_ST[duelo?1:0],PASS=st.l,dt=t-st.t;st.t=t;if(!(dt>0)||dt>.1)dt=0;
+  st.prox-=dt;
+  if(st.prox<=0){
+    st.prox=duelo?2+Math.random()*5:3+Math.random()*7;
+    if(PASS.length<(duelo?3:2)){
       var tipos=[0,1,2,3,4,5].filter(function(x){return x!==fora&&!PASS.some(function(p){return p.tp===x})});
-      var dir=Math.random()<.5?1:-1;
-      PASS.push({tp:tipos[Math.floor(Math.random()*tipos.length)],dir:dir,x:dir>0?-AND.fw:195,v:8+Math.random()*6,d:Math.random()*20});
+      var dir=Math.random()<.5?1:-1,np={tp:tipos[Math.floor(Math.random()*tipos.length)],dir:dir,x:dir>0?-AND.fw:195,v:8+Math.random()*6,d:Math.random()*20};
+      if(duelo&&Math.random()<.65){   // vai parar para assistir num ponto livre de uma das laterais
+        var lado=Math.random()<.5?0:1,alvo=lado?120+Math.random()*14:26+Math.random()*12;   // entre o chope (esquerda), o adversário (meio) e a garrafa (direita)
+        if(!PASS.some(function(q){return q.para!=null&&Math.abs(q.para-alvo)<16})){np.para=alvo;np.fica=Math.random()<.5?2+Math.random()*2:8+Math.random()*7}
+      }
+      PASS.push(np);
     }
   }
-  PASS=PASS.filter(function(p){
-    p.x+=p.dir*p.v*dt;p.d+=p.v*dt;
+  var cols=Math.round(AND.img.width/AND.fw);
+  st.l=PASS.filter(function(p){
     if(p.tp===fora)return false;
+    if(p.para!=null&&p.fica>0&&(p.dir>0?p.x>=p.para:p.x<=p.para)){   // chegou no lugar: fica olhando o duelo
+      p.x=p.para;p.fica-=dt;p.olha=(p.olha||0)+dt;
+      var vira=p.x+AND.fw/2<97?1:-1,q=cols>=8?(Math.floor(p.olha/1.6)%5===4?7:6):0;
+      andaQuadro(p.tp,q,p.x,cols>=8?1:vira);
+      if(p.fica<=0)p.para=null;   // segue o caminho
+      return true;
+    }
+    p.x+=p.dir*p.v*dt;p.d+=p.v*dt;
     andaQuadro(p.tp,Math.floor(p.d/3.2)%6,p.x,p.dir);
     return p.dir>0?p.x<196:p.x>-AND.fw-1;
   });
@@ -3080,7 +3094,7 @@ function desenhaCena(now){
   var dd=J.ele.tot-J.eu.tot,L2=limite(),est={abre:CENA.pisca>0?Math.abs(CENA.pisca-.08)/.08:1,
       humor:J.fim?(J.fim==="ele"?"calmo":"bravo"):(J.vez==="ele"&&dd<-.6*L2)?"tenso":dd<-.4*L2?"bravo":dd>.4*L2?"calmo":"normal",
       ox:Math.round(Math.sin(CENA.ang)*2),morto:CENA.morto==="ele",vence:J.fim==="ele",t:t};
-  passantes(t,CFG.look<3?CFG.look:-1);   // o adversário sentado não passa no salão (linhas 0, 1 e 2 dos figurantes)
+  passantes(t,CFG.look<3?CFG.look:-1,true);   // o adversário sentado não passa no salão (linhas 0, 1 e 2 dos figurantes)
   var C=CHG[CFG.look],ch=CENA.chega,ec=ch&&C?t-ch.t0:9,CH_A=2.4,CH_Q=.14,CH_F=CH_A+CH_Q*(C_N(C)-1);   // chegada: anda CH_A s pelo salão e senta quadro a quadro
   g.imageSmoothingEnabled=false;
   if(ec<CH_A){   // vem do fundo do salão até a mesa, crescendo com a perspectiva
