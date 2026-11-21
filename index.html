@@ -2678,12 +2678,79 @@ function somAnota(ok){if(ok){bip(520,.07,.05);bip(780,.1,.05,"square",.07)}else 
 function somBoom(){ruido(1.1,.9);bip(60,.8,.4,"sine")}
 function somTique(){bip(1400,.02,.03)}
 
+
+/* ---------- abertura do chefe final ---------- */
+var INTRO=null,INTRO_FALAS=["Então é você que anda limpando as mesas da minha casa...","Senta. A última rodada é por conta da casa."];
+var IT={escuro:.7,aviso:3.4,chega:3.4,impacto:6.1,placa:6.3,sai:8.7,fala:9.1};   // tempos (s) de cada parte
+function introInicia(){INTRO={t:0,fala:-1,car:0,espera:0,som:{},fim:-1};ocupado=true;if(CENA.chega)CENA.chega.t0=CENA.t+IT.chega}
+function introSom(k,f){if(INTRO.som[k])return;INTRO.som[k]=1;f()}
+function introPula(){   // toque na cena: pula a parte animada, completa o texto ou passa para a próxima fala
+  if(!INTRO||INTRO.fim>=0)return;
+  if(INTRO.t<IT.fala){INTRO.t=IT.fala;if(CENA.chega)CENA.chega.t0=CENA.t-20;INTRO.som={a:1,i:1,j:1}}
+  else if(INTRO.car<INTRO_FALAS[INTRO.fala].length)INTRO.car=INTRO_FALAS[INTRO.fala].length;
+  else introProxima();
+}
+function introProxima(){INTRO.fala++;INTRO.car=0;INTRO.espera=0;if(INTRO.fala>=INTRO_FALAS.length){INTRO.fala=INTRO_FALAS.length-1;INTRO.fim=0}}
+function introTexto(txt,x,y,tam,cor,alinha){g.font=tam+'px "Jersey 10","Cinco",monospace';g.textAlign=alinha||"left";g.textBaseline="top";var mw=186;g.fillStyle="#08060a";g.fillText(txt,x+1,y+1,mw);g.fillStyle=cor;g.fillText(txt,x,y,mw)}   // maxWidth: nunca sai da cena
+function introQuebra(txt,larg){var l=[],a="";txt.split(" ").forEach(function(p){var t=a?a+" "+p:p;g.font='8px "Jersey 10","Cinco",monospace';if(g.measureText(t).width>larg&&a){l.push(a);a=p}else a=t});return l.concat([a])}
+function introCena(dt){
+  if(!INTRO)return;
+  var I=INTRO,t=(I.t+=dt),k,e,cv=$("cena");
+  // escuridão: cai no começo; no holofote abre um círculo de luz no meio; volta no impacto
+  var esc=t<IT.escuro?t/IT.escuro*.88:t<IT.impacto?.88:Math.max(0,.88-(t-IT.impacto)/.4*.88);
+  if(esc>0){
+    if(t>=IT.chega&&t<IT.impacto+.4){var gr=g.createRadialGradient(97,34,6,97,34,40);gr.addColorStop(0,"rgba(5,3,6,"+esc*.15+")");gr.addColorStop(1,"rgba(5,3,6,"+esc+")");g.fillStyle=gr}
+    else g.fillStyle="rgba(5,3,6,"+esc+")";
+    g.fillRect(0,0,195,92);
+  }
+  introSom("a",function(){[400,300,220,150,100].forEach(function(f,i){bip(f,.12,.05,"square",i*.09)});ruido(.25,.15)});
+  // aviso piscando com sirene
+  if(t>=IT.escuro&&t<IT.aviso){
+    var on=(t*4)%1<.65,dx=(t*40)%16;
+    [[18,8],[66,8]].forEach(function(b){g.fillStyle="#7a0c14";g.fillRect(0,b[0],195,b[1]);g.fillStyle="#ff2a3a";for(k=-16;k<210;k+=16){g.beginPath();g.moveTo(k+dx,b[0]);g.lineTo(k+dx+8,b[0]);g.lineTo(k+dx+4,b[0]+b[1]);g.lineTo(k+dx-4,b[0]+b[1]);g.fill()}});
+    if(on){introTexto("!! CHEFE FINAL !!",97,34,20,"#ff3b3b","center");introTexto("O DONO DA CASA CHEGOU",97,53,8,"#ffd23e","center")}
+    var n=Math.floor((t-IT.escuro)/.4);introSom("s"+n,function(){bip(n%2?660:880,.22,.05,"square")});
+  }
+  // passos pesados enquanto ele atravessa o salão
+  if(t>=IT.chega&&t<IT.chega+2.4){var pn=Math.floor((t-IT.chega)/.42);introSom("p"+pn,function(){bip(70,.14,.18,"sine");ruido(.05,.08)})}
+  // impacto: clarão, tremida e baixo
+  if(t>=IT.impacto&&t<IT.impacto+.3){g.fillStyle="rgba(255,246,220,"+(1-(t-IT.impacto)/.3)+")";g.fillRect(0,0,195,92)}
+  introSom("i",function(){bip(55,.7,.35,"sine");ruido(.35,.45)});
+  if(t>=IT.impacto&&t<IT.impacto+.45&&cv){var a=(1-(t-IT.impacto)/.45)*4;cv.style.transform="translate("+((Math.random()-.5)*a).toFixed(1)+"px,"+((Math.random()-.5)*a).toFixed(1)+"px)"}else if(cv&&cv.style.transform)cv.style.transform="";
+  // faixas de cinema (entram com a placa, saem no fim)
+  var fx=t<IT.placa?0:Math.min(1,(t-IT.placa)/.25);if(I.fim>=0)fx=Math.max(0,1-I.fim/.3);
+  if(fx>0){g.fillStyle="#050307";g.fillRect(0,0,195,Math.round(10*fx));g.fillRect(0,92-Math.round(10*fx),195,Math.round(10*fx))}
+  // placa com o nome: entra pela esquerda, sai pela direita
+  if(t>=IT.placa&&t<IT.sai+.3){
+    introSom("j",function(){[262,311,392,523,622].forEach(function(f,i){bip(f,.16,.05,"square",i*.07)});bip(131,.8,.08,"triangle",.35);bip(196,.8,.06,"triangle",.35)});
+    e=t<IT.placa+.3?1-Math.pow(1-(t-IT.placa)/.3,3):t<IT.sai?1:1+Math.pow((t-IT.sai)/.3,2);
+    var px0=Math.round(-200+200*e);
+    g.fillStyle="rgba(8,5,10,.92)";g.fillRect(px0,30,195,30);g.fillStyle="#e3b341";g.fillRect(px0,30,195,1);g.fillRect(px0,59,195,1);g.fillStyle="#a87a1f";g.fillRect(px0,32,195,1);g.fillRect(px0,57,195,1);
+    introTexto("O GATO",px0+97,32,22,"#ffd23e","center");introTexto("DONO DO KAT4 HOUSE",px0+97,50,8,"#fff6dc","center");
+  }
+  // fala em caixa de diálogo, letra a letra, com retrato
+  if(t>=IT.fala){
+    if(I.fala<0)introProxima();
+    var txt=INTRO_FALAS[I.fala];
+    if(I.fim<0){
+      if(I.car<txt.length){var c0=Math.floor(I.car);I.car=Math.min(txt.length,I.car+dt*32);if(Math.floor(I.car)>c0&&txt[c0]!==" ")bip(520+Math.random()*80,.025,.025,"square")}
+      else if((I.espera+=dt)>3)introProxima();
+    }
+    var bx=4,by=58,bw=187,bh=30,sp=SPR[4];
+    g.fillStyle="rgba(8,5,10,.95)";g.fillRect(bx,by,bw,bh);g.strokeStyle="#fff6dc";g.lineWidth=1;g.strokeRect(bx+1.5,by+1.5,bw-3,bh-3);
+    if(sp&&sp.ok){g.save();g.beginPath();g.rect(bx+4,by+4,22,22);g.clip();g.fillStyle="#2a1612";g.fillRect(bx+4,by+4,22,22);g.drawImage(sp.img,0,0,sp.w,sp.h,bx+4-17,by+4-4,sp.w,sp.h);g.restore();g.strokeStyle="#e3b341";g.strokeRect(bx+3.5,by+3.5,23,23)}
+    introTexto("O GATO",bx+31,by+3,8,"#ffd23e");
+    introQuebra(txt.slice(0,Math.floor(I.car)),bw-38).forEach(function(l,j){introTexto(l,bx+31,by+11+j*8,8,"#fff6dc")});
+    if(I.car>=txt.length&&I.fim<0&&(t*2)%1<.6)introTexto("▼",bx+bw-9,by+bh-10,8,"#ffd23e");
+    if(I.fim>=0){I.fim+=dt;if(I.fim>.3){INTRO=null;ocupado=false;if(cv)cv.style.transform="";desenha()}}
+  }
+}
 /* ---------- estado ---------- */
 function novo(){
   ficha++;                                     // invalida qualquer jogada antiga que ainda esteja em andamento
   J={rod:0,vez:"eu",eu:{sc:{},tot:0},ele:{sc:{},tot:0},dados:[0,0,0,0,0],guard:[false,false,false,false,false],lances:0,boca:false,fim:null,nova:null,extra:0,carta:null,modo:-1};
   vendo="eu";ocupado=false;
-  CENA.alvo=Math.PI;CENA.ang=Math.PI;CENA.vel=0;CENA.boom=null;CENA.morto=null;CENA.dadosDele=null;CENA.chega=CHG[CFG.look]?{t0:CENA.t}:null;
+  CENA.alvo=Math.PI;CENA.ang=Math.PI;CENA.vel=0;CENA.boom=null;CENA.morto=null;CENA.dadosDele=null;CENA.chega=CHG[CFG.look]?{t0:CENA.t}:null;INTRO=null;if(CFG.look===4&&CHG[4])introInicia();   // o chefe final tem abertura
   $("tela").hidden=true;desenha();
 }
 function mask(q){var m=0,i;for(i=0;i<10;i++)if(q.sc[CATS[i].id]==null)m|=1<<i;return m}
@@ -3100,7 +3167,8 @@ function desenhaCena(now){
   passantes(t,CFG.look<3?CFG.look:-1,true);   // o adversário sentado não passa no salão (linhas 0, 1 e 2 dos figurantes)
   var C=CHG[CFG.look],ch=CENA.chega,ec=ch&&C?t-ch.t0:9,CH_A=2.4,CH_Q=.14,CH_F=CH_A+CH_Q*(C_N(C)-1);   // chegada: anda CH_A s pelo salão e senta quadro a quadro
   g.imageSmoothingEnabled=false;
-  if(ec<CH_A){   // vem do fundo do salão até a mesa, crescendo com a perspectiva
+  if(ec<0){}   // ainda não entrou (abertura do chefe)
+  else if(ec<CH_A){   // vem do fundo do salão até a mesa, crescendo com a perspectiva
     // vem do fundo do salão até a cadeira: cresce até a escala de quem está sentado (o quadro em pé da sentada tem ~94 px)
     // e desce na tela conforme chega perto. Longe, passa por trás da cadeira; no fim, já está na frente dela.
     var u=Math.min(1,ec/CH_A),e=u*u*(3-2*u),pf=C.c.senta[0][5]+3+C.c.senta[0][3],k=.42+(pf/C.c.ah-.42)*e,W=Math.round(C.c.aw*k),H=Math.round(C.c.ah*k),q=Math.floor(ec*30/3.2)%6,
@@ -3153,6 +3221,7 @@ function desenhaCena(now){
     else{for(i=0;i<16;i++)px(b.x-20+((i*29)%40)+Math.sin(t+i)*2,b.y-6-((t*8+i*9)%34),4,4,"rgba(60,60,70,.5)")}
   }
   if(CENA.morto==="eu"){g.fillStyle="rgba(168,23,32,.35)";g.fillRect(0,0,195,92)}
+  introCena(dt);
   if(rodando)requestAnimationFrame(desenhaCena);
 }
 function giraBomba(para){   // dá o tapa: a bomba roda meio giro até o lado de quem vai jogar
@@ -3338,6 +3407,7 @@ $("itens").addEventListener("click",function(e){var b=e.target.closest("[data-it
 /* ---------- eventos ---------- */
 $("btn-rolar").addEventListener("click",rolar);
 $("dados").addEventListener("click",function(e){var b=e.target.closest("[data-i]");if(!b||J.vez!=="eu"||ocupado)return;var i=+b.getAttribute("data-i");if(J.modo>=0){escolheDado(i);return}if(J.lances>=maxL())return;J.guard[i]=!J.guard[i];somTique();desenhaDados()});
+$("cena").addEventListener("click",function(){introPula()});
 $("cartela").addEventListener("click",function(e){
   if(e.target.closest("#btn-vercart")){vendo=vendo==="eu"?"ele":"eu";desenhaPlacas();desenhaCartela();return}
   var b=e.target.closest("[data-c]");if(b)anotar(+b.getAttribute("data-c"))});
