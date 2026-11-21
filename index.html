@@ -2808,40 +2808,42 @@ function poderInicioRodada(){   // chamado quando volta a vez do jogador
   J.prev=null;J.olho=false;J.tranca=-1;
   if(CFG.look===4){var o=GATO_ROD[J.rod];if(!o||J.rod>=RODADAS-1)return;
     if(o==="prev"){J.prev=maoRuim();balao("Conheço esse jogo. Vai cair:",J.prev);aviso("PREVISÃO: "+J.prev.join(" "),"p");bip(990,.3,.04,"triangle");bip(1320,.4,.03,"triangle",.15)}
-    if(o==="olho"){J.olho=true;balao("Esses dados são do bar, né?",null);aviso("O BLACK CAT ESTÁ DE OLHO NOS SEUS DADOS","p");bip(300,.08,.05,"square");bip(240,.12,.05,"square",.1)}
+    if(o==="olho"){J.olho=true;balao("Esses dados são do bar, né?",null,3);aviso("O BLACK CAT ESTÁ DE OLHO NOS SEUS DADOS","p");bip(300,.08,.05,"square");bip(240,.12,.05,"square",.1)}
     if(o==="tranca"){var livres=ORDEM.filter(function(ci){return J.eu.sc[CATS[ci].id]==null});
       if(livres.length>=3){var bons=livres.filter(function(ci){return ci>=5});var esc=(bons.length?bons:livres);J.tranca=esc[Math.floor(Math.random()*esc.length)];
         balao("Regra nova do bar: essa fechou.",null,2.6);aviso("FECHOU A CONTA: "+CATS[J.tranca].nome.toUpperCase()+" TRANCADA NESTA RODADA","p");somTapa();treme("tapa")}}
     return;}
   if(!poder()||!rodadaPoder())return;
   if(CFG.look===1){J.prev=maoRuim();balao("Vejo nos dados...",J.prev);aviso("PREVISÃO: "+J.prev.join(" "),"p");bip(990,.3,.04,"triangle");bip(1320,.4,.03,"triangle",.15)}
-  if(CFG.look===2){J.olho=true;balao("Que dados bonitos...",null);aviso("O GUAXINIM ESTÁ DE OLHO NOS SEUS DADOS","p");bip(300,.08,.05,"square");bip(240,.12,.05,"square",.1)}
+  if(CFG.look===2){J.olho=true;balao("Que dados bonitos...",null,3);aviso("O GUAXINIM ESTÁ DE OLHO NOS SEUS DADOS","p");bip(300,.08,.05,"square");bip(240,.12,.05,"square",.1)}
 }
 function poderRouba(){   // antes de rolar: rouba o melhor dado guardado
   if(!J.olho||J.lances===0)return;
   var melhor=-1;for(var i=0;i<5;i++)if(J.guard[i]&&(melhor<0||J.dados[i]>J.dados[melhor]))melhor=i;
   if(melhor<0)return;
   J.olho=false;J.guard[melhor]=false;
-  balao(CFG.look===4?"Quero de volta!":"Esse aqui é meu!",null,1.8);aviso("MÃO LEVE! ROUBOU SEU "+J.dados[melhor],"p");ruido(.08,.2);bip(700,.05,.05,"square");bip(1050,.07,.05,"square",.06);treme("tapa");
+  balao(CFG.look===4?"Quero de volta!":"Esse aqui é meu!",null,2.2);aviso("MÃO LEVE! ROUBOU SEU "+J.dados[melhor],"p");ruido(.08,.2);bip(700,.05,.05,"square");bip(1050,.07,.05,"square",.06);treme("tapa");
 }
-function poderCena(){   // balão de fala do adversário, no alto da cena
+function poderCena(){   // fala do adversário na mesma caixa de diálogo da abertura do chefe: retrato, nome e texto letra a letra
   var b=CENA.balao;if(!b)return;
-  if((b.dur&&CENA.t-b.t0>b.dur)||J.fim){CENA.balao=null;return}
-  // balão à direita do adversário (não cobre o rosto), texto em até 3 linhas, rabinho apontando para ele
-  g.font='7px "Jersey 10","Cinco",monospace';
-  var a=Math.min(1,(CENA.t-b.t0)/.15),w=80,lin=[],at="";
-  b.txt.split(" ").forEach(function(p){var t=at?at+" "+p:p;if(g.measureText(t).width>w-6&&at){lin.push(at);at=p}else at=t});lin.push(at);
-  var h=3+lin.length*7+(b.dados?12:0),x=112,y=3;
+  if((b.dur&&CENA.t-b.t0>b.dur)||J.fim||INTRO){CENA.balao=null;return}
+  var c0=Math.floor(b.car||0);b.car=Math.min(b.txt.length,(CENA.t-b.t0)*34);if(Math.floor(b.car)>c0&&b.txt[c0]&&b.txt[c0]!==" ")bip(520+Math.random()*80,.025,.022,"square");
+  var bx=4,by=58,bw=187,bh=30,sp=SPR[CFG.look],a=Math.min(1,(CENA.t-b.t0)/.12);
   g.save();g.globalAlpha=a;
-  g.fillStyle="#fff6dc";g.fillRect(x,y,w,h);g.fillStyle="#1a0a0e";g.fillRect(x,y-1,w,1);g.fillRect(x,y+h,w,1);g.fillRect(x-1,y,1,h);g.fillRect(x+w,y,1,h);
-  g.fillStyle="#fff6dc";g.fillRect(x-3,y+8,3,3);g.fillRect(x-5,y+10,2,2);g.fillStyle="#1a0a0e";g.fillRect(x-3,y+7,3,1);g.fillRect(x-6,y+10,1,2);g.fillRect(x-5,y+12,4,1);
-  g.textAlign="left";g.textBaseline="top";g.fillStyle="#1a0a0e";lin.forEach(function(l,k){g.fillText(l,x+3,y+2+k*7,w-6)});
-  if(b.dados){x=x+2;y=y+lin.length*7-9}
-  if(b.dados)b.dados.forEach(function(v,i){   // dadinhos da previsão
-    var dx=x+3+i*15,dy=y+12,P={1:[[4,4]],2:[[2,2],[6,6]],3:[[2,2],[4,4],[6,6]],4:[[2,2],[6,2],[2,6],[6,6]],5:[[2,2],[6,2],[4,4],[2,6],[6,6]],6:[[2,2],[6,2],[2,4],[6,4],[2,6],[6,6]]};
-    g.fillStyle="#1a0a0e";g.fillRect(dx-1,dy-1,11,11);g.fillStyle="#f3dcb4";g.fillRect(dx,dy,9,9);g.fillStyle="#5a1a6e";
-    P[v].forEach(function(q){g.fillRect(dx+q[0]-.5,dy+q[1]-.5,2,2)});
-  });
+  g.fillStyle="rgba(8,5,10,.95)";g.fillRect(bx,by,bw,bh);g.strokeStyle="#fff6dc";g.lineWidth=1;g.strokeRect(bx+1.5,by+1.5,bw-3,bh-3);
+  if(sp&&sp.ok){   // retrato sem zoom: o busto inteiro cabe no quadrinho
+    var k=Math.min(22/sp.w,22/sp.h),dw=sp.w*k,dh=sp.h*k;g.fillStyle="#2a1612";g.fillRect(bx+4,by+4,22,22);
+    g.imageSmoothingEnabled=true;g.drawImage(sp.img,0,0,sp.w,sp.h,bx+4+(22-dw)/2,by+4+(22-dh),dw,dh);g.imageSmoothingEnabled=false;
+    g.strokeStyle="#e3b341";g.strokeRect(bx+3.5,by+3.5,23,23)}
+  introTexto(nomeR().toUpperCase(),bx+31,by+3,8,"#ffd23e");
+  var txt=b.txt.slice(0,Math.floor(b.car));
+  if(b.dados){
+    introTexto(txt,bx+31,by+10,8,"#fff6dc");
+    if(b.car>=b.txt.length)b.dados.forEach(function(v,i){
+      var dx=bx+32+i*13,dy=by+19,P={1:[[4,4]],2:[[2,2],[6,6]],3:[[2,2],[4,4],[6,6]],4:[[2,2],[6,2],[2,6],[6,6]],5:[[2,2],[6,2],[4,4],[2,6],[6,6]],6:[[2,2],[6,2],[2,4],[6,4],[2,6],[6,6]]};
+      g.fillStyle="#f3dcb4";g.fillRect(dx,dy,9,9);g.fillStyle="#1a0a0e";P[v].forEach(function(q){g.fillRect(dx+q[0]-.5,dy+q[1]-.5,2,2)});
+    });
+  }else introQuebra(txt,bw-38).forEach(function(l,j){introTexto(l,bx+31,by+11+j*8,8,"#fff6dc")});
   g.restore();
 }
 /* ---------- estado ---------- */
