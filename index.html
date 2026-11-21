@@ -1276,6 +1276,7 @@ function pintaPata(){                              // patinha do JOGAR: normal e
   im.src=DADOS_ARTE.pata;
 }
 try{document.documentElement.style.setProperty("--dados","url("+DADOS_ARTE.faces+")")}catch(e){}
+window.DADOS_ARTE=DADOS_ARTE;   // o duelo usa as faces na previsão da coruja
 
 /* ---------- som ---------- */
 var AC=null,mudo=false,chiado=null;
@@ -2824,6 +2825,16 @@ function poderRouba(){   // antes de rolar: rouba o melhor dado guardado
   J.olho=false;J.guard[melhor]=false;
   balao(CFG.look===4?"Quero de volta!":"Esse aqui é meu!",null,2.2);aviso("MÃO LEVE! ROUBOU SEU "+J.dados[melhor],"p");ruido(.08,.2);bip(700,.05,.05,"square");bip(1050,.07,.05,"square",.06);treme("tapa");
 }
+var MINI=null;
+function dadoMini(v){   // face v da arte dos dados (linha "osso"), reduzida em etapas para ficar limpa em 22 px (11 na cena 2x)
+  if(MINI)return MINI[v];
+  var A=window.DADOS_ARTE;if(!A||!A.faces)return null;
+  MINI={};var im=new Image();
+  im.onload=function(){for(var k=1;k<=6;k++){var t=112,src=document.createElement("canvas");src.width=src.height=112;src.getContext("2d").drawImage(im,(k-1)*112,0,112,112,0,0,112,112);
+    while(t>44){var n=Math.max(22,t>>1),c=document.createElement("canvas");c.width=c.height=n;var x=c.getContext("2d");x.imageSmoothingEnabled=true;x.imageSmoothingQuality="high";x.drawImage(src,0,0,t,t,0,0,n,n);src=c;t=n}
+    var fim=document.createElement("canvas");fim.width=fim.height=22;var y=fim.getContext("2d");y.imageSmoothingEnabled=true;y.imageSmoothingQuality="high";y.drawImage(src,0,0,t,t,0,0,22,22);MINI[k]=fim}};
+  im.src=A.faces;return null;
+}
 function poderCena(){   // fala do adversário na mesma caixa de diálogo da abertura do chefe: retrato, nome e texto letra a letra
   var b=CENA.balao;if(!b)return;
   if((b.dur&&CENA.t-b.t0>b.dur)||J.fim||INTRO){CENA.balao=null;return}
@@ -2839,10 +2850,7 @@ function poderCena(){   // fala do adversário na mesma caixa de diálogo da abe
   var txt=b.txt.slice(0,Math.floor(b.car));
   if(b.dados){
     introTexto(txt,bx+31,by+10,8,"#fff6dc");
-    if(b.car>=b.txt.length)b.dados.forEach(function(v,i){
-      var dx=bx+32+i*13,dy=by+19,P={1:[[4,4]],2:[[2,2],[6,6]],3:[[2,2],[4,4],[6,6]],4:[[2,2],[6,2],[2,6],[6,6]],5:[[2,2],[6,2],[4,4],[2,6],[6,6]],6:[[2,2],[6,2],[2,4],[6,4],[2,6],[6,6]]};
-      g.fillStyle="#f3dcb4";g.fillRect(dx,dy,9,9);g.fillStyle="#1a0a0e";P[v].forEach(function(q){g.fillRect(dx+q[0]-.5,dy+q[1]-.5,2,2)});
-    });
+    if(b.car>=b.txt.length)b.dados.forEach(function(v,i){var f=dadoMini(v);if(f)g.drawImage(f,bx+31+i*14,by+17,11,11)});   // os mesmos dados do jogo
   }else introQuebra(txt,bw-38).forEach(function(l,j){introTexto(l,bx+31,by+11+j*8,8,"#fff6dc")});
   g.restore();
 }
