@@ -2783,12 +2783,58 @@ function introCena(dt){
     if(I.fim>=0){I.fim+=dt;if(I.fim>.3){INTRO=null;ocupado=false;if(cv)cv.style.transform="";desenha()}}
   }
 }
+
+/* ---------- poderes dos adversários ---------- */
+var PODERES={
+  1:{nome:"Previsão",desc:"Em algumas rodadas a coruja prevê uma mão ruim, e o seu primeiro lance da rodada cai exatamente nela. Use os outros lances para escapar."},
+  2:{nome:"Mão leve",desc:"Em algumas rodadas o guaxinim fica de olho: no primeiro lance com dados guardados, ele rouba o melhor dado guardado e ele volta a rolar."}
+};
+function poder(){return PODERES[CFG.look]?CFG.look:0}
+function rodadaPoder(){var n=RODADAS,r=J.rod;return r>0&&r<n-1&&(r===1||r===Math.round(n/2)||r===n-2)}   // 3 vezes por duelo, nunca na 1ª nem na última rodada
+function maoRuim(){   // sem Full, Seguida, Quadrada ou General, sem trinca, soma baixa
+  for(var t=0;t<200;t++){
+    var d=[0,0,0,0,0].map(function(){return 1+Math.floor(Math.random()*(t<100?4:6))});
+    var c={};d.forEach(function(v){c[v]=(c[v]||0)+1});var mx=Math.max.apply(null,Object.keys(c).map(function(k){return c[k]}));
+    var soma=d.reduce(function(a,b){return a+b},0);
+    if(mx<=2&&soma<=14&&!X1.pontos(6,d,true)&&!X1.pontos(7,d,true)&&!X1.pontos(8,d,true)&&!X1.pontos(9,d,true))return d.sort();
+  }
+  return [1,1,2,3,6];
+}
+function balao(txt,dados,dur){CENA.balao={txt:txt,dados:dados||null,t0:CENA.t,dur:dur||0}}   // dur 0 = fica até sumir de propósito
+function poderInicioRodada(){   // chamado quando volta a vez do jogador
+  J.prev=null;J.olho=false;
+  if(!poder()||!rodadaPoder())return;
+  if(CFG.look===1){J.prev=maoRuim();balao("Vejo nas cartas...",J.prev);aviso("PREVISÃO: "+J.prev.join(" "),"p");bip(990,.3,.04,"triangle");bip(1320,.4,.03,"triangle",.15)}
+  if(CFG.look===2){J.olho=true;balao("Que dados bonitos...",null);aviso("O GUAXINIM ESTÁ DE OLHO NOS SEUS DADOS","p");bip(300,.08,.05,"square");bip(240,.12,.05,"square",.1)}
+}
+function poderRouba(){   // antes de rolar: rouba o melhor dado guardado
+  if(!J.olho||J.lances===0)return;
+  var melhor=-1;for(var i=0;i<5;i++)if(J.guard[i]&&(melhor<0||J.dados[i]>J.dados[melhor]))melhor=i;
+  if(melhor<0)return;
+  J.olho=false;J.guard[melhor]=false;
+  balao("Esse aqui é meu!",null,1.8);aviso("MÃO LEVE! ROUBOU SEU "+J.dados[melhor],"p");ruido(.08,.2);bip(700,.05,.05,"square");bip(1050,.07,.05,"square",.06);treme("tapa");
+}
+function poderCena(){   // balão de fala do adversário, no alto da cena
+  var b=CENA.balao;if(!b)return;
+  if((b.dur&&CENA.t-b.t0>b.dur)||J.fim){CENA.balao=null;return}
+  var a=Math.min(1,(CENA.t-b.t0)/.15),w=b.dados?78:Math.min(110,16+b.txt.length*4.2),h=b.dados?24:13,x=Math.round(130-w/2),y=3;
+  g.save();g.globalAlpha=a;
+  g.fillStyle="#fff6dc";g.fillRect(x,y,w,h);g.fillStyle="#1a0a0e";g.fillRect(x,y-1,w,1);g.fillRect(x,y+h,w,1);g.fillRect(x-1,y,1,h);g.fillRect(x+w,y,1,h);
+  g.fillStyle="#fff6dc";g.fillRect(x+10,y+h,4,2);g.fillRect(x+9,y+h+2,3,2);g.fillStyle="#1a0a0e";g.fillRect(x+8,y+h+2,1,2);g.fillRect(x+12,y+h+2,1,2);g.fillRect(x+9,y+h+4,2,1);
+  g.font='7px "Jersey 10","Cinco",monospace';g.textAlign="center";g.textBaseline="top";g.fillStyle="#1a0a0e";g.fillText(b.txt,x+w/2,y+2,w-4);
+  if(b.dados)b.dados.forEach(function(v,i){   // dadinhos da previsão
+    var dx=x+5+i*14,dy=y+11,P={1:[[4,4]],2:[[2,2],[6,6]],3:[[2,2],[4,4],[6,6]],4:[[2,2],[6,2],[2,6],[6,6]],5:[[2,2],[6,2],[4,4],[2,6],[6,6]],6:[[2,2],[6,2],[2,4],[6,4],[2,6],[6,6]]};
+    g.fillStyle="#1a0a0e";g.fillRect(dx-1,dy-1,11,11);g.fillStyle="#f3dcb4";g.fillRect(dx,dy,9,9);g.fillStyle="#5a1a6e";
+    P[v].forEach(function(q){g.fillRect(dx+q[0]-.5,dy+q[1]-.5,2,2)});
+  });
+  g.restore();
+}
 /* ---------- estado ---------- */
 function novo(){
   ficha++;                                     // invalida qualquer jogada antiga que ainda esteja em andamento
   J={rod:0,vez:"eu",eu:{sc:{},tot:0},ele:{sc:{},tot:0},dados:[0,0,0,0,0],guard:[false,false,false,false,false],lances:0,boca:false,fim:null,nova:null,extra:0,carta:null,modo:-1};
   vendo="eu";ocupado=false;
-  CENA.alvo=Math.PI;CENA.ang=Math.PI;CENA.vel=0;CENA.boom=null;CENA.morto=null;CENA.dadosDele=null;CENA.chega=CHG[CFG.look]?{t0:CENA.t}:null;INTRO=null;if(CFG.look===4&&CHG[4])introInicia();   // o chefe final tem abertura
+  CENA.alvo=Math.PI;CENA.ang=Math.PI;CENA.vel=0;CENA.boom=null;CENA.morto=null;CENA.dadosDele=null;CENA.balao=null;CENA.chega=CHG[CFG.look]?{t0:CENA.t}:null;INTRO=null;if(CFG.look===4&&CHG[4])introInicia();   // o chefe final tem abertura
   $("tela").hidden=true;desenha();
 }
 function mask(q){var m=0,i;for(i=0;i<10;i++)if(q.sc[CATS[i].id]==null)m|=1<<i;return m}
@@ -3257,7 +3303,7 @@ function desenhaCena(now){
     else{for(i=0;i<16;i++)px(b.x-20+((i*29)%40)+Math.sin(t+i)*2,b.y-6-((t*8+i*9)%34),4,4,"rgba(60,60,70,.5)")}
   }
   if(CENA.morto==="eu"){g.fillStyle="rgba(168,23,32,.35)";g.fillRect(0,0,195,92)}
-  introCena(dt);
+  poderCena();introCena(dt);
   if(rodando)requestAnimationFrame(desenhaCena);
 }
 function giraBomba(para){   // dá o tapa: a bomba roda meio giro até o lado de quem vai jogar
@@ -3278,9 +3324,10 @@ function sorteiaEu(){   // carta de dados viciados (uma rodada): 9 em 10 saem do
 async function rolar(){
   var f=ficha;
   if(J.vez!=="eu"||ocupado||J.lances>=maxL()||J.fim)return;
-  ocupado=true;somRola();J.modo=-1;
+  ocupado=true;somRola();J.modo=-1;poderRouba();
   var todos=J.lances===0||J.guard.every(function(g){return !g});   // de boca: os 5 dados rolados juntos
   for(var k=0;k<5;k++){for(var i=0;i<5;i++)if(!J.guard[i])J.dados[i]=sorteiaEu();desenha(true);await espera(90);if(f!==ficha)return}
+  if(J.prev&&J.lances===0){J.dados=J.prev.slice();J.prev=null;balao("Eu disse.",null,1.6)}   // a previsão da coruja se cumpre
   if(window.TESTE_PROX){for(i=0;i<5;i++)if(!J.guard[i])J.dados[i]=window.TESTE_PROX[i]||J.dados[i];window.TESTE_PROX=null}   // modo de teste
   J.boca=todos;J.lances++;ocupado=false;desenha();
   falaJogada(J.dados,J.boca);
@@ -3359,7 +3406,7 @@ async function confere(){
     await espera(1100);if(f!==ficha)return;explode(per);return;
   }
   if(dif()>limite()){if(perde==="eu"){giraBomba();await espera(800);if(f!==ficha)return}explode(perde);return;}
-  J.vez="eu";vendo="eu";giraBomba();J.nova=null;ocupado=false;desenha();
+  J.vez="eu";vendo="eu";giraBomba();J.nova=null;ocupado=false;poderInicioRodada();desenha();
 }
 function explode(quem){
   var p=posBomba();CENA.boom={x:p.x,y:p.y,t0:performance.now()};CENA.morto=quem;
@@ -3377,7 +3424,7 @@ function fim(vence,bomba){
   $("de-novo").onclick=CFG.aoFim?function(){var cb=CFG.aoFim,res={vence:vence==="eu",bomba:bomba&&!J.ultimo,eu:J.eu.tot,ele:J.ele.tot,rod:Math.min(J.rod+1,RODADAS)};fechar();cb(res)}:novo;
 }
 function regras(){
-  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. No fim vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona'+(CFG.aoFim?' (empate não salva)':'')+'.</li>'+(CFG.forca?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>Seus bônus e itens da noitada valem no duelo.</li>':'')+(E().velha?'<li><b>Jogo da velha:</b> três casas em linha com o valor máximo valem +'+E().velha+', para os dois (número: 5 dados iguais; Full, Seguida e Quadrada: pontuou; a coluna do meio também exige o General).</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li></ul><button type="button" id="ok">VOLTAR</button>';
+  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. No fim vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona'+(CFG.aoFim?' (empate não salva)':'')+'.</li>'+(CFG.forca?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>Seus bônus e itens da noitada valem no duelo.</li>':'')+(E().velha?'<li><b>Jogo da velha:</b> três casas em linha com o valor máximo valem +'+E().velha+', para os dois (número: 5 dados iguais; Full, Seguida e Quadrada: pontuou; a coluna do meio também exige o General).</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li>'+(poder()?'<li><b>Poder de '+nomeR()+': '+PODERES[CFG.look].nome+'.</b> '+PODERES[CFG.look].desc+'</li>':'')+'</ul><button type="button" id="ok">VOLTAR</button>';
   $("tela").hidden=false;$("ok").onclick=function(){$("tela").hidden=true};
 }
 
