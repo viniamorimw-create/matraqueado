@@ -1979,7 +1979,7 @@ function recalcMods(){
 function maxJog(){var n=MAX_JOGADAS;if(R){if(M&&M.lance)n++;if(R.chefe)n--}return n+((S&&S.extra)||0)}
 function poder(){var t=0,k=R.k-1;R.relics.concat(R.itens).forEach(function(id){if(PRECO[id])t+=PRECO[id][k]});return t}
 // ajuste fino da meta por fase, vindo do teste de balanceamento: o começo era fácil demais e o chefe final era mais fácil que a fase 9
-var AJ_META=[1,1,1,1,1,1,1],META_MESA=[.62,.66,.78];   // fração do esperado de um jogador perfeito, por mesa (simrun7)   // nov/2026: início de bloco mais leve (3-4 rodadas de cartela vazia), fim de bloco mais duro
+var AJ_META=[1,1,1,1,1,1,1],META_MESA=[.73,.75,.84];   // fração do esperado de um jogador perfeito, por mesa (simrun7)   // nov/2026: início de bloco mais leve (3-4 rodadas de cartela vazia), fim de bloco mais duro
 function kAnt(){return INI_BLOCO[R.fase]?0:RODADAS[R.fase-2]}   // rodadas do bloco já jogadas antes desta fase
 function espBloco(n){return n>0?E3[n-1]+VELHA*LIN_ESP[n-1]:0}
 function calcMeta(){   // meta = total do bloco ao fim desta fase; a maldição só pesa nos pontos esperados desta fase
