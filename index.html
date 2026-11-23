@@ -3283,11 +3283,11 @@ function desenhaCena(now){
   else if(ec<CH_A){   // vem do fundo do salão até a mesa, crescendo com a perspectiva
     // cresce pouco (de 60% a 100% de uma altura de 66 px) e fica sempre atrás do balcão: os pés somem atrás do tampo, a cabeça não sai da cena
     var u=Math.min(1,ec/CH_A),e=u*u*(3-2*u),kf=74/C.c.ah,k=40/C.c.ah+(kf-40/C.c.ah)*e,W=Math.round(C.c.aw*k),H=Math.round(C.c.ah*k),q=Math.floor(ec*30/3.4)%6,
-        x=Math.round(-10-W/2+(97+10)*e),pe=Math.round(52+22*e);   // termina perto do balcão: pés em 74, cabeça no alto da cena   // entra pela esquerda, de frente para onde anda (as folhas olham para a direita)
+        x=Math.round(-10-W/2+(84+10)*e),pe=Math.round(52+22*e);   // termina perto do balcão: pés em 74, cabeça no alto da cena   // entra pela esquerda, de frente para onde anda (as folhas olham para a direita)
     g.save();g.beginPath();g.rect(0,0,195,58);g.clip();g.drawImage(C.img,q*C.c.aw,0,C.c.aw,C.c.ah,x,pe-H,W,H);g.restore();
   }else if(ec<CH_F){   // senta: abaixa e chega mais perto do balcão (cresce da escala da caminhada até a do busto), sem transparência
     var v=(ec-CH_A)/CH_S,e2=v*v*(3-2*v),kf2=74/C.c.ah,sc=kf2+(1-kf2)*e2,f=C.c.senta[v<.45?1:2]||C.c.senta[C.c.senta.length-1],
-        W2=f[2]*sc,H2=f[3]*sc,x2=Math.round(97-W2/2),y2=Math.round((1-e2)*(74-H2)+e2*(f[5]+3));
+        W2=f[2]*sc,H2=f[3]*sc,x2=Math.round(84+13*e2-W2/2),y2=Math.round((1-e2)*(74-H2)+e2*(f[5]+3));
     g.save();g.beginPath();g.rect(0,0,195,58);g.clip();g.drawImage(C.img,f[0],f[1],f[2],f[3],x2,y2,Math.round(W2),Math.round(H2));g.restore();
   }
   else{cadeira();rivalPinta(CFG.look,est)}
