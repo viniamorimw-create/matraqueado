@@ -1562,18 +1562,19 @@ function pontos(cat,d,boca){
   if(M&&M.verm!=null&&d[M.verm]===1){d2=d.slice();d2[M.verm]=6;v=Math.max(v,pontosBase(cat,d2,boca))}
   return v;
 }
+function temFull(cc){for(var a=1;a<=6;a++)if(cc[a]>=3)for(var b=1;b<=6;b++)if(b!==a&&cc[b]>=2)return true;return false}   // trinca + par (com 5 dados: exatamente 3+2)
 function pontosBase(cat,d,boca){
   var c=[0,0,0,0,0,0,0],i,m=M,v=0;
   for(i=0;i<5;i++)c[d[i]]++;
   var max=Math.max.apply(null,c),b5=boca?5:0,cc=c,mc=max;
-  if(m&&m.gem.length){                          // dado gêmeo: se cai a face dele, ganha uma cópia (casas de número, Quadrada e General)
+  if(m&&m.gem.length){                          // dado gêmeo: se cai a face dele, ganha uma cópia (casas de número, Full, Quadrada e General)
     cc=c.slice();m.gem.forEach(function(g){if(d[g.i]===g.f)cc[g.f]++});
     mc=Math.max.apply(null,cc);
   }
   if(cat.n)v=cat.n*cc[cat.n]*(m&&cat.n===1?m.as:1);
   else switch(cat.id){
     case "quadra":v=mc>=4?25+b5:0;break;
-    case "full":v=(c.indexOf(3)>0&&c.indexOf(2)>0)?(m?m.full:15)+b5:0;break;
+    case "full":v=temFull(cc)?(m?m.full:15)+b5:0;break;   // com o dado gêmeo, a cópia conta
     case "seq":v=temSeq(c,d,m)?20+b5:0;break;
     case "general":v=mc>=5?(boca?(m?m.genB:100):(m?m.gen:50)):0;break;
   }
@@ -1803,8 +1804,8 @@ var BONUS=[
   {id:"rolext",t:"rel",r:"c",nome:"Rolamento extra",desc:"Uma vez por fase, ganha +1 lance numa rodada (botão +1/F).",rolext:1},
   {id:"gen75",t:"rel",r:"i",nome:"General 75",desc:"O General vale 75, e 150 de boca.",gen75:1},
   {id:"x2_u3",t:"rel",r:"i",nome:"Terno ×2",desc:"O Terno vale o dobro.",x2:"u3"},
-  {id:"gem6",t:"rel",r:"i",nome:"Dado gêmeo 6",desc:"Um dado verde: se cair 6, ganha uma cópia (conta a mais nas casas de número, na Quadrada e no General).",gem:6},
-  {id:"gem4",t:"rel",r:"i",nome:"Dado gêmeo 4",desc:"Um dado verde: se cair 4, ganha uma cópia (conta a mais nas casas de número, na Quadrada e no General).",gem:4},
+  {id:"gem6",t:"rel",r:"i",nome:"Dado gêmeo 6",desc:"Um dado verde: se cair 6, ganha uma cópia (conta a mais nas casas de número, no Full, na Quadrada e no General).",gem:6},
+  {id:"gem4",t:"rel",r:"i",nome:"Dado gêmeo 4",desc:"Um dado verde: se cair 4, ganha uma cópia (conta a mais nas casas de número, no Full, na Quadrada e no General).",gem:4},
   {id:"verm",t:"rel",r:"i",nome:"Dado vermelho",desc:"Um dado vermelho: se cair 1, vale 1 ou 6, o que render mais.",verm:1},
   {id:"azul",t:"rel",r:"r",nome:"Dado azul",desc:"Um dado azul: na Seguida ele vale como a face que faltar.",azul:1},
   {id:"x2_full",t:"rel",r:"i",nome:"Full ×2",desc:"O Full vale o dobro.",x2:"full"},
