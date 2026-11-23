@@ -2488,7 +2488,7 @@ var PERSOS=[
   {id:"capivara",nome:"Capivara",poder:"Tranquilona",desc:"Nos duelos, a bomba aguenta 10 pontos a mais de diferença antes de estourar."},
   {id:"tamandua",nome:"Tamanduá",poder:"Língua comprida",desc:"Uma vez por fase de meta, rola de novo um dado sem gastar lance (botão Língua)."},
   {id:"arara",nome:"Arara-azul",poder:"Olho vivo",desc:"A caça-níquel mostra sempre uma opção a mais para escolher."},
-  {id:"lobo",nome:"Lobo-guará",poder:"Notívago",desc:"Nas fases com maldição, a meta cai o dobro.",trava:"Vença o duelo da fase 10 para liberar."},
+  {id:"lobo",nome:"Lobo-guará",poder:"Notívago",desc:"Nas fases com maldição, o desconto na meta é o dobro.",trava:"Vença o duelo da fase 10 para liberar."},
   {id:"onca",nome:"Onça-pintada",poder:"Rainha da noite",desc:"Começa a noitada com uma bênção rara.",trava:"Vença uma noitada para liberar."}];
 function persoPor(id){for(var i=0;i<PERSOS.length;i++)if(PERSOS[i].id===id)return PERSOS[i];return null}
 function persoLib(){var o={};try{o=JSON.parse(localStorage.getItem("matraq-perso-v1"))||{}}catch(e){}if(typeof TESTE!=="undefined"&&TESTE){o.lobo=1;o.onca=1}return o}
