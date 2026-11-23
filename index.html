@@ -1815,9 +1815,9 @@ function velhaGanho(ch,id){   // linhas que a casa id acabou de fechar
 // Modo Noitada: fases de duelo, com a bomba do X1, no lugar da meta. rod = rodadas; l0 = limite inicial da bomba (cai até 25);
 // pensa = quanto o adversário guarda casas boas para depois (0 = só pensa na rodada); forca = bônus nos pontos dele.
 // Nomes genéricos e números provisórios (a simulação de balanceamento ainda vai ajustar). O visual de cada um: rivalPinta(), no bloco do X1.
-var DUELOS={2:{look:0,nome:"Rival 1",rod:6,l0:70,pensa:0,erro:.75,forca:0,tat:0,pod:""},   // 23/11/2026: dificuldade só pela inteligência (erro = jogadas de iniciante)
-            4:{look:2,nome:"Rival 2",rod:8,l0:60,pensa:1,erro:.25,forca:0,tat:1,pod:"Mão leve · Empate é dele"},
-            6:{look:1,nome:"Chefe 1",rod:8,l0:55,pensa:1,erro:.1,forca:0,tat:2,pod:"Previsão · Escudo · Encanto · Empate é dela"},
+var DUELOS={2:{look:0,nome:"Rival 1",rod:10,l0:70,pensa:0,erro:.75,forca:0,tat:0,pod:""},   // 23/11/2026: dificuldade só pela inteligência (erro = jogadas de iniciante)
+            4:{look:2,nome:"Rival 2",rod:10,l0:60,pensa:1,erro:.25,forca:0,tat:1,pod:"Mão leve · Empate é dele"},
+            6:{look:1,nome:"Chefe 1",rod:10,l0:55,pensa:1,erro:.1,forca:0,tat:2,pod:"Previsão · Escudo · Encanto · Empate é dela"},
             7:{look:4,nome:"Black Cat",rod:10,l0:50,pensa:1,erro:0,forca:0,tat:2,pod:"Previsão · Mão leve · Tranca · Fecha a conta · Empate é dele"}};
 function limitesDuelo(D){var out=[],i,x=(temPerso("capivara")?10:0)+5*nivel("pavio");for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5+x);return out}   // capivara: +10                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
 var SLOT_PESOS={n:{c:.50,i:.30,r:.15,l:.05},t:{c:.25,i:.35,r:.28,l:.12}};
