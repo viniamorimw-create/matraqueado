@@ -982,11 +982,11 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
       </ul>
       <h3>Modo Noitada</h3>
       <ul>
-        <li>Uma noite no KAT4 House em 7 etapas: <b>Mesa 1</b>, duelo com o Rival 1, <b>Mesa 2</b>, duelo com o Rival 2, <b>Mesa 3</b>, o Chefe e o <b>Black Cat</b>.</li><li><b>Mesas:</b> cada mesa é uma cartela inteira, do Ás ao General. No caminho, a casa confere a sua conta (4 conferências nas mesas 1 e 2, 3 na mesa 3): em cada uma você precisa ter o total pedido. Ficou abaixo, a noitada acaba.</li><li><b>Caça-níquel:</b> na 2ª e na última conferência de cada mesa e depois de cada duelo vencido. Bateu a meta: máquina de <b>bronze</b>. Passou 20% da meta: <b>prata</b> (mais raras). Passou 40%: <b>ouro</b> (muito mais raras e lendárias). Prata e ouro contam só os pontos feitos desde a conferência anterior. No duelo, vitória dá bronze e a bomba estourando no rival dá prata. Nas outras conferências, a casa dá uma gorjeta para a próxima: +3 (bronze), +5 (prata) ou +10 (ouro).</li><li><b>Jogo da velha:</b> três casas em linha na grade (de pé, deitada ou diagonal) com o valor máximo valem +10. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem; a coluna do meio só fecha com o General também. Vale também nos duelos, para você e para o adversário.</li>
+        <li>Uma noite no KAT4 House em 7 etapas: <b>Mesa 1</b>, duelo com o Rival 1, <b>Mesa 2</b>, duelo com o Rival 2, <b>Mesa 3</b>, o Chefe e o <b>Black Cat</b>.</li><li><b>Mesas:</b> uma cartela inteira, do Ás ao General, com uma meta. Bateu a meta, vem a caça-níquel; ficou abaixo, a noitada acaba.</li><li><b>Caça-níquel:</b> depois de cada mesa e de cada duelo vencido. Bateu a meta: máquina de <b>bronze</b>. Passou 20%: <b>prata</b>. Passou 40%: <b>ouro</b>. No duelo, vitória dá bronze e a bomba estourando no rival dá prata.</li><li><b>Jogo da velha:</b> três casas em linha na grade (de pé, deitada ou diagonal) com o valor máximo valem +10. Máximo: casa de número com os 5 dados iguais (Ás 5, Sena 30); Full, Seguida e Quadrada valem se pontuarem; a coluna do meio só fecha com o General também. Vale também nos duelos, para você e para o adversário.</li>
         <li><b>Duelo:</b> cada um com a sua cartela. Depois que os dois jogam a rodada, a bomba confere a diferença de pontos: passou do limite, estoura em quem está atrás. Se não estourar antes, no fim vem o último tapa: a bomba vai para quem terminou atrás e detona. Perder encerra a noitada; vencer dá a caça-níquel, turbinada se a bomba estourar do outro lado.</li>
         <li>As suas bênçãos valem nos duelos. Os adversários do Rival 2 em diante jogam com um bônus nos pontos.</li>
         <li><b>Dados coloridos:</b> o verde duplica a face dele, o vermelho, quando cai 1, vale 1 ou 6 (o que render mais) e o azul completa a Seguida. <b>Combo de cores:</b> dois ou mais dados coloridos com a mesma face, numa anotação que pontua, rendem +5 por dado.</li>
-        <li><b>Maldições:</b> as mesas 2 e 3 trazem uma maldição cada, que vale a cartela inteira (toque na placa vermelha para ler). A meta fica um pouco menor e cada conferência vencida dá uma opção a mais na caça-níquel.</li>
+        <li><b>Maldições:</b> as mesas 2 e 3 trazem uma maldição cada (toque na placa vermelha para ler). A meta fica um pouco menor e vencer dá uma opção a mais na caça-níquel.</li>
       </ul>
       <button class="rolar px" id="regras-voltar" type="button">VOLTAR</button>
     </div>
@@ -1743,7 +1743,7 @@ function desenhaMesa(){
 function desenhaTabela(){
   if(vendo>=S.jogadores)vendo=0;
   var sc=S.scores[vendo],joga=vendo===S.vez&&!S.fim&&S.jogadas>0&&!rolando,h="";
-  var neb=!!R&&R.mald==="neblina",tranca=R&&R.mald==="casa"?R.maldCasa:null,nv=ultCasa;ultCasa=null;
+  var neb=!!R&&R.mald==="neblina",tranca=R&&R.mald==="casa"&&(S.rod||0)<8?R.maldCasa:null,nv=ultCasa;ultCasa=null;
   if(S.jogadores>1)h+='<div class="cab">Cartela: '+esc(nomeJog(vendo))+(vendo!==S.vez&&!S.fim?" · só olhando":"")+'</div>';
   h+='<div class="bozo">';
   ORDEM.forEach(function(id,k){
@@ -1796,11 +1796,11 @@ function desenha(){
 // Uma run são FASES fases. Cada fase é uma cartela com RODADAS[n] rodadas e uma meta mínima: bateu, pode avançar na hora (ou seguir
 // jogando para sobrar pontos) e escolhe 1 de 3 bônus sorteados numa caça-níquel; errou, a run acaba.
 // Os números abaixo (rodadas, metas, taxa, raridades) foram calibrados por simulação com o cálculo exato das regras do jogo.
-var FASES=15,TAXA=1,F1=0.5,F10=1.0,MARGEM_TURBO=0.6,MAX_ITENS=3;
+var FASES=7,TAXA=1,F1=0.5,F10=1.0,MARGEM_TURBO=0.6,MAX_ITENS=3;
 // a cartela atravessa o bloco: RODADAS = rodadas acumuladas do bloco ao fim de cada fase (0 nas fases de duelo)
-var RODADAS=[3,6,8,10,0,3,6,8,10,0,4,7,10,0,0];
-var INI_BLOCO={1:1,6:1,11:1},SLOT_FASES={2:1,4:1,7:1,9:1,12:1,13:1};
-var CHEFES={14:1,15:1};
+var RODADAS=[10,0,10,0,10,0,0];
+var INI_BLOCO={1:1,3:1,5:1},SLOT_FASES={1:1,3:1,5:1};
+var CHEFES={6:1,7:1};
 // jogo da velha: linhas da grade 3x3 (posições de ORDEM). VELHA = pontos por linha; LIN_ESP = linhas que um bom jogador
 // fecha em média até a rodada k (simulação com o cérebro do X1, sem mirar nas linhas)
 var VELHA=10,LINHAS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7,9],[2,5,8],[0,4,8],[2,4,6]];   // a coluna do meio (Full, Seguida, Quadrada) também exige o General
@@ -1815,10 +1815,10 @@ function velhaGanho(ch,id){   // linhas que a casa id acabou de fechar
 // Modo Noitada: fases de duelo, com a bomba do X1, no lugar da meta. rod = rodadas; l0 = limite inicial da bomba (cai até 25);
 // pensa = quanto o adversário guarda casas boas para depois (0 = só pensa na rodada); forca = bônus nos pontos dele.
 // Nomes genéricos e números provisórios (a simulação de balanceamento ainda vai ajustar). O visual de cada um: rivalPinta(), no bloco do X1.
-var DUELOS={5:{look:0,nome:"Rival 1",rod:6,l0:60,pensa:0,forca:0},
-            10:{look:2,nome:"Rival 2",rod:8,l0:60,pensa:1,forca:.3},
-            14:{look:1,nome:"Chefe 1",rod:8,l0:55,pensa:1,forca:.35},
-            15:{look:4,nome:"Black Cat",rod:10,l0:50,pensa:1,forca:.5}};
+var DUELOS={2:{look:0,nome:"Rival 1",rod:6,l0:70,pensa:0,forca:-.15},   // 23/11/2026: Rival 1 mais fraco (aprendizado)
+            4:{look:2,nome:"Rival 2",rod:8,l0:60,pensa:1,forca:.03},
+            6:{look:1,nome:"Chefe 1",rod:8,l0:55,pensa:1,forca:.25},
+            7:{look:4,nome:"Black Cat",rod:10,l0:50,pensa:1,forca:.5}};
 function limitesDuelo(D){var out=[],i,x=(temPerso("capivara")?10:0)+5*nivel("pavio");for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5+x);return out}   // capivara: +10                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
 var SLOT_PESOS={n:{c:.50,i:.30,r:.15,l:.05},t:{c:.25,i:.35,r:.28,l:.12}};
 var MAQ_PESOS=[{c:.60,i:.30,r:.09,l:.01},{c:.35,i:.40,r:.20,l:.05},{c:.15,i:.40,r:.33,l:.12}];   // bronze, prata, ouro (nov/2026: menos raras, a noitada estava fácil)
@@ -1890,7 +1890,7 @@ var BONUS=[
   {id:"x2_u2",t:"rel",r:"c",nome:"Duque ×2",desc:"O Duque vale o dobro.",x2:"u2"},
   {id:"nb1",t:"rel",r:"c",nome:"Na boquinha I",desc:"Full, Seguida, Quadrada e General de boca valem +25%.",nb:.25},
   {id:"gor5",t:"rel",r:"c",nome:"Gorjeta 5%",desc:"+5% nos pontos.",gor:.05},
-  {id:"rolext",t:"rel",r:"c",nome:"Rolamento extra",desc:"Uma vez por conferência, ganha +1 lance numa rodada (botão +1/F).",rolext:1},
+  {id:"rolext",t:"rel",r:"c",nome:"Rolamento extra",desc:"Uma vez por mesa, ganha +1 lance numa rodada (botão +1/F).",rolext:1},
   {id:"gen75",t:"rel",r:"i",nome:"General 75",desc:"O General vale 75, e 150 de boca.",gen75:1},
   {id:"x2_u3",t:"rel",r:"i",nome:"Terno ×2",desc:"O Terno vale o dobro.",x2:"u3"},
   {id:"gem6",t:"rel",r:"i",nome:"Dado gêmeo 6",desc:"Um dado verde: se cair 6, ganha uma cópia (conta a mais nas casas de número, no Full, na Quadrada e no General).",gem:6},
@@ -1920,18 +1920,18 @@ var BONUS=[
   {id:"i_ajx",t:"item",r:"l",nome:"Ajuste livre",curto:"Livre",desc:"Uso único: muda um dado para qualquer face."},
   {id:"i_clone",t:"item",r:"l",nome:"Clone",curto:"Clone",desc:"Uso único: um dado vira cópia da face de outro dado."},
   {id:"i_ouro",t:"item",r:"l",nome:"Dados de ouro",curto:"Ouro",desc:"Carta de uso único: use antes de rolar. Nesta rodada os dados só saem 5 ou 6.",carta:"ouro"},
-  {id:"pt10",t:"pts",r:"c",v:10,nome:"+10 pontos",desc:"Soma 10 pontos na próxima conferência."},
-  {id:"pt20",t:"pts",r:"i",v:20,nome:"+20 pontos",desc:"Soma 20 pontos na próxima conferência."},
-  {id:"pt35",t:"pts",r:"r",v:35,nome:"+35 pontos",desc:"Soma 35 pontos na próxima conferência."}
+  {id:"pt10",t:"pts",r:"c",v:10,nome:"+10 pontos",desc:"Soma 10 pontos na próxima mesa."},
+  {id:"pt20",t:"pts",r:"i",v:20,nome:"+20 pontos",desc:"Soma 20 pontos na próxima mesa."},
+  {id:"pt35",t:"pts",r:"r",v:35,nome:"+35 pontos",desc:"Soma 35 pontos na próxima mesa."}
 ];
 var R=null,M=null,modoItem=-1,painelCb=[];   // R: a run (null = modo clássico) · M: efeitos das relíquias · modoItem: item esperando o dado a ser mudado
 // MALDIÇÕES: da fase 3 em diante, cada fase sorteia uma. custo = fração dos pontos que ela tira de um bom jogador, por nº de rodadas
 // (k=1..10), estimada por simulação. A meta cai COMP x custo: a maldição ainda aperta, e vencer dá 1 opção a mais na caça-níquel.
-var COMP=0.6,FASE_MALD=6;
+var COMP=0.6,FASE_MALD=3;
 var MALD={
-  imposto:{nome:"Imposto",curto:"IMPOSTO",desc:"Os pontos feitos em cada conferência desta mesa valem 15% a menos.",custo:.15},
+  imposto:{nome:"Imposto",curto:"IMPOSTO",desc:"Os pontos desta mesa valem 15% a menos.",custo:.15},
   mao3:{nome:"Mão curta",curto:"MÃO CURTA",desc:'Só dá para marcar "fica" em 3 dados por vez.',custo:[.03,.03,.03,.03,.03,.04,.05,.06,.065,.07]},
-  casa:{nome:"Casa trancada",curto:"TRANCA",desc:"Uma casa da cartela fica trancada até a última conferência da mesa.",custo:[.075,.075,.075,.08,.085,.09,.095,.105,.11,.11]},
+  casa:{nome:"Casa trancada",curto:"TRANCA",desc:"Uma casa da cartela fica trancada até a rodada 8.",custo:[.075,.075,.075,.08,.085,.09,.095,.105,.11,.11]},
   pedagio:{nome:"Pedágio",curto:"PEDÁGIO",desc:"Cada casa riscada tira 10 pontos.",custo:[0,0,0,0,0,.005,.015,.035,.07,.13]},
   seca:{nome:"Boca seca",curto:"BOCA SECA",desc:"Jogadas de boca não valem bônus nesta mesa.",custo:.015},
   neblina:{nome:"Neblina",curto:"NEBLINA",desc:"A cartela não mostra quanto cada casa vale. Faça a conta antes de tocar.",custo:0}
@@ -1950,7 +1950,7 @@ function painelMald(){
   var m=MALD[R.mald];if(!m)return;
   var l=[m.desc];
   if(R.mald==="casa")l.push("Casa trancada: <b>"+CATS.filter(function(c){return c.id===R.maldCasa})[0].nome+"</b>.");
-  l.push("Cada conferência vencida dá uma opção a mais na caça-níquel.");
+  l.push("Vencer a mesa dá uma opção a mais na caça-níquel.");
   abrePainel("Maldição: "+m.nome,l,[{txt:"OK"}]);
 }
 function bonusPor(id){for(var i=0;i<BONUS.length;i++)if(BONUS[i].id===id)return BONUS[i];return null}
@@ -1979,11 +1979,11 @@ function recalcMods(){
 function maxJog(){var n=MAX_JOGADAS;if(R){if(M&&M.lance)n++;if(R.chefe)n--}return n+((S&&S.extra)||0)}
 function poder(){var t=0,k=R.k-1;R.relics.concat(R.itens).forEach(function(id){if(PRECO[id])t+=PRECO[id][k]});return t}
 // ajuste fino da meta por fase, vindo do teste de balanceamento: o começo era fácil demais e o chefe final era mais fácil que a fase 9
-var AJ_META=[1,1.1,1.1,1.1, 1, .85,1,1,1.1, 1, .85,1,1.05, 1,1];   // nov/2026: início de bloco mais leve (3-4 rodadas de cartela vazia), fim de bloco mais duro
+var AJ_META=[1,1,1,1,1,1,1],META_MESA=[.62,.66,.78];   // fração do esperado de um jogador perfeito, por mesa (simrun7)   // nov/2026: início de bloco mais leve (3-4 rodadas de cartela vazia), fim de bloco mais duro
 function kAnt(){return INI_BLOCO[R.fase]?0:RODADAS[R.fase-2]}   // rodadas do bloco já jogadas antes desta fase
 function espBloco(n){return n>0?E3[n-1]+VELHA*LIN_ESP[n-1]:0}
 function calcMeta(){   // meta = total do bloco ao fim desta fase; a maldição só pesa nos pontos esperados desta fase
-  var f=F1+(F10-F1)*(R.fase-1)/(FASES-1),m=f*espBloco(R.k)+TAXA*poder();
+  var f=META_MESA[(R.fase-1)>>1]||.7,m=f*espBloco(R.k)+TAXA*poder();
   m-=COMP*custoMald()*(temPerso("lobo")?2:1)*f*(espBloco(R.k)-espBloco(kAnt()));   // lobo-guará: dobro
   m*=AJ_META[R.fase-1]||1;
   m*=1-.02*nivel("meta");   // balcão: meta mais leve
@@ -2029,7 +2029,7 @@ function checa666(antes){
 /* run: início, fases, fim */
 function novaRun(){cancelaCena();fecharInicio();$("painel").hidden=true;escolhePerso(novaRunCom)}
 function novaRunCom(perso){
-  R={v:3,perso:perso||"capivara",fase:1,k:0,relics:[],itens:[],cred:0,credProx:0,alvo:0,chefe:false,rext:false,cedo:false,estado:"jogando",slot:null,hist:[],mald:null,maldAnt:null,maldCasa:null};
+  R={v:4,perso:perso||"capivara",fase:1,k:0,relics:[],itens:[],cred:0,credProx:0,alvo:0,chefe:false,rext:false,cedo:false,estado:"jogando",slot:null,hist:[],mald:null,maldAnt:null,maldCasa:null};
   contaSt("noitadas");R.fichas=0;
   (function(){var nb=nivel("benc"),com=BONUS.filter(function(b){return b.t==="rel"&&b.r==="c"&&R.relics.indexOf(b.id)<0});
     for(var k=0;k<nb&&com.length;k++){var j=Math.floor(Math.random()*com.length);R.relics.push(com[j].id);com.splice(j,1)}
@@ -2044,8 +2044,7 @@ function comecaFase(mostra){
   else{S.fim=false;S.vez=0;S.boca=false;S.guardado=[false,false,false,false,false];S.jogadas=0;S.extra=0;S.carta=null}
   if(R.duelo){R.mald=null;R.maldCasa=null}
   else if(INI_BLOCO[R.fase]||(R.fase>=FASE_MALD&&R.maldMesa!==etapa(R.fase).mesa)){R.maldMesa=etapa(R.fase).mesa;R.mald=sorteiaMald();if(R.mald)R.maldUlt=R.mald;var tv=trancaveis();R.maldCasa=R.mald==="casa"?tv[Math.floor(Math.random()*tv.length)]:null}   // maldição da mesa
-  if(R.mald==="casa"&&R.k>=10)R.maldCasa=null;   // a casa trancada abre na última conferência
-  R.cred=novo?R.credProx:(R.cred||0)+R.credProx;R.credProx=0;R.base=R.duelo?null:brutoFase();
+  R.cred=novo?R.credProx:(R.cred||0)+R.credProx;R.credProx=0;if(novo&&!R.duelo)R.cred+=3*nivel("gorj");   // balcão: couvertR.base=R.duelo?null:brutoFase();
   var aAnt=novo?0:(R.alvo||0);R.alvo=R.duelo?0:calcMeta();R.alvoAnt=aAnt;R.inicio=R.duelo?0:pontosFase();R.rext=false;R.lingua=false;modoLing=false;R.estado=R.duelo?"duelo":"jogando";R.slot=null;
   vendo=0;modoItem=-1;guardaInicioFase();
   desenha();salvaRun();
@@ -2054,10 +2053,10 @@ function comecaFase(mostra){
 function abrePainelFase(){
   if(R.duelo){abrePainelDuelo();return}
   var m=R.mald&&MALD[R.mald],et=etapa(R.fase),iniMesa=!!INI_BLOCO[R.fase],l=[mapaNoite(R.fase)];
-  l.push('<span class="pn-meta"><b>'+R.alvo+'</b> pontos até a rodada <b>'+R.k+'</b></span>');
+  l.push('<span class="pn-meta">Meta: <b>'+R.alvo+'</b> pontos</span>');
   if(m)l.push(linhaMald(m,R.mald));
   if(m&&iniMesa)PAINEL_TEMA="t-vinho";
-  abrePainel("Mesa "+et.mesa+(iniMesa?"":" · "+et.conf+"/"+et.n),l,[{txt:iniMesa?"SENTAR NA MESA":"CONTINUAR",cb:function(){
+  abrePainel("Mesa "+et.mesa,l,[{txt:iniMesa?"SENTAR NA MESA":"CONTINUAR",cb:function(){
     faixa(iniMesa?"MESA "+et.mesa:"CONFERÊNCIA "+et.conf,iniMesa?"":"até a rodada "+R.k);tremer(1);
     if(m&&iniMesa)setTimeout(function(){if(!R)return;faixa(m.nome.toUpperCase(),"","m");clarao("#4a0c0c");tremer(2);somDiabo()},1250);
   }}]);
@@ -2074,7 +2073,7 @@ function cenaNoite(){   // anima a mesa vazia (X1UI.pintaVazia, no bloco do X1) 
 function abrePainelDuelo(){
   var D=DUELOS[R.fase],L=limitesDuelo(D),l=[mapaNoite(R.fase)];
   l.push('<span class="pn-meta"><b>'+D.rod+'</b> rodadas · bomba <b>'+L[0]+'</b>→'+L[L.length-1]+'</span>');
-  if(D.forca)l.push(D.nome+' joga com <b>+'+Math.round(D.forca*100)+'%</b> nos pontos.');
+  if(D.forca>0)l.push(D.nome+' joga com <b>+'+Math.round(D.forca*100)+'%</b> nos pontos.');
   PAINEL_TEMA="t-azul";
   abrePainel(R.fase>=FASES?"Chefe final: "+D.nome:R.chefe?"Chefe: "+D.nome:"Duelo: "+D.nome,l,[{txt:"COMEÇAR DUELO",cb:abrirDuelo}]);
 }
@@ -2107,7 +2106,7 @@ function extDuelo(){
 function fimDuelo(res){
   if(!R)return;
   R.duelo={res:res};R.hist.push({f:R.fase,pts:res.eu,alvo:res.ele,duelo:1});salvaRun();
-  if(res.vence&&R.fase===10&&persoLibera("lobo"))setTimeout(function(){faixa("NOVO PERSONAGEM","Lobo-guará liberado","o");somFim()},400);
+  if(res.vence&&R.fase===4&&persoLibera("lobo"))setTimeout(function(){faixa("NOVO PERSONAGEM","Lobo-guará liberado","o");somFim()},400);
   if(res.vence){ganhaFichas(3+(res.bomba?2:0));contaSt("duelos");contaSt("fases")}
   if(!res.vence)encerraRun(false,res.eu);
   else if(R.fase>=FASES)encerraRun(true,res.eu);
@@ -2119,7 +2118,7 @@ function fimDeFase(){
   setTimeout(function(){
     if(!R)return;
     if(pts<R.alvo){encerraRun(false,pts);return}
-    if(R.fichaFase!==R.fase){R.fichaFase=R.fase;ganhaFichas(1);contaSt("fases")}
+    if(R.fichaFase!==R.fase){R.fichaFase=R.fase;ganhaFichas(3);contaSt("fases")}   // mesa vencida: 3 fichas
     if(R.fase>=FASES)encerraRun(true,pts);
     else if(SLOT_FASES[R.fase])abrirSlot(false);
     else passaFase(pts);
@@ -2133,13 +2132,13 @@ function passaFase(pts){
     gj?"Gorjeta da casa: <b>+"+gj+"</b> na próxima.":"",du?"Agora: duelo com <b>"+du.nome+"</b>.":""].filter(Boolean),
     [{txt:"CONTINUAR",cb:function(){if(!R)return;R.fase++;comecaFase(true)}}]);
 }
-function melhor(){try{return parseInt(localStorage.getItem("general5-surv-melhor"),10)||0}catch(e){return 0}}
+function melhor(){try{return parseInt(localStorage.getItem("matraq-melhor-v7"),10)||0}catch(e){return 0}}
 function encerraRun(venceu,pts){
   if(!venceu&&usaSegundaChance()){somAnota(0);clarao("#4a0c0c");tremer(2);return}
   if(venceu){ganhaFichas(10);contaSt("vitorias")}
   var feitas=venceu?FASES:R.fase-1;
   R.estado="fim";
-  try{if(feitas>melhor())localStorage.setItem("general5-surv-melhor",String(feitas))}catch(e){}
+  try{if(feitas>melhor())localStorage.setItem("matraq-melhor-v7",String(feitas))}catch(e){}
   limpaRun();
   if(venceu){somFim();clarao("#e3b341");chuva(OURO,160);setTimeout(function(){chuva(OURO,120)},500)}
   else{somAnota(0);clarao("#4a0c0c");tremer(3)}
@@ -2161,7 +2160,7 @@ function testeFase(f){
   try{X1UI.fechar()}catch(e){}
   cancelaCena();fecharInicio();$("painel").hidden=true;$("slot").hidden=true;$("tst").hidden=true;
   var rel=R?R.relics:[],it=R?R.itens:[],pr=R&&R.perso||"capivara";
-  R={v:3,perso:pr,fase:f,k:0,relics:rel,itens:it,cred:0,credProx:0,alvo:0,chefe:false,rext:false,cedo:false,estado:"jogando",slot:null,hist:[],mald:null,maldAnt:null,maldCasa:null};
+  R={v:4,perso:pr,fase:f,k:0,relics:rel,itens:it,cred:0,credProx:0,alvo:0,chefe:false,rext:false,cedo:false,estado:"jogando",slot:null,hist:[],mald:null,maldAnt:null,maldCasa:null};
   recalcMods();S=null;comecaFase(false);
   var ka=R.duelo?0:kAnt();
   if(ka){   // a cartela do bloco já vem andada até esta fase, com jogadas sorteadas
@@ -2210,7 +2209,7 @@ if(TESTE){
 }
 /* salvar e retomar a run (localStorage) */
 function salvaRun(){if(!R)return;try{localStorage.setItem("general5-run-v2",JSON.stringify({R:R,S:S}))}catch(e){}marca("s")}
-function lerRun(){try{var d=JSON.parse(localStorage.getItem("general5-run-v2"));return d&&d.R&&d.R.v===3&&d.R.fase&&valido(d.S)?d:null}catch(e){return null}}
+function lerRun(){try{var d=JSON.parse(localStorage.getItem("general5-run-v2"));return d&&d.R&&d.R.v===4&&d.R.fase&&valido(d.S)?d:null}catch(e){return null}}
 function limpaRun(){try{localStorage.removeItem("general5-run-v2")}catch(e){}}
 function retomarRun(){
   var d=lerRun();if(!d)return;
@@ -2256,7 +2255,7 @@ function continuar(){
 function pintaCont(){
   var u=ultima(),b=$("ini-cont"),t,r,d,n=0;
   b.hidden=!u;if(!u)return;
-  if(u.m==="s"){r=u.m===naMemoria()?R:u.d.R;t="Noitada · "+(DUELOS[r.fase]?"duelo, fase ":"fase ")+r.fase+" de "+FASES}
+  if(u.m==="s"){r=u.m===naMemoria()?R:u.d.R;t="Noitada · "+etapaTxt(r.fase)}
   else{
     d=u.m===naMemoria()?S:u.d;
     CATS.forEach(function(c){if(d.scores[d.vez][c.id]!=null)n++});
@@ -2289,13 +2288,13 @@ function desenhaBonus(){
     b=R.itens[i]?bonusPor(R.itens[i]):null;
     h+=b?'<button type="button" class="slot px'+(modoItem===i?' ativo':'')+'" data-it="'+i+'" aria-label="Item: '+b.nome+'" style="border-color:'+RAR_COR[b.r]+'">'+b.curto+'</button>':'<span class="slot vazio px">–</span>';
   }
-  if(M&&M.rolext)h+='<button type="button" class="slot px rext'+(R.rext?' vazio':'')+'" data-rext="1" aria-label="Rolamento extra da conferência">+1/F</button>';
+  if(M&&M.rolext)h+='<button type="button" class="slot px rext'+(R.rext?' vazio':'')+'" data-rext="1" aria-label="Rolamento extra da mesa">+1/F</button>';
   if(temPerso("tamandua"))h+='<button type="button" class="slot px rext'+(R.lingua?' vazio':'')+(modoLing?' ativo':'')+'" data-ling="1" aria-label="Língua comprida">Língua</button>';
   $("slots").innerHTML=h;
 }
 $("btn-bonus").addEventListener("click",function(){
   var l=R.relics.map(function(id){var b=bonusPor(id);return '<b style="color:'+(b.r==="c"?"#7a6a40":RAR_COR[b.r])+'">'+b.nome+'</b>: '+b.desc});
-  if(!l.length)l=["Nenhum bônus ainda. A caça-níquel oferece três a cada conferência vencida e você escolhe um."];
+  if(!l.length)l=["Nenhum bônus ainda. A caça-níquel oferece três a cada mesa e duelo vencidos e você escolhe um."];
   var pp=persoPor(R.perso);if(pp)l.unshift('<b>'+pp.nome+'</b> · '+pp.poder+': '+pp.desc);
   abrePainel("Seus bônus",l,[{txt:"FECHAR"}]);
 });
@@ -2307,7 +2306,7 @@ var modoLing=false;
 function usaLingua(){
   if(!R||S.fim||rolando)return;
   if(modoLing){modoLing=false;desenha();return}
-  if(R.lingua){abrePainel("Língua comprida",["Já usada nesta conferência. Volta na próxima."],[{txt:"OK"}]);return}
+  if(R.lingua){abrePainel("Língua comprida",["Já usada nesta mesa. Volta na próxima."],[{txt:"OK"}]);return}
   if(S.jogadas===0){abrePainel("Língua comprida",["Role os dados antes de usar a língua."],[{txt:"OK"}]);return}
   modoItem=-1;modoLing=true;desenha();
 }
@@ -2320,9 +2319,9 @@ function linguaDado(i){
 }
 function usaRext(){
   if(!R||S.fim||rolando)return;
-  if(R.rext){abrePainel("Rolamento extra",["Já usado nesta conferência. Recarrega na próxima."],[{txt:"OK"}]);return}
+  if(R.rext){abrePainel("Rolamento extra",["Já usado nesta mesa. Recarrega na próxima."],[{txt:"OK"}]);return}
   if(S.jogadas===0){abrePainel("Rolamento extra",["Role os dados antes de usar o rolamento extra."],[{txt:"OK"}]);return}
-  abrePainel("Rolamento extra",["Ganha mais 1 lance na rodada atual (uma vez por conferência)."],[{txt:"USAR",cb:function(){R.rext=true;S.extra=(S.extra||0)+1;somFica(true);desenha();salvaRun()}},{txt:"CANCELAR",cls:"opc"}]);
+  abrePainel("Rolamento extra",["Ganha mais 1 lance na rodada atual (uma vez por mesa)."],[{txt:"USAR",cb:function(){R.rext=true;S.extra=(S.extra||0)+1;somFica(true);desenha();salvaRun()}},{txt:"CANCELAR",cls:"opc"}]);
 }
 function usaItem(i){
   if(!R||S.fim||rolando)return;
@@ -2582,10 +2581,10 @@ var SAVE_K="matraq-save-v1";
 var UPG=[
   {id:"meta",nome:"Meta mais leve",preco:[6,10,15,20,25],desc:function(n){return n?"Metas "+(2*n)+"% menores.":"Metas 2% menores por nível."}},
   {id:"pavio",nome:"Pavio longo",preco:[8,14,20],desc:function(n){return n?"Nos duelos, a bomba aguenta +"+(5*n)+" pontos.":"Nos duelos, a bomba aguenta +5 pontos por nível."}},
-  {id:"gorj",nome:"Gorjeta maior",preco:[4,8,12],desc:function(n){return n?"A gorjeta da casa dá +"+(2*n)+" pontos a mais.":"+2 pontos na gorjeta da casa por nível."}},
+  {id:"gorj",nome:"Couvert da casa",preco:[4,8,12],desc:function(n){return n?"Cada mesa começa com +"+(3*n)+" pontos.":"Cada mesa começa com +3 pontos por nível."}},
   {id:"benc",nome:"Bênção de entrada",preco:[10,20],desc:function(n){return n===2?"Começa com 2 bênçãos comuns.":n?"Começa com 1 bênção comum (próximo nível: 2).":"Começa a noitada com 1 bênção comum (depois 2)."}},
   {id:"item",nome:"Item no bolso",preco:[12],desc:function(){return "Começa a noitada com 1 item comum ou incomum."}},
-  {id:"chance",nome:"Segunda chance",preco:[30],desc:function(){return "Uma vez por noitada, perdeu uma conferência ou duelo? Joga de novo do começo dela."}}];
+  {id:"chance",nome:"Segunda chance",preco:[30],desc:function(){return "Uma vez por noitada, perdeu uma mesa ou duelo? Joga de novo do começo dela."}}];
 function lerSave(){var d=null;try{d=JSON.parse(localStorage.getItem(SAVE_K))}catch(e){}
   d=d&&typeof d==="object"?d:{};d.v=1;d.fichas=d.fichas|0;d.nv=d.nv||{};d.st=d.st||{};
   ["noitadas","vitorias","duelos","fases","ganhas"].forEach(function(k){d.st[k]=d.st[k]|0});
@@ -2613,7 +2612,7 @@ function pintaBalcao(ok){
   var st=d.st;
   $("bc-stats").innerHTML='<span>Noitadas: <b>'+st.noitadas+'</b></span><span>Vitórias: <b>'+st.vitorias+'</b></span>'+
     '<span>Melhor: <b>'+melhorTxt(melhor())+'</b></span><span>Duelos vencidos: <b>'+st.duelos+'</b></span>'+
-    '<span>Conferências e duelos: <b>'+st.fases+'</b></span><span>Fichas ganhas: <b>'+st.ganhas+'</b></span>';
+    '<span>Mesas e duelos: <b>'+st.fases+'</b></span><span>Fichas ganhas: <b>'+st.ganhas+'</b></span>';
 }
 $("bc-lista").addEventListener("click",function(e){
   var b=e.target.closest("[data-upg]");if(!b||b.disabled)return;
@@ -2641,28 +2640,27 @@ $("bc-importa").addEventListener("click",function(){
     if(t.indexOf("MTQ1-")!==0)throw 0;
     var o=JSON.parse(decodeURIComponent(escape(atob(t.slice(5)))));if(!o||!o.s||typeof o.s!=="object")throw 0;
     gravaSave(o.s);if(o.p)localStorage.setItem("matraq-perso-v1",JSON.stringify(o.p));
-    if(o.m>melhor())localStorage.setItem("general5-surv-melhor",String(o.m));
+    if(o.m>melhor())localStorage.setItem("matraq-melhor-v7",String(o.m));
     msg.textContent="Progresso carregado!";somFim();pintaBalcao();psPerfil();
   }catch(e){msg.textContent="Código inválido. Confira se copiou inteiro.";somAnota(0)}
 });
 
 // ---------- noitada em mesas: nomes das etapas ----------
-var DU_ORD=[5,10,14,15];
+var DU_ORD=[2,4,6,7];
 function etapa(f){
   if(DUELOS[f]){var j=DU_ORD.indexOf(f);return {duelo:true,j:j+1,nome:DUELOS[f].nome,curto:DUELOS[f].nome}}
-  var m=f<6?1:f<11?2:3,i0=[1,6,11][m-1],n=m===3?3:4;
-  return {duelo:false,mesa:m,conf:f-i0+1,n:n,curto:"Mesa "+m};
+  var m=(f+1)>>1;return {duelo:false,mesa:m,conf:1,n:1,curto:"Mesa "+m};
 }
-function etapaTxt(f){var e=etapa(f);return e.duelo?"Duelo com "+e.nome:"Mesa "+e.mesa+", conferência "+e.conf+" de "+e.n}
-function melhorTxt(feitas){if(feitas>=FASES)return "noitada vencida";var e=etapa(feitas+1);return e.duelo?"duelo com "+e.nome:"Mesa "+e.mesa+" (conferência "+e.conf+")"}
+function etapaTxt(f){var e=etapa(f);return e.duelo?"Duelo com "+e.nome:"Mesa "+e.mesa}
+function melhorTxt(feitas){if(feitas>=FASES)return "noitada vencida";var e=etapa(feitas+1);return e.duelo?"duelo com "+e.nome:"Mesa "+e.mesa}
 function mapaNoite(f){   // as 7 paradas com ícones (arte em ui_arte.json, CSS do patch_ui)
-  var paradas=[{f:[1,2,3,4],t:"Mesa 1",ic:"mesa1"},{f:[5],t:DUELOS[5].nome,ic:"duelo1"},{f:[6,7,8,9],t:"Mesa 2",ic:"mesa2"},{f:[10],t:DUELOS[10].nome,ic:"duelo2"},{f:[11,12,13],t:"Mesa 3",ic:"mesa3"},{f:[14],t:DUELOS[14].nome,ic:"chefe"},{f:[15],t:DUELOS[15].nome,ic:"gato"}];
+  var paradas=[{f:[1],t:"Mesa 1",ic:"mesa1"},{f:[2],t:DUELOS[2].nome,ic:"duelo1"},{f:[3],t:"Mesa 2",ic:"mesa2"},{f:[4],t:DUELOS[4].nome,ic:"duelo2"},{f:[5],t:"Mesa 3",ic:"mesa3"},{f:[6],t:DUELOS[6].nome,ic:"chefe"},{f:[7],t:DUELOS[7].nome,ic:"gato"}];
   return '<span class="mapa" role="img" aria-label="Mapa da noitada">'+paradas.map(function(p,k){var ag=p.f.indexOf(f)>=0,ok=p.f[p.f.length-1]<f;
     return (k?'<b class="mp-seta"></b>':'')+'<i class="mp'+(ag?' ag':ok?' ok':'')+'" title="'+p.t+'" style="background-image:var(--mp-'+p.ic+')"></i>'}).join("")+'</span>';
 }
 
-var MALD_CURTO={imposto:"−15% nos pontos",mao3:"“fica” em só 3 dados",casa:"casa trancada",pedagio:"casa riscada: −10",seca:"boca sem bônus",neblina:"cartela sem os valores"};
-function linhaMald(m,id){var t=MALD_CURTO[id]||m.desc;if(id==="casa"&&R.maldCasa)t=CATS.filter(function(c){return c.id===R.maldCasa})[0].nome+" trancada";return '<span class="pn-mald">'+m.curto+'</span> '+t}
+var MALD_CURTO={imposto:"−15% nos pontos",mao3:"“fica” em só 3 dados",casa:"casa trancada até a rodada 8",pedagio:"casa riscada: −10",seca:"boca sem bônus",neblina:"cartela sem os valores"};
+function linhaMald(m,id){var t=MALD_CURTO[id]||m.desc;if(id==="casa"&&R.maldCasa)t=CATS.filter(function(c){return c.id===R.maldCasa})[0].nome+" trancada até a rodada 8";return '<span class="pn-mald">'+m.curto+'</span> '+t}
 // ganchos para os testes automáticos
 window.MQT={get R(){return R},get S(){return S},fimDeFase:function(){fimDeFase()},encerra:function(v,p){encerraRun(v,p)}};
 // segunda chance: guarda a noitada no começo de cada fase
@@ -2671,7 +2669,7 @@ function usaSegundaChance(){
   if(!R||!R.snap||R.chanceUsada||!nivel("chance"))return false;
   var o=JSON.parse(R.snap);R=o.R;S=o.S;R.chanceUsada=true;R.snap=null;recalcMods();guardaInicioFase();R.snap=null;
   vendo=0;modoItem=-1;desenha();salvaRun();
-  abrePainel("Segunda chance!",["Por conta da casa: "+(R.duelo?"o duelo":"a conferência")+" recomeça."],
+  abrePainel("Segunda chance!",["Por conta da casa: "+(R.duelo?"o duelo":"a mesa")+" recomeça."],
     [{txt:"JOGAR DE NOVO",cb:function(){abrePainelFase()}}]);
   return true;
 }
@@ -2681,7 +2679,7 @@ var PERSO_ARTE={"tamandua": {"b": {"src": "data:image/png;base64,iVBORw0KGgoAAAA
 // Personagens jogáveis: cada um com uma vantagem fixa na noitada. Os bloqueados abrem por conquista (guardada no aparelho).
 var PERSOS=[
   {id:"capivara",nome:"Capivara",poder:"Tranquilona",desc:"Nos duelos, a bomba aguenta 10 pontos a mais de diferença antes de estourar."},
-  {id:"tamandua",nome:"Tamanduá",poder:"Língua comprida",desc:"Uma vez por conferência, rola de novo um dado sem gastar lance (botão Língua)."},
+  {id:"tamandua",nome:"Tamanduá",poder:"Língua comprida",desc:"Uma vez por mesa, rola de novo um dado sem gastar lance (botão Língua)."},
   {id:"arara",nome:"Arara-azul",poder:"Olho vivo",desc:"A caça-níquel mostra sempre uma opção a mais para escolher."},
   {id:"lobo",nome:"Lobo-guará",poder:"Notívago",desc:"Nas mesas com maldição, o desconto na meta é o dobro.",trava:"Vença o duelo da Mesa 2 (Rival 2) para liberar."},
   {id:"onca",nome:"Onça-pintada",poder:"Rainha da noite",desc:"Começa a noitada com uma bênção rara.",trava:"Vença uma noitada para liberar."}];
@@ -2783,7 +2781,7 @@ function anotar(id){
   if(S.fim||rolando||S.jogadas===0)return;
   var cat=CATS.filter(function(c){return c.id===id})[0],sc=S.scores[S.vez];
   if(!cat||sc[id]!=null)return;
-  if(R&&R.mald==="casa"&&id===R.maldCasa)return;                // maldição Casa trancada
+  if(R&&R.mald==="casa"&&id===R.maldCasa&&(S.rod||0)<8)return;                // maldição Casa trancada
   var antigos=S.dados.slice();
   var elCasa=$("tabela").querySelector('[data-cat="'+id+'"]'),ori=elCasa?centro(elCasa):null,antesPts=R?pontosFase():0,eraBoca=S.boca&&!cat.n,embGanho=0;
   sc[id]=pontos(cat,S.dados,S.boca);
@@ -3811,7 +3809,7 @@ function fim(vence,bomba){
   $("de-novo").onclick=CFG.aoFim?function(){var cb=CFG.aoFim,res={vence:vence==="eu",bomba:bomba&&!J.ultimo,eu:J.eu.tot,ele:J.ele.tot,rod:Math.min(J.rod+1,RODADAS)};fechar();cb(res)}:novo;
 }
 function regras(){
-  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. No fim vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona'+(CFG.aoFim?' (empate não salva)':'')+'.</li>'+(CFG.forca?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>Seus bônus e itens da noitada valem no duelo.</li>':'')+(E().velha?'<li><b>Jogo da velha:</b> três casas em linha com o valor máximo valem +'+E().velha+', para os dois (número: 5 dados iguais; Full, Seguida e Quadrada: pontuou; a coluna do meio também exige o General).</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li>'+(poder()?'<li><b>Poder de '+nomeR()+': '+PODERES[CFG.look].nome+'.</b> '+PODERES[CFG.look].desc+'</li>':'')+'</ul><button type="button" id="ok">VOLTAR</button>';
+  $("cx").innerHTML='<h2 class="bom">'+(CFG.aoFim?"DUELO":"MODO X1")+'</h2><ul><li>Cada um tem a sua cartela. Você joga, dá o tapa e a bomba gira para ele.</li><li>Depois que os dois jogam, a bomba confere a <b>diferença de pontos</b>. Passou do limite, estoura em quem está atrás.</li><li>O limite começa em <b>'+LIMITES[0]+'</b> e cai a cada rodada, até <b>'+LIMITES[RODADAS-1]+'</b>. O pavio encurta junto.</li><li>São <b>'+RODADAS+' rodadas</b>. No fim vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona'+(CFG.aoFim?' (empate não salva)':'')+'.</li>'+(CFG.forca>0?'<li>'+nomeR()+' joga com <b>+'+Math.round(CFG.forca*100)+'%</b> nos pontos.</li>':'')+(CFG.pontosEu?'<li>Seus bônus e itens da noitada valem no duelo.</li>':'')+(E().velha?'<li><b>Jogo da velha:</b> três casas em linha com o valor máximo valem +'+E().velha+', para os dois (número: 5 dados iguais; Full, Seguida e Quadrada: pontuou; a coluna do meio também exige o General).</li>':'')+'<li>Jogada especial num lance com os 5 dados rolados juntos é de boca: +5 (General vale 100).</li>'+(poder()?'<li><b>Poder de '+nomeR()+': '+PODERES[CFG.look].nome+'.</b> '+PODERES[CFG.look].desc+'</li>':'')+'</ul><button type="button" id="ok">VOLTAR</button>';
   $("tela").hidden=false;$("ok").onclick=function(){$("tela").hidden=true};
 }
 
@@ -3822,7 +3820,7 @@ function desenhaItens(){
   var l=listaItens(),rx=E().rolext?E().rolext():null,bn=E().bencaos?E().bencaos():[],h="";
   if(bn.length)h+='<button type="button" class="item benc" data-benc="1" aria-label="Ver bênçãos">Bênçãos '+bn.length+'</button>';
   l.forEach(function(b,i){h+='<button type="button" class="item'+(J.modo===i?' ativo':'')+'" data-it="'+i+'" style="border-color:'+b.cor+'" aria-label="Item: '+b.nome+'">'+b.curto+'</button>'});
-  if(rx)h+='<button type="button" class="item'+(rx.usado?' usado':'')+'" data-rext="1" aria-label="Rolamento extra da conferência">+1/F</button>';
+  if(rx)h+='<button type="button" class="item'+(rx.usado?' usado':'')+'" data-rext="1" aria-label="Rolamento extra da mesa">+1/F</button>';
   $("itens").innerHTML=h;
 }
 function painel(tit,linhas,bts,ops){
@@ -3835,9 +3833,9 @@ function podeItem(){return J.vez==="eu"&&!ocupado&&!J.fim}
 function usaRext(){
   if(!podeItem())return;
   var rx=E().rolext&&E().rolext();if(!rx)return;
-  if(rx.usado){painel("Rolamento extra",["Já usado nesta conferência."],[{txt:"OK"}]);return}
+  if(rx.usado){painel("Rolamento extra",["Já usado nesta mesa."],[{txt:"OK"}]);return}
   if(J.lances===0){painel("Rolamento extra",["Role os dados antes de usar o rolamento extra."],[{txt:"OK"}]);return}
-  painel("Rolamento extra",["Ganha mais 1 lance na rodada atual (uma vez por conferência)."],[{txt:"USAR",cb:function(){E().usaRext();J.extra++;somTique();desenha()}},{txt:"CANCELAR"}]);
+  painel("Rolamento extra",["Ganha mais 1 lance na rodada atual (uma vez por mesa)."],[{txt:"USAR",cb:function(){E().usaRext();J.extra++;somTique();desenha()}},{txt:"CANCELAR"}]);
 }
 function usaItem(i){
   if(!podeItem())return;
