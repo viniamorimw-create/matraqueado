@@ -823,7 +823,9 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
 #painel .pn button.rolar,#perso .rolar,#balcao .rolar,#sl button.rolar{clip-path:none!important;background:none!important;border:0!important;box-shadow:none!important;outline:0;
   border-image:var(--ui-bt) 14 fill / 10px stretch!important;color:#2a0d10!important;text-shadow:none!important}
 #painel .pn button.rolar:active,#perso .rolar:active,#balcao .rolar:active{border-image-source:var(--ui-bt2)!important}
+#painel .pn button.opc{clip-path:none!important;background:none!important;border:0!important;box-shadow:none!important;border-image:var(--ui-bta) 14 fill / 10px stretch!important;min-height:52px;font-family:var(--f-display);font-size:24px!important;letter-spacing:2px}
 #painel .pn button.opc,#perso .rolar.opc,#balcao .rolar.opc{border-image-source:var(--ui-bta)!important;color:#f1d9a8!important}
+#painel .regras.pn h2{font-size:34px!important}
 #painel .pn button.opc:active,#perso .rolar.opc:active,#balcao .rolar.opc:active{border-image-source:var(--ui-bta2)!important}
 #balcao .rolar[data-upg]{border-image-source:var(--ui-bto)!important;color:#2a1208!important}
 #balcao .rolar[data-upg]:active{border-image-source:var(--ui-bto2)!important}
@@ -856,6 +858,12 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
 .ps-fwrap::after{content:"";position:absolute;inset:0;pointer-events:none;border:7px solid transparent;border-image:var(--ui-mold) 16 / 7px stretch}
 .ps-fwrap:has(.sel)::after{border-image-source:var(--ui-mold-sel);filter:drop-shadow(0 0 4px #e3b341)}
 .ps-cad{width:18px!important;height:18px!important;right:5px!important;top:5px!important;background:var(--ui-cad) center/contain no-repeat!important;z-index:3}
+
+.pn-meta{display:block;font-family:var(--f-display);font-size:24px;line-height:1.1}
+.pn-meta b{font-size:34px;color:#a81720}
+.t-azul .pn-meta b,.t-vinho .pn-meta b{color:#ffcf6a}
+.pn-mald{display:inline-block;font-family:var(--f-display);font-size:20px;letter-spacing:1px;color:#ffcf6a;background:#3a0a10;border:2px solid #d49a48;padding:2px 8px;margin-right:4px}
+.pn-pouco{font-size:14px;opacity:.85}
 </style>
 </head>
 <body>
@@ -2045,19 +2053,11 @@ function comecaFase(mostra){
 }
 function abrePainelFase(){
   if(R.duelo){abrePainelDuelo();return}
-  var ka=kAnt(),nr=R.k-ka,fb=faseDoBloco();
-  var l=[];
-  var m=R.mald&&MALD[R.mald],pp=persoPor(R.perso),et=etapa(R.fase),iniMesa=!!INI_BLOCO[R.fase];
-  l.push(mapaNoite(R.fase));
-  l.push(iniMesa?"Uma cartela inteira, do Ás ao General. A casa confere a sua conta <b>"+et.n+" vezes</b> no caminho.":"A mesma cartela continua.");
-  l.push("Jogue até a <b>rodada "+R.k+"</b> da cartela. Na conferência, você precisa ter <b>"+R.alvo+" pontos</b> no total.");
-  if(R.fase===1&&pp)l.push('<b>'+pp.nome+'</b>, '+pp.poder.toLowerCase()+': '+pp.desc);
-  if(m){
-    l.push('<b style="color:'+(iniMesa?'#ffcf6a':'#a81c1f')+'">'+(iniMesa?'Maldição desta mesa: ':'A maldição continua: ')+m.nome+'.</b> '+m.desc+(R.mald==="casa"?" Desta vez: <b>"+CATS.filter(function(c){return c.id===R.maldCasa})[0].nome+"</b>.":""));
-  }
-  l.splice(1,0,'<b>Conferência '+et.conf+' de '+et.n+'</b>');
+  var m=R.mald&&MALD[R.mald],et=etapa(R.fase),iniMesa=!!INI_BLOCO[R.fase],l=[mapaNoite(R.fase)];
+  l.push('<span class="pn-meta"><b>'+R.alvo+'</b> pontos até a rodada <b>'+R.k+'</b></span>');
+  if(m)l.push(linhaMald(m,R.mald));
   if(m&&iniMesa)PAINEL_TEMA="t-vinho";
-  abrePainel("Mesa "+et.mesa,l,[{txt:iniMesa?"SENTAR NA MESA":"CONTINUAR",cb:function(){
+  abrePainel("Mesa "+et.mesa+(iniMesa?"":" · "+et.conf+"/"+et.n),l,[{txt:iniMesa?"SENTAR NA MESA":"CONTINUAR",cb:function(){
     faixa(iniMesa?"MESA "+et.mesa:"CONFERÊNCIA "+et.conf,iniMesa?"":"até a rodada "+R.k);tremer(1);
     if(m&&iniMesa)setTimeout(function(){if(!R)return;faixa(m.nome.toUpperCase(),"","m");clarao("#4a0c0c");tremer(2);somDiabo()},1250);
   }}]);
@@ -2072,13 +2072,9 @@ function cenaNoite(){   // anima a mesa vazia (X1UI.pintaVazia, no bloco do X1) 
   }
 }
 function abrePainelDuelo(){
-  var D=DUELOS[R.fase],L=limitesDuelo(D),l=[];
-  l.push("Duelo contra <b>"+D.nome+"</b>: <b>"+D.rod+" rodadas</b>, cada um com a sua cartela.");
-  l.push("Depois que os dois jogam a rodada, a bomba confere a diferença de pontos. Passou do limite, estoura em quem está atrás. O limite começa em <b>"+L[0]+"</b> e cai até <b>"+L[L.length-1]+"</b>.");
-  if(D.forca)l.push(D.nome+" joga com <b>+"+Math.round(D.forca*100)+"%</b> nos pontos. As suas bênçãos também valem no duelo.");
-  else if(R.relics.length)l.push("As suas bênçãos valem no duelo.");
-  l.push("Na última rodada vem o <b>último tapa</b>: a bomba vai para quem terminou atrás e detona (empate não salva). Perder o duelo encerra a noitada.");
-  l.unshift(mapaNoite(R.fase));
+  var D=DUELOS[R.fase],L=limitesDuelo(D),l=[mapaNoite(R.fase)];
+  l.push('<span class="pn-meta"><b>'+D.rod+'</b> rodadas · bomba <b>'+L[0]+'</b>→'+L[L.length-1]+'</span>');
+  if(D.forca)l.push(D.nome+' joga com <b>+'+Math.round(D.forca*100)+'%</b> nos pontos.');
   PAINEL_TEMA="t-azul";
   abrePainel(R.fase>=FASES?"Chefe final: "+D.nome:R.chefe?"Chefe: "+D.nome:"Duelo: "+D.nome,l,[{txt:"COMEÇAR DUELO",cb:abrirDuelo}]);
 }
@@ -2132,11 +2128,9 @@ function fimDeFase(){
 function passaFase(pts){
   if(R.estado!=="passou"){var nv=Math.max(0,nivelMaq(pts));R.gorjNv=nv;R.gorjCasa=GORJ_CASA[nv]+2*nivel("gorj");R.credProx=(R.credProx||0)+R.gorjCasa}
   R.estado="passou";salvaRun();
-  var prox=R.fase+1,du=DUELOS[prox],gj=R.gorjCasa||0;
-  var et=etapa(R.fase);
-  abrePainel(et.conf>=et.n?"Mesa "+et.mesa+" fechada":"Conferência "+et.conf+" superada",["Você está com <b>"+pts+"</b> pontos na cartela (meta "+R.alvo+").",
-    (gj?"Gorjeta da casa"+(R.gorjNv>0?" ("+MAQ_NOME[R.gorjNv].toLowerCase()+")":"")+": <b>+"+gj+" pontos</b> na próxima conferência.":""),
-    du?"Agora a cartela fecha e vem o duelo contra <b>"+du.nome+"</b>.":"Próxima conferência: na rodada "+RODADAS[R.fase]+", com a meta mais alta."].filter(Boolean),
+  var du=DUELOS[R.fase+1],gj=R.gorjCasa||0,et=etapa(R.fase);
+  abrePainel(et.conf>=et.n?"Mesa "+et.mesa+" fechada":"Conferência "+et.conf+" ok",['<span class="pn-meta"><b>'+pts+'</b> de '+R.alvo+'</span>',
+    gj?"Gorjeta da casa: <b>+"+gj+"</b> na próxima.":"",du?"Agora: duelo com <b>"+du.nome+"</b>.":""].filter(Boolean),
     [{txt:"CONTINUAR",cb:function(){if(!R)return;R.fase++;comecaFase(true)}}]);
 }
 function melhor(){try{return parseInt(localStorage.getItem("general5-surv-melhor"),10)||0}catch(e){return 0}}
@@ -2151,13 +2145,12 @@ function encerraRun(venceu,pts){
   else{somAnota(0);clarao("#4a0c0c");tremer(3)}
   var du=R.duelo&&R.duelo.res,D=DUELOS[R.fase],novaOnca=venceu&&persoLibera("onca");
   abrePainel(venceu?"Noitada completa!":"Noitada encerrada",[
-    novaOnca?'<b style="color:#e3b341">Novo personagem liberado: Onça-pintada!</b>':"",
-    venceu?"Você fechou as 3 mesas e venceu os 4 duelos, até o Black Cat.":
-      du?"Duelo com "+D.nome+": você <b>"+du.eu+" × "+du.ele+"</b> "+D.nome+"."+(du.bomba?" A bomba estourou na sua mão.":" "+D.nome+" terminou na frente."):
-      etapaTxt(R.fase)+": "+pts+" pontos, faltaram "+(R.alvo-pts)+" para a meta de "+R.alvo+".",
-    "Você chegou até: <b>"+melhorTxt(feitas)+"</b>. Melhor noitada: "+melhorTxt(melhor())+".",
-    "Bônus: "+listaBonus()+".",
-    '<b style="color:#c98a1a">Fichas nesta noitada: +'+(R.fichas||0)+'</b> (total '+lerSave().fichas+'). Gaste no Balcão do Black Cat, na tela de personagens.'].filter(Boolean),
+    novaOnca?'<b style="color:#e3b341">Onça-pintada liberada!</b>':"",
+    venceu?'<span class="pn-meta">Você venceu o <b>Black Cat</b>!</span>':
+      du?'<span class="pn-meta"><b>'+du.eu+'</b> × '+du.ele+'</span>'+(du.bomba?"A bomba estourou na sua mão.":D.nome+" venceu."):
+      '<span class="pn-meta"><b>'+pts+'</b> de '+R.alvo+'</span>Faltaram '+(R.alvo-pts)+'.',
+    "Chegou até: <b>"+melhorTxt(feitas)+"</b>",
+    '<b style="color:#c98a1a">+'+(R.fichas||0)+' fichas</b> <span class="pn-pouco">(total '+lerSave().fichas+')</span>'].filter(Boolean),
     [{txt:"NOVA NOITADA",cb:novaRun},{txt:"MENU",cls:"opc",cb:function(){abrirInicio(false)}}]);
 }
 
@@ -2667,6 +2660,9 @@ function mapaNoite(f){   // as 7 paradas com ícones (arte em ui_arte.json, CSS 
   return '<span class="mapa" role="img" aria-label="Mapa da noitada">'+paradas.map(function(p,k){var ag=p.f.indexOf(f)>=0,ok=p.f[p.f.length-1]<f;
     return (k?'<b class="mp-seta"></b>':'')+'<i class="mp'+(ag?' ag':ok?' ok':'')+'" title="'+p.t+'" style="background-image:var(--mp-'+p.ic+')"></i>'}).join("")+'</span>';
 }
+
+var MALD_CURTO={imposto:"−15% nos pontos",mao3:"“fica” em só 3 dados",casa:"casa trancada",pedagio:"casa riscada: −10",seca:"boca sem bônus",neblina:"cartela sem os valores"};
+function linhaMald(m,id){var t=MALD_CURTO[id]||m.desc;if(id==="casa"&&R.maldCasa)t=CATS.filter(function(c){return c.id===R.maldCasa})[0].nome+" trancada";return '<span class="pn-mald">'+m.curto+'</span> '+t}
 // ganchos para os testes automáticos
 window.MQT={get R(){return R},get S(){return S},fimDeFase:function(){fimDeFase()},encerra:function(v,p){encerraRun(v,p)}};
 // segunda chance: guarda a noitada no começo de cada fase
@@ -2675,7 +2671,7 @@ function usaSegundaChance(){
   if(!R||!R.snap||R.chanceUsada||!nivel("chance"))return false;
   var o=JSON.parse(R.snap);R=o.R;S=o.S;R.chanceUsada=true;R.snap=null;recalcMods();guardaInicioFase();R.snap=null;
   vendo=0;modoItem=-1;desenha();salvaRun();
-  abrePainel("Segunda chance!",["O Black Cat dá mais uma rodada por conta da casa: "+etapaTxt(R.fase).replace("Duelo","o duelo").replace("Mesa","a mesa")+" recomeça do início.","Só vale uma vez por noitada."],
+  abrePainel("Segunda chance!",["Por conta da casa: "+(R.duelo?"o duelo":"a conferência")+" recomeça."],
     [{txt:"JOGAR DE NOVO",cb:function(){abrePainelFase()}}]);
   return true;
 }
@@ -3749,7 +3745,7 @@ async function quemComeca(){
   var nm=nomeR(),v1=0,v2=0,tela=$("tela"),cx=$("cx");
   function pinta(a,b,rolA,rolB,msg,bt,gan){
     var fim=gan?'<span class="qm-faixa">'+msg+'</span>':msg||"";
-    cx.innerHTML='<h2 class="qm-tit">QUEM<br>COMEÇA?</h2><p class="qm-sub">Cada um rola um dado. O mais alto começa.</p>'+
+    cx.innerHTML='<h2 class="qm-tit">QUEM<br>COMEÇA?</h2>'+
       '<div class="qm"><div><span>'+nm+'</span>'+(a?htmlDado(a,0,false,rolA,false,gan==="ele"?" ganha":""):'<i class="qm-vazio"></i>')+'</div>'+
       '<div><span>Você</span>'+(b?htmlDado(b,1,false,rolB,false,gan==="eu"?" ganha":""):'<i class="qm-vazio"></i>')+'</div></div>'+
       '<div class="qm-div">★</div><div class="qm-msg">'+fim+'</div>'+(bt?'<button type="button" id="qm-rolar"'+(bt==="esp"?' disabled':'')+'>'+(bt==="esp"?"AGUARDE":"ROLAR")+'</button>':'');
