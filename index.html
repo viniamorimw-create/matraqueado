@@ -2070,10 +2070,12 @@ function cenaNoite(){   // anima a mesa vazia (X1UI.pintaVazia, no bloco do X1) 
     (function quadro(now){if(!R||c.hidden){cenaN=false;return}X1UI.pintaVazia(c,now/1000);requestAnimationFrame(quadro)})(performance.now());
   }
 }
+var REGRAS_DUELO={bomba:"Casa a casa + bomba",nocaute:"Linha mortal (nocaute)",linha:"Linha vale +10",pontos:"Só pontos"};
+function regraDuelo(){var r=null;try{r=localStorage.getItem("matraq-regra-duelo")}catch(e){}return REGRAS_DUELO[r]?r:"bomba"}
 function abrePainelDuelo(){
   var D=DUELOS[R.fase],L=limitesDuelo(D),l=[mapaNoite(R.fase)];
   l.push('<span class="pn-meta"><b>'+D.rod+'</b> rodadas · casa a casa</span>');
-  l.push('Tome as casas dele. <b>3 em linha = nocaute.</b>');
+  var rg=regraDuelo();l.push(rg==="bomba"?'Tome as casas dele. A bomba vigia a diferença.':rg==="nocaute"?'Tome as casas dele. <b>3 em linha = nocaute.</b>':rg==="linha"?'Tome as casas dele. <b>3 em linha = +10.</b>':'Tome as casas dele. Vence quem somar mais.');
   if(D.pod)l.push('<span class="pn-pouco">Poderes: '+D.pod+'</span>');
   if(D.forca>0)l.push(D.nome+' joga com <b>+'+Math.round(D.forca*100)+'%</b> nos pontos.');
   PAINEL_TEMA="t-azul";
@@ -2081,7 +2083,7 @@ function abrePainelDuelo(){
 }
 function abrirDuelo(){
   var D=DUELOS[R.fase];
-  X1UI.abrir({tag:"D"+(DU_ORD.indexOf(R.fase)+1),rodadas:D.rod,limites:limitesDuelo(D),look:D.look,nome:D.nome,pensa:D.pensa,forca:D.forca,erro:D.erro,tat:D.tat,escudosEu:(temPerso("capivara")?1:0)+nivel("pavio"),
+  X1UI.abrir({tag:"D"+(DU_ORD.indexOf(R.fase)+1),rodadas:D.rod,limites:limitesDuelo(D),look:D.look,nome:D.nome,pensa:D.pensa,forca:D.forca,erro:D.erro,tat:D.tat,regra:regraDuelo(),escudosEu:(temPerso("capivara")?1:0)+nivel("pavio"),
     pontosEu:function(id,d,boca){var p=pontos(CATS.filter(function(c){return c.id===id})[0],d,boca);return M&&M.gor&&p>0?Math.round(p*(1+M.gor)):p},   // relíquias e gorjeta valem no duelo
     ext:extDuelo(),
     aoFim:fimDuelo,aoSair:function(){abrirInicio(false)}});
@@ -2183,6 +2185,7 @@ function testeAbre(){
   h+='<h3>Dados do próximo lance</h3><div class="gr"><input id="tst-d" inputmode="numeric" maxlength="5" placeholder="66666"><button type="button" id="tst-dok">USAR</button>'+
      [["66666","General 6"],["11111","General 1"],["33322","Full"],["12345","Seguida"],["44441","Quadrada"],["66612","Terno 6"]].map(function(x){return '<button type="button" data-dd="'+x[0]+'">'+x[1]+'</button>'}).join("")+'</div>'+
      '<small>Vale só para o próximo lance (na meta ou no duelo). Dados com "fica" não mudam.</small>';
+  h+='<h3>Regra do duelo</h3><div class="gr">'+Object.keys(REGRAS_DUELO).map(function(k){return '<button type="button" data-rg="'+k+'" class="'+(regraDuelo()===k?'on':'')+'">'+REGRAS_DUELO[k]+'</button>'}).join('')+'</div><small>Vale a partir do próximo duelo.</small>';
   h+='<h3>Ações</h3><div class="gr"><button type="button" data-ac="pts">+50 pontos</button><button type="button" data-ac="slot">Caça-níquel agora</button><button type="button" data-ac="vence">Vencer duelo</button><button type="button" data-ac="perde">Perder duelo</button><button type="button" data-ac="limpa">Tirar bônus</button></div>';
   h+='<h3>Ganhar bônus</h3><div class="gr">';
   BONUS.forEach(function(b){var tem=R&&(R.relics.indexOf(b.id)>=0);h+='<button type="button" data-bn="'+b.id+'" class="'+(tem?"on":"")+'" style="border-color:'+RAR_COR[b.r]+'">'+b.nome+'</button>'});
@@ -2196,6 +2199,7 @@ if(TESTE){
     var b=e.target.closest("button");if(!b)return;
     if(b.id==="tst-x"){$("tst").hidden=true;return}
     if(b.dataset.fase){testeFase(+b.dataset.fase);return}
+    if(b.dataset.rg){try{localStorage.setItem("matraq-regra-duelo",b.dataset.rg)}catch(e){}testeAbre();return}
     if(b.dataset.dd||b.id==="tst-dok"){
       var v=(b.dataset.dd||$("tst-d").value).replace(/[^1-6]/g,"").slice(0,5);if(v.length<5)return;
       window.TESTE_PROX=v.split("").map(Number);$("tst").hidden=true;return;
@@ -3586,7 +3590,7 @@ function desenhaCena(now){
   // o adversário da vez, desenhado inteiro (rivalPinta: logo acima de desenhaCena)
   CENA.proxPisca-=dt;if(CENA.proxPisca<=0){CENA.pisca=.16;CENA.proxPisca=2+Math.random()*4}
   if(CENA.pisca>0)CENA.pisca-=dt;
-  var dd=J.ele.tot-J.eu.tot,L2=40,est={abre:CENA.pisca>0?Math.abs(CENA.pisca-.08)/.08:1,
+  var dd=J.ele.tot-J.eu.tot,L2=CFG.regra==="bomba"?limite():40,est={abre:CENA.pisca>0?Math.abs(CENA.pisca-.08)/.08:1,
       humor:J.fim?(J.fim==="ele"?"calmo":"bravo"):(J.vez==="ele"&&dd<-.6*L2)?"tenso":dd<-.4*L2?"bravo":dd>.4*L2?"calmo":"normal",
       ox:Math.round(Math.sin(CENA.ang)*2),morto:CENA.morto==="ele",vence:J.fim==="ele",t:t};
   passantes(t,CFG.look<3?CFG.look:-1,true);   // o adversário sentado não passa no salão (linhas 0, 1 e 2 dos figurantes)
@@ -3629,7 +3633,10 @@ function desenhaCena(now){
     var n=24,j;for(j=0;j<=n;j++)px(97+(tx-97)*j/n,58+(ty-2-58)*j/n,2,2,j%6<1?"#44444e":"#7a7a86");
     px(97-(tx-97)*.22,58-(ty-2-58)*.22-1,4,4,"#3a3a44");                        // contrapeso
   }
-
+  if(!frente&&CFG.regra==="bomba"){braco();bomba()}
+  if(CFG.regra==="bomba"){g.fillStyle="#1c1c22";g.beginPath();g.ellipse(97,70,11,3.5,0,0,7);g.fill();g.fillStyle="#32323c";g.beginPath();g.ellipse(97,69,9,2.5,0,0,7);g.fill();
+  px(96,58,3,11,"#55555f");px(95,56,5,3,"#9a9aa6");
+  if(frente){braco();bomba()}}
   // faíscas do pavio
   for(i=CENA.fag.length-1;i>=0;i--){var f=CENA.fag[i];f.v-=dt;f.x+=f.vx*dt;f.y+=f.vy*dt;f.vy+=60*dt;if(f.v<=0){CENA.fag.splice(i,1);continue}px(f.x,f.y,1,1,f.v>.2?"#ffd23e":"#ff7a1e")}
   cenaLuz(pisc);
@@ -3644,7 +3651,7 @@ function desenhaCena(now){
   poderCena();introCena(dt);
   if(rodando)requestAnimationFrame(desenhaCena);
 }
-function giraBomba(para){   // dá o tapa: a bomba roda meio giro até o lado de quem vai jogar
+function giraBomba(para){if(CFG.regra!=="bomba")return;   // dá o tapa: a bomba roda meio giro até o lado de quem vai jogar
   CENA.alvo+=Math.PI;somTapa();treme("tapa");aviso("TAPA!","p");
 }
 function posBomba(){var a=CENA.alvo,prof=(1-Math.cos(a))/2;return {x:97+40*Math.sin(a),y:60-8*Math.cos(a)+8*prof+6}}
@@ -3885,7 +3892,7 @@ $("btn-regras").addEventListener("click",regras);
 $("btn-sair").addEventListener("click",function(){var cb=CFG.aoSair;fechar();if(cb)cb()});
 // abrir(cfg): cfg = {tag (texto ao lado da placa), rodadas, limites, look, nome, pensa, forca, pontosEu(id,dados,boca), aoFim(res), aoSair()}; sem cfg = duelo avulso padrão
 function abrir(cfg){
-  cfg=cfg||{};CFG={look:cfg.look||0,nome:cfg.nome||"Rival",pensa:cfg.pensa==null?1:cfg.pensa,forca:cfg.forca||0,erro:cfg.erro||0,tat:cfg.tat||0,escudosEu:cfg.escudosEu||0,pontosEu:cfg.pontosEu||null,aoFim:cfg.aoFim||null,aoSair:cfg.aoSair||null,ext:cfg.ext||null};
+  cfg=cfg||{};CFG={look:cfg.look||0,nome:cfg.nome||"Rival",pensa:cfg.pensa==null?1:cfg.pensa,forca:cfg.forca||0,erro:cfg.erro||0,tat:cfg.tat||0,escudosEu:cfg.escudosEu||0,regra:cfg.regra||"bomba",pontosEu:cfg.pontosEu||null,aoFim:cfg.aoFim||null,aoSair:cfg.aoSair||null,ext:cfg.ext||null};
   RODADAS=cfg.rodadas||8;LIMITES=cfg.limites||[60,55,50,45,40,35,30,25];
   $("tag-fase").textContent=cfg.tag||"X1";
   host.hidden=false;X1.prepara();tema();novo();if(!rodando){rodando=true;CENA.ult=0;requestAnimationFrame(desenhaCena)}}
@@ -3904,14 +3911,15 @@ function donoC(ci){var id=CATS[ci].id,a=J.eu.sc[id],b=J.ele.sc[id];
 function recalcTot(){var a=J.eu.xp||0,b=0,ci,id,d,va,vb;
   for(ci=0;ci<10;ci++){id=CATS[ci].id;d=donoC(ci);va=J.eu.sc[id]||0;vb=J.ele.sc[id]||0;
     if(d==="eu")a+=va+vb;else if(d==="ele")b+=va+vb;else{a+=va;b+=vb}}
+  if(CFG.regra==="linha"){a+=10*linhasDono("eu").length;b+=10*linhasDono("ele").length}   // linha de 3 casas tomadas = +10
   J.eu.tot=a;J.ele.tot=b;
 }
 function linhasDono(q){return LINHAS.filter(function(l){return l.every(function(k){return donoC(ORDEM[k])===q})})}
-function ameacas(q){var out=[];LINHAS.forEach(function(l){var cs=l.map(function(k){return ORDEM[k]}),d=cs.map(donoC),meus=d.filter(function(x){return x===q}).length,ab=cs.filter(function(c,i){return d[i]===null});
+function ameacas(q){var out=[];if(CFG.regra!=="nocaute"&&CFG.regra!=="linha")return out;LINHAS.forEach(function(l){var cs=l.map(function(k){return ORDEM[k]}),d=cs.map(donoC),meus=d.filter(function(x){return x===q}).length,ab=cs.filter(function(c,i){return d[i]===null});
   if(meus===cs.length-1&&ab.length===1&&out.indexOf(ab[0])<0)out.push(ab[0])});return out}
 function nomesCasas(l){return l.map(function(ci){return CATS[ci].nome}).join(", ")}
-function koCheck(){   // alguém fechou 3 em linha? nocaute na hora
-  if(J.fim||J.ko)return true;
+function koCheck(){   // alguém fechou 3 em linha? nocaute na hora (só na regra "nocaute")
+  if(J.fim||J.ko)return true;if(CFG.regra!=="nocaute")return false;
   var a=linhasDono("eu").length,b=linhasDono("ele").length;if(!a&&!b)return false;
   var v=a&&!b?"eu":b&&!a?"ele":(J.eu.tot>J.ele.tot?"eu":"ele");nocaute(v);return true;
 }
@@ -3955,13 +3963,14 @@ function escolheCasaIA(c0){   // o adversário escolhe a casa pensando na disput
     if(ci===c0)sc+=1;if(sc>bv){bv=sc;best=ci}}
   return best;
 }
-function giraBomba(){}   // sem bomba no casa a casa
+function limite(){var l=LIMITES[Math.min(J.rod,RODADAS-1)];return CFG.regra==="bomba"?Math.round(l*1.8/5)*5:l}   // casa a casa dá saltos maiores
 function desenhaPlacas(){
   var joga=!J.fim,ca=0,cb=0,ci,ae=ameacas("ele"),am=ameacas("eu");
   for(ci=0;ci<10;ci++){var d=donoC(ci);if(d==="eu")ca++;else if(d==="ele")cb++}
   $("placas").innerHTML=
     '<button type="button" class="placa px'+(joga&&J.vez==="eu"?' vez':'')+(vendo==="eu"?' vendo':'')+'" data-v="eu" aria-label="Você, '+J.eu.tot+' pontos"><span>Você</span><b>'+J.eu.tot+'</b></button>'+
-    '<div class="placa px casas'+(ae.length?' perigo':'')+'" aria-label="Casas tomadas: você '+ca+', '+nomeR()+' '+cb+'"><span>Casas</span><b>'+ca+' × '+cb+'</b></div>'+
+    (CFG.regra==="bomba"?'<div class="placa px bomba'+(Math.abs(J.eu.tot-J.ele.tot)>limite()*.7?' quente':'')+'"><span>Bomba</span><b>'+Math.abs(J.eu.tot-J.ele.tot)+'/'+limite()+'</b></div>':
+    '<div class="placa px casas'+(ae.length?' perigo':'')+'" aria-label="Casas tomadas: você '+ca+', '+nomeR()+' '+cb+'"><span>Casas</span><b>'+ca+' × '+cb+'</b></div>')+
     '<button type="button" class="placa px'+(joga&&J.vez==="ele"?' vez':'')+(vendo==="ele"?' vendo':'')+'" data-v="ele" aria-label="'+nomeR()+', '+J.ele.tot+' pontos"><span>'+nomeR()+'</span><b>'+J.ele.tot+'</b></button>'+
     '<div class="placa rodada px"><span>Rodada</span><b>'+Math.min(J.rod+1,RODADAS)+'/'+RODADAS+'</b></div>';
 }
@@ -3985,35 +3994,42 @@ function desenhaCartela(){   // uma cartela só: cada casa mostra o seu valor (v
   $("cartela").className="cartela px";
 }
 function dicaCasa(){
+  if(CFG.regra==="bomba"){var d=J.eu.tot-J.ele.tot,L=limite();return d===0?"Empatados. Abrir mais de <b>"+L+"</b> estoura o outro.":d<0?"<b>"+(-d)+"</b> atrás. Passou de <b>"+L+"</b>, estoura em você.":"<b>"+d+"</b> na frente. Passou de <b>"+L+"</b>, estoura nele."}
   var ae=ameacas("ele"),am=ameacas("eu");
   if(ae.length)return "<b>Perigo!</b> "+nomeR()+" fecha linha em "+nomesCasas(ae)+".";
   if(am.length)return "Você fecha linha em <b>"+nomesCasas(am)+"</b>.";
-  return "Tome as casas dele. 3 em linha = nocaute.";
+  return CFG.regra==="nocaute"?"Tome as casas dele. 3 em linha = nocaute.":CFG.regra==="linha"?"Tome as casas dele. 3 em linha = +10.":"Tome as casas dele. Vence quem somar mais.";
 }
 async function confere(){
   var f=ficha;
+  if(CFG.regra==="bomba"){var dif=J.eu.tot-J.ele.tot;
+    if(Math.abs(dif)>limite()){var per=dif>0?"ele":"eu";if(per!==J.vez){CENA.alvo+=Math.PI;await espera(800);if(f!==ficha)return}explode(per);return}}
   J.rod++;
-  if(J.rod>=RODADAS){fim(J.eu.tot>J.ele.tot?"eu":"ele",false);return}   // empate fica com a casa
+  if(J.rod>=RODADAS){
+    if(CFG.regra==="bomba"){J.ultimo=true;var pe=J.eu.tot>J.ele.tot?"ele":"eu";aviso("ÚLTIMO TAPA!");CENA.alvo+=pe!==J.vez?Math.PI:2*Math.PI;somTapa();await espera(1000);if(f!==ficha)return;explode(pe);return}
+    fim(J.eu.tot>J.ele.tot?"eu":"ele",false);return}   // empate fica com a casa
   if(J.primeiro==="ele"){J.vez="ele";vendo="ele";J.nova=null;desenha();await espera(900);if(f!==ficha)return;vezDele();return}
   J.vez="eu";vendo="eu";J.nova=null;ocupado=false;poderInicioRodada();desenha();
 }
 function fim(vence,ko){
   J.fim=vence;ocupado=true;vendo="eu";desenha();
-  var emp=J.eu.tot===J.ele.tot,t=vence==="eu"?(ko?"NOCAUTE!":"VENCEU"):(ko?"NOCAUTE":"NÃO DEU"),
-      s=ko?(vence==="eu"?"Você tomou 3 casas em linha.":nomeR()+" tomou 3 casas suas em linha."):
+  var emp=J.eu.tot===J.ele.tot,bom=CFG.regra==="bomba",t=bom&&ko?"BUM!":vence==="eu"?(ko?"NOCAUTE!":"VENCEU"):(ko?"NOCAUTE":"NÃO DEU"),
+      s=bom&&ko?(J.ultimo?"Último tapa: "+(vence==="eu"?"você terminou na frente e a bomba detonou do lado de "+nomeR()+".":nomeR()+(emp?" empatou (empate fica com a casa)":" terminou na frente")+" e a bomba detonou na sua mão."):
+        vence==="eu"?"A bomba estourou do lado de "+nomeR()+".":"A bomba estourou na sua mão."):ko?(vence==="eu"?"Você tomou 3 casas em linha.":nomeR()+" tomou 3 casas suas em linha."):
         vence==="eu"?"As rodadas acabaram com você na frente.":emp?"Empate: fica com a casa.":"As rodadas acabaram com "+nomeR()+" na frente.";
   $("cx").innerHTML='<h2'+(vence==="eu"?' class="bom"':'')+'>'+t+'</h2><p>'+s+'</p><p class="placar">VOCÊ '+J.eu.tot+' × '+J.ele.tot+' '+nomeR().toUpperCase()+'</p><button type="button" id="de-novo">'+(CFG.aoFim?"CONTINUAR":"DE NOVO")+'</button>';
   $("tela").classList.remove("quem");$("tela").hidden=false;
-  $("de-novo").onclick=CFG.aoFim?function(){var cb=CFG.aoFim,res={vence:vence==="eu",bomba:!!ko&&vence==="eu",ko:!!ko,eu:J.eu.tot,ele:J.ele.tot,rod:Math.min(J.rod+1,RODADAS)};fechar();cb(res)}:novo;
+  $("de-novo").onclick=CFG.aoFim?function(){var cb=CFG.aoFim,res={vence:vence==="eu",bomba:!!ko&&vence==="eu"&&!J.ultimo,ko:!!ko,eu:J.eu.tot,ele:J.ele.tot,rod:Math.min(J.rod+1,RODADAS)};fechar();cb(res)}:novo;
 }
 function regras(){
   $("cx").innerHTML='<h2 class="bom">CASA A CASA</h2><ul><li>Cada casa é uma disputa: quem anotar mais leva os pontos das duas. Empate, cada um com o seu. Riscar entrega a casa.</li>'+
-    '<li><b>3 casas tomadas em linha</b> (de pé, deitada ou diagonal) = <b>nocaute</b>. A coluna do meio precisa do General.</li>'+
-    '<li>Sem nocaute, vence quem tiver mais pontos no fim. Empate fica com a casa.</li>'+
+    (CFG.regra==="bomba"?'<li>A <b>bomba</b> confere a diferença de pontos depois de cada rodada: passou do limite, estoura em quem está atrás. No fim, o último tapa detona em quem terminou atrás.</li>':
+     CFG.regra==="nocaute"?'<li><b>3 casas tomadas em linha</b> (de pé, deitada ou diagonal) = <b>nocaute</b>. A coluna do meio precisa do General.</li><li>Sem nocaute, vence quem tiver mais pontos no fim.</li>':
+     CFG.regra==="linha"?'<li><b>3 casas tomadas em linha</b> valem <b>+10</b>. Vence quem tiver mais pontos no fim.</li>':'<li>Vence quem tiver mais pontos no fim.</li>')+'<li>Empate fica com a casa.</li>'+
     '<li>Uma cartela só: o seu valor em <b style="color:#ff8a8a">vermelho</b>, o dele em <b style="color:#9bb6ff">azul</b>. O maior risca o outro e a casa fica com a cor de quem ganhou. Escudo = protegida, pata = roubada, riscado = casa perdida, borda vermelha = perigo de linha dele, borda dourada = você fecha linha.</li></ul><button type="button" id="ok">OK</button>';
   $("tela").hidden=false;$("ok").onclick=function(){$("tela").hidden=true};
 }
-window.X1TESTE={vence:function(){if(!J.fim)nocaute("eu")},perde:function(){if(!J.fim)nocaute("ele")}};   // modo de teste
+window.X1TESTE={vence:function(){if(!J.fim){if(CFG.regra==="bomba")explode("ele");else nocaute("eu")}},perde:function(){if(!J.fim){if(CFG.regra==="bomba")explode("eu");else nocaute("ele")}}};   // modo de teste
 })(audio,fxOk);
 
 pintaPano();pintaEnfeites();faixaInicia();
