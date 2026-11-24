@@ -887,6 +887,21 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
   #lado-pc .lp-ben i{font-style:normal;font-size:14px;padding:2px 7px;border:2px solid;background:#1d1520}
   #lado-pc small{opacity:.75}
 }
+
+#senha{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(5,5,7,.8);padding:16px}
+#senha[hidden]{display:none}
+#senha .sx{width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px;align-items:stretch;text-align:center;color:#f1d9a8;
+  background:#141b2b;border:3px solid #d49a48;box-shadow:inset 0 0 0 3px #2a1408,0 0 0 3px #2a1408,0 6px 0 3px #000;padding:18px 16px}
+#senha h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:34px;color:#e3a33a;letter-spacing:1px}
+#senha input{font:inherit;font-size:20px;text-align:center;background:#0d0709;color:#fff2c8;border:2px solid #6b3a22;padding:8px}
+#senha .erro{min-height:18px;color:#ff8a7a;font-size:15px}
+#senha .bts{display:flex;gap:8px}#senha .bts button{flex:1 1 0}
+#senha .rolar{clip-path:none!important;background:none!important;border:0!important;box-shadow:none!important;border-image:var(--ui-bt) 14 fill / 10px stretch!important;
+  color:#2a0d10!important;font-size:22px!important;padding:10px 6px!important;min-width:0!important;width:auto!important;margin:0!important;white-space:nowrap}
+#senha .rolar.opc{border-image-source:var(--ui-bta)!important;color:#f1d9a8!important}
+#senha .rolar::after{display:none!important}
+@keyframes senha-treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#senha .sx.nao{animation:senha-treme .25s 2}
 </style>
 </head>
 <body>
@@ -926,6 +941,9 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
   <div class="pata" aria-hidden="true"></div>
 </div>
 
+<div id="senha" hidden><form class="sx" id="senha-f" autocomplete="off"><h2 class="px">MODO NOITADA</h2><div>Digite a senha para entrar.</div>
+<input id="senha-in" type="password" aria-label="Senha" autocomplete="off"><div class="erro" id="senha-erro" aria-live="polite"></div>
+<div class="bts"><button type="button" class="rolar px opc" id="senha-x">VOLTAR</button><button type="submit" class="rolar px" id="senha-ok">ENTRAR</button></div></form></div>
 <canvas id="fx" aria-hidden="true"></canvas>
 <div id="flash" aria-hidden="true"></div>
 
@@ -2707,6 +2725,23 @@ document.addEventListener("keydown",function(e){
   if(e.key===" "||e.key==="Enter"){var r=$("btn-rolar");if(r&&!r.disabled){e.preventDefault();r.click()}return}
   var n="12345".indexOf(e.key);if(n>=0){var dd=$("dados").children[n];if(dd){e.preventDefault();dd.click()}}
 });
+
+// ---------- trava do Modo Noitada ----------
+var SENHA_NOITADA="password",SENHA_K="matraq-noitada-liberada";
+function noitadaLiberada(){try{return localStorage.getItem(SENHA_K)==="1"}catch(e){return false}}
+var senhaDepois=null;
+function pedeSenha(depois){senhaDepois=depois;$("senha-in").value="";$("senha-erro").textContent="";$("senha").hidden=false;setTimeout(function(){$("senha-in").focus()},50)}
+$("senha-f").addEventListener("submit",function(e){e.preventDefault();
+  if($("senha-in").value.trim()===SENHA_NOITADA){try{localStorage.setItem(SENHA_K,"1")}catch(x){}$("senha").hidden=true;var d=senhaDepois;senhaDepois=null;if(d)d();return}
+  $("senha-erro").textContent="Senha errada.";var c=document.querySelector("#senha .sx");c.classList.remove("nao");void c.offsetWidth;c.classList.add("nao");$("senha-in").select();
+});
+$("senha-x").addEventListener("click",function(){$("senha").hidden=true;senhaDepois=null});
+// intercepta antes dos outros cliques: botão da Noitada e "Continuar" de uma noitada salva
+document.addEventListener("click",function(e){
+  if(noitadaLiberada())return;var b=e.target.closest&&e.target.closest("#ini-survival,#ini-cont");if(!b)return;
+  if(b.id==="ini-cont"&&!lerRun())return;
+  e.preventDefault();e.stopImmediatePropagation();pedeSenha(function(){b.click()});
+},true);
 // ganchos para os testes automáticos
 window.MQT={get R(){return R},get S(){return S},fimDeFase:function(){fimDeFase()},encerra:function(v,p){encerraRun(v,p)}};
 // segunda chance: guarda a noitada no começo de cada fase
