@@ -948,6 +948,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
     <label class="opc px cf" id="ini-linha2" for="ini-nome2" hidden><span>Nome 2</span><input id="ini-nome2" type="text" maxlength="12" autocomplete="off" placeholder="Jogador 2"></label>
     <button class="opc px cf" id="ini-som" type="button"><span>Som</span><b id="ini-som-v">ligado</b></button>
     <button class="opc px cf" id="ini-mus" type="button"><span>Música</span><b id="ini-mus-v">ligada</b></button>
+    <button class="opc px cf" id="ini-amb" type="button"><span>Ambiente</span><b id="ini-amb-v">ligado</b></button>
     <button class="opc px cf" id="ini-fx" type="button"><span>Efeitos</span><b id="ini-fx-v">ligados</b></button>
     <button class="opc px cf" id="ini-regras" type="button"><span>Regras</span><b>?</b></button>
     <button class="rolar px" id="ini-voltar" type="button">VOLTAR</button>
@@ -2852,6 +2853,78 @@ document.addEventListener("visibilitychange",function(){if(document.hidden)music
 (function(){var a0=alternaSom;alternaSom=function(){a0.apply(this,arguments);if(mudo)musicaPara();else musicaToca();pintaMusica()}})();
 pintaMusica();
 window.MUST={MUS:MUS,musMonta:musMonta,musCompasso:musCompasso,TEMAS:TEMAS};   // para gravar amostras nos testes
+// Ambiente de bar gerado por código: murmúrio de conversa e risadas (brindes e talheres removidos a pedido, 25/11/2026). Tudo Web Audio.
+var BAR={};
+function barMonta(c,saida){
+  var ent=c.createGain(),lp=c.createBiquadFilter(),conv=c.createConvolver(),seco=c.createGain(),mol=c.createGain();
+  lp.type="lowpass";lp.frequency.value=3200;
+  var n=Math.floor(c.sampleRate*1.8),b=c.createBuffer(2,n,c.sampleRate);
+  for(var ch=0;ch<2;ch++){var d=b.getChannelData(ch);for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.5)}
+  conv.buffer=b;seco.gain.value=.55;mol.gain.value=.5;
+  ent.connect(lp);lp.connect(seco);lp.connect(conv);conv.connect(mol);seco.connect(saida);mol.connect(saida);
+  var rb=c.createBuffer(1,c.sampleRate*2,c.sampleRate),rd=rb.getChannelData(0);for(var j=0;j<rd.length;j++)rd[j]=Math.random()*2-1;
+  BAR={c:c,ent:ent,ruido:rb};
+}
+function barPan(no,pan){var c=BAR.c;if(c.createStereoPanner){var p=c.createStereoPanner();p.pan.value=pan;no.connect(p);p.connect(BAR.ent)}else no.connect(BAR.ent)}
+var VOGAIS=[[800,1200],[500,1900],[300,2300],[500,900],[350,800],[650,1700]];
+// uma pessoa falando: sílabas com vogais trocando, entonação, pausas
+function barFala(t0,dur,f0,pan,vol){
+  var c=BAR.c,o=c.createOscillator(),ns=c.createBufferSource(),ng=c.createGain(),f1=c.createBiquadFilter(),f2=c.createBiquadFilter(),g=c.createGain(),g1=c.createGain(),g2=c.createGain(),t=t0;
+  o.type="sawtooth";ns.buffer=BAR.ruido;ns.loop=true;ng.gain.value=.25;
+  f1.type="bandpass";f1.Q.value=6;f2.type="bandpass";f2.Q.value=8;g1.gain.value=1;g2.gain.value=.6;
+  o.connect(f1);o.connect(f2);ns.connect(ng);ng.connect(f1);ng.connect(f2);f1.connect(g1);f2.connect(g2);g1.connect(g);g2.connect(g);barPan(g,pan);
+  g.gain.setValueAtTime(0,t);o.frequency.setValueAtTime(f0,t);
+  while(t<t0+dur){
+    var palavra=1+Math.floor(Math.random()*4);
+    for(var k=0;k<palavra&&t<t0+dur;k++){
+      var sd=.09+Math.random()*.16,v=VOGAIS[Math.floor(Math.random()*VOGAIS.length)],a=vol*(.6+Math.random()*.4);
+      f1.frequency.setTargetAtTime(v[0],t,.02);f2.frequency.setTargetAtTime(v[1],t,.02);
+      o.frequency.setTargetAtTime(f0*(.85+Math.random()*.35),t,.05);
+      g.gain.setTargetAtTime(a,t,.015);g.gain.setTargetAtTime(a*.15,t+sd*.7,.02);t+=sd;
+    }
+    g.gain.setTargetAtTime(0,t,.03);t+=.08+Math.random()*(Math.random()<.2?.8:.25);
+  }
+  g.gain.setTargetAtTime(0,t,.05);o.start(t0);ns.start(t0,Math.random());o.stop(t+.3);ns.stop(t+.3);
+}
+// copo: parciais de sino, curtos
+function barCopo(t,vol,pan){var c=BAR.c,f=1700+Math.random()*1300,g=c.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0005,t+.9);
+  [[1,1],[2.32,.5],[4.25,.3],[6.63,.15]].forEach(function(p){var o=c.createOscillator();o.type="sine";o.frequency.value=f*p[0]*(1+Math.random()*.004);
+    var og=c.createGain();og.gain.setValueAtTime(p[1],t);og.gain.exponentialRampToValueAtTime(.001,t+.9/p[0]+.05);o.connect(og);og.connect(g);o.start(t);o.stop(t+1)});
+  var ns=c.createBufferSource(),hp=c.createBiquadFilter(),ng=c.createGain();ns.buffer=BAR.ruido;hp.type="highpass";hp.frequency.value=4000;ng.gain.setValueAtTime(vol*.6,t);ng.gain.exponentialRampToValueAtTime(.0005,t+.03);
+  ns.connect(hp);hp.connect(ng);ng.connect(g);ns.start(t,Math.random());ns.stop(t+.05);barPan(g,pan)}
+function barBrinde(t,pan){var n=2+Math.floor(Math.random()*3);for(var i=0;i<n;i++)barCopo(t+i*(.03+Math.random()*.07),.12+Math.random()*.08,pan+(Math.random()-.5)*.3)}
+// risada: "ha ha ha" caindo
+function barRisada(t,f0,pan,vol){var c=BAR.c,o=c.createOscillator(),f1=c.createBiquadFilter(),f2=c.createBiquadFilter(),g=c.createGain(),ns=c.createBufferSource(),ng=c.createGain(),n=4+Math.floor(Math.random()*4),i,tt=t;
+  o.type="sawtooth";f1.type="bandpass";f1.frequency.value=800;f1.Q.value=5;f2.type="bandpass";f2.frequency.value=1250;f2.Q.value=7;ns.buffer=BAR.ruido;ng.gain.value=.5;
+  o.connect(f1);o.connect(f2);ns.connect(ng);ng.connect(f1);ng.connect(f2);f1.connect(g);f2.connect(g);barPan(g,pan);g.gain.setValueAtTime(0,t);
+  for(i=0;i<n;i++){var a=vol*(1-i/(n+1)),p=f0*(1.25-i*.05);o.frequency.setValueAtTime(p,tt);o.frequency.linearRampToValueAtTime(p*.88,tt+.12);
+    g.gain.setTargetAtTime(a,tt,.01);g.gain.setTargetAtTime(0,tt+.09,.025);tt+=.15+Math.random()*.05}
+  o.start(t);ns.start(t,Math.random());o.stop(tt+.3);ns.stop(tt+.3)}
+// talher no prato
+function barTalher(t,pan){var c=BAR.c,o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=3200+Math.random()*1500;g.gain.setValueAtTime(.05,t);g.gain.exponentialRampToValueAtTime(.0005,t+.15);o.connect(g);barPan(g,pan);o.start(t);o.stop(t+.2)}
+// agenda um trecho [t0, t0+dur)
+function barAgenda(t0,dur){
+  var vozes=7,i;
+  for(i=0;i<vozes;i++){var t=t0+Math.random()*2;while(t<t0+dur){var d=1.5+Math.random()*5;barFala(t,Math.min(d,t0+dur-t),i%2?95+Math.random()*40:175+Math.random()*60,(Math.random()*2-1)*.8,.05+Math.random()*.03);t+=d+Math.random()*2.5}}
+  var t=t0+4+Math.random()*5;while(t<t0+dur){barRisada(t,Math.random()<.5?160+Math.random()*40:260+Math.random()*60,(Math.random()*2-1)*.7,.06+Math.random()*.05);t+=7+Math.random()*10}
+}
+
+// ambiente do bar (conversa e risadas bem baixinhas), agendado em trechos de 10 s
+var AMB={on:true,vol:.46,tocando:false,ctx:null,prox:0,timer:null,ganho:null};
+try{AMB.on=localStorage.getItem("matraq-ambiente")!=="0"}catch(e){}
+function ambLaco(){if(!AMB.tocando)return;var c=AMB.ctx;if(AMB.prox<c.currentTime+.2)AMB.prox=c.currentTime+.3;while(AMB.prox<c.currentTime+8){barAgenda(AMB.prox,10);AMB.prox+=10}}
+function ambToca(){if(!AMB.on||mudo||AMB.tocando)return;var c=audio();if(!c)return;
+  if(AMB.ctx!==c){AMB.ctx=c;AMB.ganho=c.createGain();AMB.ganho.gain.value=0;AMB.ganho.connect(c.destination);barMonta(c,AMB.ganho)}
+  AMB.tocando=true;AMB.prox=c.currentTime+.3;AMB.ganho.gain.cancelScheduledValues(c.currentTime);AMB.ganho.gain.setValueAtTime(AMB.ganho.gain.value,c.currentTime);AMB.ganho.gain.linearRampToValueAtTime(AMB.vol,c.currentTime+3);
+  AMB.timer=setInterval(ambLaco,1500);ambLaco()}
+function ambPara(){if(!AMB.tocando)return;AMB.tocando=false;clearInterval(AMB.timer);try{var c=AMB.ctx;AMB.ganho.gain.cancelScheduledValues(c.currentTime);AMB.ganho.gain.setValueAtTime(AMB.ganho.gain.value,c.currentTime);AMB.ganho.gain.linearRampToValueAtTime(0,c.currentTime+.4)}catch(e){}}
+function pintaAmb(){var v=$("ini-amb-v");if(v)v.textContent=AMB.on&&!mudo?"ligado":"desligado"}
+$("ini-amb").addEventListener("click",function(){AMB.on=!AMB.on;try{localStorage.setItem("matraq-ambiente",AMB.on?"1":"0")}catch(e){}if(AMB.on){if(mudo){mudo=false;try{localStorage.setItem("general5-mudo","0")}catch(e){}pintaInicio();musicaToca()}ambToca()}else ambPara();pintaAmb();pintaMusica()});
+document.addEventListener("pointerdown",function(){if(AMB.on&&!mudo)ambToca()},true);
+document.addEventListener("keydown",function(){if(AMB.on&&!mudo)ambToca()},true);
+document.addEventListener("visibilitychange",function(){if(document.hidden)ambPara();else if(AMB.on&&!mudo)ambToca()});
+(function(){var a0=alternaSom;alternaSom=function(){a0.apply(this,arguments);if(mudo)ambPara();else ambToca();pintaAmb()}})();
+pintaAmb();
 // ganchos para os testes automáticos
 window.MQT={get R(){return R},get S(){return S},fimDeFase:function(){fimDeFase()},encerra:function(v,p){encerraRun(v,p)}};
 // segunda chance: guarda a noitada no começo de cada fase
