@@ -2759,6 +2759,33 @@ function musSax(t,m,dur,vol){   // sax: dente de serra filtrado, com "sopro", es
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.035);g.gain.setValueAtTime(vol*.85,t+dur*.7);g.gain.exponentialRampToValueAtTime(.0005,t+dur+.06);
   o.connect(lp);lp.connect(g);musPan(g,.22);o.start(t);lfo.start(t);o.stop(t+dur+.08);lfo.stop(t+dur+.08);
   musRuido(t,.05,vol*.25,2500,"bandpass")}   // sopro no começo da nota
+function musGuitarra(t,m,dur,vol,desliza){   // guitarra de jazz: corda beliscada (filtro que fecha rápido), timbre redondo de caixa, vibrato nas notas longas
+  var c=MUS.ctx,f=mHz(m),o1=c.createOscillator(),o2=c.createOscillator(),g2=c.createGain(),lp=c.createBiquadFilter(),cx=c.createBiquadFilter(),g=c.createGain();
+  o1.type="sawtooth";o2.type="triangle";g2.gain.value=.6;
+  if(desliza){o1.frequency.setValueAtTime(f*.944,t);o1.frequency.linearRampToValueAtTime(f,t+.08);o2.frequency.setValueAtTime(f*.944,t);o2.frequency.linearRampToValueAtTime(f,t+.08)}
+  else{o1.frequency.setValueAtTime(f,t);o2.frequency.setValueAtTime(f,t)}
+  if(dur>.45){var lfo=c.createOscillator(),lg=c.createGain();lfo.frequency.value=5;lg.gain.setValueAtTime(0,t);lg.gain.linearRampToValueAtTime(0,t+.25);lg.gain.linearRampToValueAtTime(f*.008,t+.6);
+    lfo.connect(lg);lg.connect(o1.frequency);lg.connect(o2.frequency);lfo.start(t);lfo.stop(t+dur+.2)}
+  lp.type="lowpass";lp.Q.value=1.2;lp.frequency.setValueAtTime(3800,t);lp.frequency.exponentialRampToValueAtTime(1100,t+.25);lp.frequency.exponentialRampToValueAtTime(800,t+dur+.1);
+  cx.type="peaking";cx.frequency.value=220;cx.Q.value=1;cx.gain.value=5;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.004);g.gain.exponentialRampToValueAtTime(vol*.45,t+.3);g.gain.setValueAtTime(vol*.45,t+dur);g.gain.exponentialRampToValueAtTime(.0005,t+dur+.15);
+  o1.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(cx);cx.connect(g);musPan(g,.05);
+  o1.start(t);o2.start(t);o1.stop(t+dur+.2);o2.stop(t+dur+.2)}
+var ESCALAS={maj7:[0,2,4,7,9,11],m7:[0,2,3,5,7,9,10],"7":[0,2,4,5,7,9,10],m6:[0,2,3,5,7,9]};
+function musEncaixa(m,A){var sc=ESCALAS[A.tipo]||ESCALAS["7"],best=m,bd=99,k,o;for(o=-1;o<=1;o++)for(k=0;k<sc.length;k++){var x=A.r+sc[k]+12*(Math.round((m-A.r)/12)+o),dd=Math.abs(x-m);if(dd<bd){bd=dd;best=x}}return best}
+function musAlvo(A,perto){var alvos=[A.iv[1],A.iv[3],A.iv[0]],best=null,bd=99;alvos.forEach(function(iv){for(var o=-1;o<=1;o++){var x=A.r+iv+12*(Math.round((perto-A.r)/12)+o),dd=Math.abs(x-perto);if(x>=60&&x<=79&&dd<bd){bd=dd;best=x}}});return best===null?perto:best}
+var RITMOS=[[0,2,3,4,6],[0,1,2,4,5],[1,2,3,5,6],[0,3,4,6],[0,2,4,5,6,7]],CONTORNOS=[[1,1,-2,1,2],[2,-1,-1,2,1],[-1,-1,2,1,-2],[1,2,-1,-2,1]];
+function musSolo(T,A,tempo,seis){   // solo melódico em frases de 4 compassos: motivo, variação, motivo no acorde novo, resolução
+  var S=MUS.solo||(MUS.solo={ult:70,rit:null,con:null}),fase=MUS.passo%4,k,m,notas;
+  if(fase===0){S.rit=RITMOS[Math.floor(Math.random()*RITMOS.length)];S.con=CONTORNOS[Math.floor(Math.random()*CONTORNOS.length)]}
+  var rit=fase===3?[0,2,4]:S.rit,con=fase===1?S.con.map(function(x){return -x}):S.con;
+  m=musAlvo(A,S.ult);notas=[];
+  for(k=0;k<rit.length;k++){if(k>0)m=musEncaixa(m+con[(k-1)%con.length],A);while(m>79)m-=12;while(m<60)m+=12;notas.push(m)}
+  if(fase===1||fase===3)notas[notas.length-1]=musAlvo(A,notas[notas.length-1]);   // fecha a frase numa nota do acorde
+  for(k=0;k<rit.length;k++){var ultima=k===rit.length-1,d=ultima?(fase===1||fase===3?seis*2.6:seis*1.1):((rit[k+1]-rit[k])*seis*.5*1.05);
+    musGuitarra(tempo(rit[k]),notas[k],d,.12,ultima&&Math.random()<.5)}
+  S.ult=notas[notas.length-1];
+}
 function musPrato(t,dur,vol){   // prato de condução metálico (6 osciladores quadrados, como bateria eletrônica)
   var c=MUS.ctx,bp=c.createBiquadFilter(),hp=c.createBiquadFilter(),g=c.createGain();
   bp.type="bandpass";bp.frequency.value=9000;bp.Q.value=.7;hp.type="highpass";hp.frequency.value=6500;
@@ -2791,13 +2818,14 @@ function musCompasso(t){
     if(Math.random()<.5)musRuido(tempo(Math.random()<.5?3:5),.18,.06,2400,"bandpass")}
   // melodia: frases de 2 compassos, depois respira 2 compassos
   MUS.frase=(MUS.frase+1)%4;
-  if(MUS.frase<2){var esc=A.iv.concat([2,5,9]).sort(function(a,b){return a-b}),ult=null;
+  if(MUS.volta===1)musSolo(T,A,tempo,seis);   // solinho de guitarra no 2º giro
+  else if(MUS.frase<2){var esc=A.iv.concat([2,5,9]).sort(function(a,b){return a-b}),ult=null;
     for(k=0;k<8;k++){if(Math.random()<(k%2?.45:.3))continue;
       var g=esc[Math.floor(Math.random()*esc.length)],m=A.r+g;while(m<67)m+=12;while(m>81)m-=12;
       if(ult!==null&&Math.abs(m-ult)>7)m+=m>ult?-12:12;ult=m;
       var d=k===7||Math.random()<.25?seis*1.6:seis*.55;musSax(tempo(k),m,d,.075)}}
   MUS.passo++;
-  if(MUS.passo%T.acordes.length===0){MUS.volta++;if(MUS.volta>=3){MUS.volta=0;MUS.tema=(MUS.tema+1)%TEMAS.length;MUS.passo=0;MUS.frase=0}}
+  if(MUS.passo%T.acordes.length===0){MUS.volta++;if(MUS.volta>=3){MUS.volta=0;MUS.solo=null;MUS.tema=(MUS.tema+1)%TEMAS.length;MUS.passo=0;MUS.frase=0}}
   return t+4*seis;   // 4 tempos
 }
 function musLaco(){
