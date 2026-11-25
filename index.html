@@ -2733,14 +2733,41 @@ function musMonta(c){
   g.gain.value=0;MUS.ganho=g;MUS.saida=ent;
   var rb=c.createBuffer(1,c.sampleRate*.3,c.sampleRate),rd=rb.getChannelData(0);for(var j=0;j<rd.length;j++)rd[j]=Math.random()*2-1;MUS.ruido=rb;
 }
-function musNota(t,m,dur,vol,tipo,duty){var c=MUS.ctx,o=c.createOscillator(),g=c.createGain();
-  if(tipo==="tri")o.type="triangle";else o.setPeriodicWave(musOnda(c,duty||.25));
-  o.frequency.setValueAtTime(mHz(m),t);
-  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.setValueAtTime(vol*.8,t+dur*.6);g.gain.exponentialRampToValueAtTime(.0005,t+dur);
-  o.connect(g);g.connect(MUS.saida);o.start(t);o.stop(t+dur+.02)}
+function musPan(no,pan){var c=MUS.ctx;if(c.createStereoPanner&&pan){var p=c.createStereoPanner();p.pan.value=pan;no.connect(p);p.connect(MUS.saida)}else no.connect(MUS.saida)}
+function musNota(t,m,dur,vol,tipo,duty){   // (mantido para compatibilidade) — agora tudo vai para os instrumentos abaixo
+  if(tipo==="tri")return musBaixo(t,m,dur,vol);return musPiano(t,m,dur,vol)}
+function musBaixo(t,m,dur,vol){   // contrabaixo: senoide + harmônico, beliscado, abafado
+  var c=MUS.ctx,f=mHz(m),o1=c.createOscillator(),o2=c.createOscillator(),g2=c.createGain(),lp=c.createBiquadFilter(),g=c.createGain();
+  o1.type="sine";o2.type="triangle";o1.frequency.value=f;o2.frequency.value=f*2;g2.gain.value=.35;
+  lp.type="lowpass";lp.frequency.setValueAtTime(1400,t);lp.frequency.exponentialRampToValueAtTime(500,t+.25);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.012);g.gain.exponentialRampToValueAtTime(vol*.35,t+dur*.8);g.gain.exponentialRampToValueAtTime(.0005,t+dur+.08);
+  o1.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);musPan(g,-.12);
+  o1.start(t);o2.start(t);o1.stop(t+dur+.1);o2.stop(t+dur+.1)}
+function musPiano(t,m,dur,vol,pan){   // piano elétrico (FM, estilo Rhodes)
+  var c=MUS.ctx,f=mHz(m),car=c.createOscillator(),mod=c.createOscillator(),mg=c.createGain(),g=c.createGain();
+  car.type="sine";mod.type="sine";car.frequency.value=f;mod.frequency.value=f;
+  mg.gain.setValueAtTime(f*2.2,t);mg.gain.exponentialRampToValueAtTime(f*.15,t+.35);
+  mod.connect(mg);mg.connect(car.frequency);
+  var fim=t+Math.max(dur,.25);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.006);g.gain.exponentialRampToValueAtTime(vol*.45,t+.5);g.gain.setValueAtTime(vol*.45,fim);g.gain.exponentialRampToValueAtTime(.0005,fim+.25);
+  car.connect(g);musPan(g,pan==null?.18:pan);car.start(t);mod.start(t);car.stop(fim+.3);mod.stop(fim+.3)}
+function musSax(t,m,dur,vol){   // sax: dente de serra filtrado, com "sopro", escorregada e vibrato
+  var c=MUS.ctx,f=mHz(m),o=c.createOscillator(),lp=c.createBiquadFilter(),g=c.createGain(),lfo=c.createOscillator(),lg=c.createGain();
+  o.type="sawtooth";o.frequency.setValueAtTime(f*.985,t);o.frequency.exponentialRampToValueAtTime(f,t+.05);
+  lfo.frequency.value=5.3;lg.gain.setValueAtTime(0,t);lg.gain.linearRampToValueAtTime(f*.006,t+Math.min(.25,dur));lfo.connect(lg);lg.connect(o.frequency);
+  lp.type="lowpass";lp.Q.value=2.5;lp.frequency.setValueAtTime(700,t);lp.frequency.linearRampToValueAtTime(2300,t+.06);lp.frequency.exponentialRampToValueAtTime(1300,t+dur);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.035);g.gain.setValueAtTime(vol*.85,t+dur*.7);g.gain.exponentialRampToValueAtTime(.0005,t+dur+.06);
+  o.connect(lp);lp.connect(g);musPan(g,.22);o.start(t);lfo.start(t);o.stop(t+dur+.08);lfo.stop(t+dur+.08);
+  musRuido(t,.05,vol*.25,2500,"bandpass")}   // sopro no começo da nota
+function musPrato(t,dur,vol){   // prato de condução metálico (6 osciladores quadrados, como bateria eletrônica)
+  var c=MUS.ctx,bp=c.createBiquadFilter(),hp=c.createBiquadFilter(),g=c.createGain();
+  bp.type="bandpass";bp.frequency.value=9000;bp.Q.value=.7;hp.type="highpass";hp.frequency.value=6500;
+  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0005,t+dur);
+  [263,400,421,531,588,824].forEach(function(fq){var o=c.createOscillator();o.type="square";o.frequency.value=fq*1.9;o.connect(bp);o.start(t);o.stop(t+dur+.02)});
+  bp.connect(hp);hp.connect(g);musPan(g,.3)}
 function musRuido(t,dur,vol,freq,tipo){var c=MUS.ctx,sr=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
   sr.buffer=MUS.ruido;f.type=tipo||"highpass";f.frequency.value=freq;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0005,t+dur);
-  sr.connect(f);f.connect(g);g.connect(MUS.saida);sr.start(t,Math.random()*.1);sr.stop(t+dur+.02)}
+  sr.connect(f);f.connect(g);musPan(g,-.25);sr.start(t,Math.random()*.1);sr.stop(t+dur+.02)}
 function musAcorde(T,i){var a=T.acordes[i%T.acordes.length];return {r:T.tom+a[1],iv:TIPOS[a[0]],tipo:a[0]}}
 // toca um compasso (8 colcheias) a partir do tempo t
 function musCompasso(t){
@@ -2748,17 +2775,18 @@ function musCompasso(t){
   function tempo(col){var b=Math.floor(col/2),off=col%2?T.swing:0;return t+(b+off)*seis}
   // baixo: caminhando (swing/blues) ou raiz-quinta (bossa)
   var rb=A.r;while(rb>40)rb-=12;while(rb<28)rb+=12;
-  if(T.estilo==="bossa"){musNota(tempo(0),rb,seis*1.4,.5,"tri");musNota(tempo(3),rb+7,seis*.9,.4,"tri");musNota(tempo(4),rb+7,seis*1.4,.45,"tri");musNota(tempo(7),rb,seis*.9,.35,"tri")}
+  if(T.estilo==="bossa"){musBaixo(tempo(0),rb,seis*1.4,.55);musBaixo(tempo(3),rb+7,seis*.9,.42);musBaixo(tempo(4),rb+7,seis*1.4,.5);musBaixo(tempo(7),rb,seis*.9,.38)}
   else{var nb=B.r;while(nb>40)nb-=12;while(nb<28)nb+=12;
     var v=[rb,rb+A.iv[Math.random()<.5?1:2],rb+(Math.random()<.7?A.iv[2]:A.iv[3]),nb+(Math.random()<.5?1:-1)];
-    for(k=0;k<4;k++)musNota(tempo(k*2),v[k],seis*.9,.5,"tri")}
+    for(k=0;k<4;k++)musBaixo(tempo(k*2),v[k],seis*.9,.55)}
   // acordes curtos (3ª, 7ª e 9ª) no ritmo do estilo
-  var voz=[A.r+A.iv[1],A.r+A.iv[3],A.r+14];voz=voz.map(function(m){while(m>66)m-=12;while(m<52)m+=12;return m});
+  var voz=[A.r+A.iv[1],A.r+A.iv[3],A.r+14,A.r+A.iv[2]+12];voz=voz.map(function(m){while(m>68)m-=12;while(m<50)m+=12;return m});
   var golpes=T.estilo==="bossa"?[0,3,5]:T.estilo==="blues"?[1,5]:(Math.random()<.5?[3,6]:[1,4]);
-  golpes.forEach(function(c){voz.forEach(function(m){musNota(tempo(c),m,seis*(T.estilo==="bossa"?.7:.45),.07,"pul",.25)})});
+  golpes.forEach(function(c){voz.forEach(function(m,j){musPiano(tempo(c)+j*.008,m,seis*(T.estilo==="bossa"?1.1:.8),.075,j%2?.28:.08)})});
   // bateria: prato de condução, chimbal no 2 e 4, bumbo leve, vassourinha
-  if(T.estilo==="bossa"){for(k=0;k<8;k++)musRuido(tempo(k),.04,k%2?.05:.08,7000);[0,3,6].forEach(function(c){musRuido(tempo(c),.05,.12,1800,"bandpass")})}
-  else{[0,2,3,4,6,7].forEach(function(c){if(c===3||c===7){if(Math.random()<.85)musRuido(tempo(c),.12,.05,6500)}else musRuido(tempo(c),.22,.08,6500)});
+  if(T.estilo==="bossa"){for(k=0;k<8;k++)musPrato(tempo(k),.05,k%2?.025:.04);[0,3,6].forEach(function(c){musRuido(tempo(c),.05,.12,1800,"bandpass")})}
+  else{[0,2,3,4,6,7].forEach(function(c){if(c===3||c===7){if(Math.random()<.85)musPrato(tempo(c),.18,.025)}else musPrato(tempo(c),.45,.04)});
+    for(k=0;k<4;k++)musRuido(tempo(k*2),seis*.9,.025,3000,"bandpass");   // vassourinha arrastando
     [2,6].forEach(function(c){musRuido(tempo(c),.03,.1,9000)});musRuido(tempo(0),.12,.18,140,"lowpass");
     if(Math.random()<.5)musRuido(tempo(Math.random()<.5?3:5),.18,.06,2400,"bandpass")}
   // melodia: frases de 2 compassos, depois respira 2 compassos
@@ -2767,7 +2795,7 @@ function musCompasso(t){
     for(k=0;k<8;k++){if(Math.random()<(k%2?.45:.3))continue;
       var g=esc[Math.floor(Math.random()*esc.length)],m=A.r+g;while(m<67)m+=12;while(m>81)m-=12;
       if(ult!==null&&Math.abs(m-ult)>7)m+=m>ult?-12:12;ult=m;
-      var d=k===7||Math.random()<.25?seis*1.6:seis*.55;musNota(tempo(k),m,d,.06,"pul",.125)}}
+      var d=k===7||Math.random()<.25?seis*1.6:seis*.55;musSax(tempo(k),m,d,.075)}}
   MUS.passo++;
   if(MUS.passo%T.acordes.length===0){MUS.volta++;if(MUS.volta>=3){MUS.volta=0;MUS.tema=(MUS.tema+1)%TEMAS.length;MUS.passo=0;MUS.frase=0}}
   return t+4*seis;   // 4 tempos
