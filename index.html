@@ -927,6 +927,11 @@ url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABAElEQV
 #ini-tuto .ini-ico{width:32px!important;height:24px!important}
 #ini-cfg .ini-ico{width:24px!important;height:24px!important}
 @media (max-width:370px){#ini-survival .nt-tit{font-size:20px}#ini-survival .ini-ico{width:70px!important;height:44px!important}#ini-tuto span,#ini-cfg span{font-size:14px!important}#ini-cont .ini-txt{font-size:20px!important}}
+
+#lado-pc .lp-placar{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+#lado-pc .lp-jog{display:flex;justify-content:space-between;align-items:baseline;padding:6px 10px;border:2px solid #3a4560;background:#1d2438;font-size:18px}
+#lado-pc .lp-jog b{font-family:var(--f-display);font-weight:400;font-size:30px;color:#fff2d6}
+#lado-pc .lp-jog.vez{border-color:#e3a33a}#lado-pc .lp-jog.vez span{color:#ffcf6a}
 </style>
 </head>
 <body>
@@ -1784,7 +1789,7 @@ function desenhaMesa(){
     if(R.mald&&MALD[R.mald])p+='<button type="button" class="placa mald px" id="btn-mald" aria-label="Maldição: '+MALD[R.mald].nome+'"><span>Maldição</span><b>'+MALD[R.mald].curto+'</b></button>';
   }else{
     for(var i=0;i<S.jogadores;i++)p+='<button type="button" data-j="'+i+'" class="placa px'+(i===S.vez&&!S.fim?' vez':'')+(S.jogadores>1&&i===vendo?' vendo':'')+'" aria-label="Ver cartela de '+esc(nomeJog(i))+'"><span>'+esc(nomeJog(i))+'</span><b>'+total(S.scores[i])+'</b></button>';
-    p+='<div class="placa rodada px"><span>Rodada</span><b>'+(S.fim?CATS.length:rodada())+'/'+CATS.length+'</b></div>';
+    p+='<div class="placa rodada px"><span class="selo">CLÁSSICO</span><b>'+(S.fim?CATS.length:rodada())+'/'+CATS.length+'</b>'+(function(){var h='',u=S.fim?CATS.length:rodada()-1;for(var j=0;j<CATS.length;j++)h+='<i class="'+(j<u?'u':j===u?'a':'f')+'"></i>';return '<i class="cart" aria-hidden="true">'+h+'</i>'})()+'</div>';
   }
   $("placas").innerHTML=p;
   $("tent").textContent=S.fim?0:resta;
@@ -1852,7 +1857,7 @@ function textoFim(){
   return "Fim de jogo: "+venc[0]+" venceu com "+max+" pontos.";
 }
 function desenha(){
-  document.body.classList.toggle("surv",!!R);cenaNoite();
+  document.body.classList.toggle("surv",true);document.body.classList.toggle("classico",!R);cenaNoite();
   document.body.classList.toggle("mald",!!(R&&R.mald));
   document.querySelector(".cartela").classList.toggle("neb",!!(R&&R.mald==="neblina"&&!S.fim));
   desenhaMesa();desenhaTabela();desenhaBonus();
@@ -2130,10 +2135,10 @@ function abrePainelFase(){
 function faseDoBloco(){var b=R.fase<6?1:R.fase<11?2:3,i0=b===1?1:b===2?6:11,n=b===3?3:4;return {b:b,i:R.fase-i0+1,n:n}}
 var cenaN=false;
 function cenaNoite(){   // anima a mesa vazia (X1UI.pintaVazia, no bloco do X1) enquanto a noitada está na tela
-  var c=$("cena-n");c.hidden=!R;
-  if(R&&!cenaN&&typeof X1UI!=="undefined"&&X1UI&&X1UI.pintaVazia){
+  var c=$("cena-n");c.hidden=false;
+  if(!cenaN&&typeof X1UI!=="undefined"&&X1UI&&X1UI.pintaVazia){
     cenaN=true;
-    (function quadro(now){if(!R||c.hidden){cenaN=false;return}X1UI.pintaVazia(c,now/1000);requestAnimationFrame(quadro)})(performance.now());
+    (function quadro(now){if(c.hidden){cenaN=false;return}X1UI.pintaVazia(c,now/1000);requestAnimationFrame(quadro)})(performance.now());
   }
 }
 function abrePainelDuelo(){
@@ -2739,7 +2744,10 @@ function linhaMald(m,id){var t=MALD_CURTO[id]||m.desc;if(id==="casa"&&R.maldCasa
 // ---------- versão de PC: painel da noitada e atalhos ----------
 function pintaLadoPC(){
   var el=$("lado-pc");if(!el)return;
-  if(!R||!window.matchMedia("(min-width:960px) and (min-aspect-ratio:4/3)").matches){el.classList.add("vazio");return}
+  if(!window.matchMedia("(min-width:960px) and (min-aspect-ratio:4/3)").matches||(!R&&!S)){el.classList.add("vazio");return}
+  if(!R){el.classList.remove("vazio");   // clássico: placar e atalhos no painel do lado
+    var lin="";for(var i=0;i<S.jogadores;i++)lin+='<div class="lp-jog'+(i===S.vez&&!S.fim?' vez':'')+'"><span>'+esc(nomeJog(i))+'</span><b>'+total(S.scores[i])+'</b></div>';
+    el.innerHTML='<h3>Modo Clássico</h3><div>10 rodadas, uma cartela. Faça o máximo de pontos.</div><div class="lp-placar">'+lin+'</div><small>Atalhos: Espaço joga · 1 a 5 guardam os dados.</small>';return}
   el.classList.remove("vazio");
   var pp=persoPor(R.perso),ben=R.relics.map(function(id){var b=BONUS.filter(function(x){return x.id===id})[0];return b?'<i style="border-color:'+RAR_COR[b.r]+'">'+b.nome+'</i>':""}).join("");
   el.innerHTML=mapaNoite(R.fase)+'<div class="lp-topo"><div class="lp-corpo" id="lp-corpo"></div><div>'+(pp?'<h3>'+pp.nome+'</h3><div class="lp-poder">'+pp.poder+'</div><div>'+pp.desc+'</div>':'')+'</div></div>'+
