@@ -947,6 +947,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
     <label class="opc px cf" for="ini-nome1"><span id="ini-rot1">Nome</span><input id="ini-nome1" type="text" maxlength="12" autocomplete="off" placeholder="Você"></label>
     <label class="opc px cf" id="ini-linha2" for="ini-nome2" hidden><span>Nome 2</span><input id="ini-nome2" type="text" maxlength="12" autocomplete="off" placeholder="Jogador 2"></label>
     <button class="opc px cf" id="ini-som" type="button"><span>Som</span><b id="ini-som-v">ligado</b></button>
+    <button class="opc px cf" id="ini-mus" type="button"><span>Música</span><b id="ini-mus-v">ligada</b></button>
     <button class="opc px cf" id="ini-fx" type="button"><span>Efeitos</span><b id="ini-fx-v">ligados</b></button>
     <button class="opc px cf" id="ini-regras" type="button"><span>Regras</span><b>?</b></button>
     <button class="rolar px" id="ini-voltar" type="button">VOLTAR</button>
@@ -2707,6 +2708,94 @@ document.addEventListener("keydown",function(e){
   if(e.key===" "||e.key==="Enter"){var r=$("btn-rolar");if(r&&!r.disabled){e.preventDefault();r.click()}return}
   var n="12345".indexOf(e.key);if(n>=0){var dd=$("dados").children[n];if(dd){e.preventDefault();dd.click()}}
 });
+
+// ---------- música ambiente (jazz 8-bit original, gerado por código) ----------
+var MUS={on:true,vol:.05,tocando:false,ctx:null,saida:null,prox:0,passo:0,tema:0,volta:0,timer:null,ondas:{},ruido:null,frase:0};
+try{MUS.on=localStorage.getItem("matraq-musica")!=="0"}catch(e){}
+var TEMAS=[
+  {nome:"Balcão",bpm:118,swing:.62,estilo:"swing",tom:53,   // Fá
+   acordes:[["m7",7],["7",0],["maj7",0],["m7",9],["m7",7],["7",0],["maj7",0],["7",0],["maj7",5],["m6",5],["m7",4],["7",9],["m7",7],["7",0],["maj7",0],["7",7]]},
+  {nome:"Fumaça",bpm:82,swing:.66,estilo:"blues",tom:46,   // Si bemol
+   acordes:[["7",0],["7",5],["7",0],["7",0],["7",5],["7",5],["7",0],["7",9],["m7",2],["7",7],["7",0],["7",7]]},
+  {nome:"Saideira",bpm:108,swing:.5,estilo:"bossa",tom:48,   // Dó
+   acordes:[["maj7",0],["maj7",0],["7",2],["7",2],["m7",2],["7",7],["maj7",0],["7",7],["m7",4],["7",9],["m7",2],["7",7],["maj7",0],["m7",9],["m7",2],["7",7]]}];
+var TIPOS={maj7:[0,4,7,11],m7:[0,3,7,10],"7":[0,4,7,10],m6:[0,3,7,9]};
+function mHz(m){return 440*Math.pow(2,(m-69)/12)}
+function musOnda(c,duty){var k="p"+duty;if(MUS.ondas[k])return MUS.ondas[k];var n=32,re=new Float32Array(n),im=new Float32Array(n);
+  for(var i=1;i<n;i++)im[i]=2/(i*Math.PI)*Math.sin(i*Math.PI*duty);return MUS.ondas[k]=c.createPeriodicWave(re,im)}
+function musMonta(c){
+  var ent=c.createGain(),lp=c.createBiquadFilter(),g=c.createGain(),conv=c.createConvolver(),seco=c.createGain(),mol=c.createGain();
+  lp.type="lowpass";lp.frequency.value=1500;lp.Q.value=.4;
+  var n=Math.floor(c.sampleRate*1.4),b=c.createBuffer(2,n,c.sampleRate);   // "eco de salão": ruído que se apaga
+  for(var ch=0;ch<2;ch++){var d=b.getChannelData(ch);for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3)}
+  conv.buffer=b;seco.gain.value=.75;mol.gain.value=.35;
+  ent.connect(lp);lp.connect(seco);lp.connect(conv);conv.connect(mol);seco.connect(g);mol.connect(g);g.connect(c.destination);
+  g.gain.value=0;MUS.ganho=g;MUS.saida=ent;
+  var rb=c.createBuffer(1,c.sampleRate*.3,c.sampleRate),rd=rb.getChannelData(0);for(var j=0;j<rd.length;j++)rd[j]=Math.random()*2-1;MUS.ruido=rb;
+}
+function musNota(t,m,dur,vol,tipo,duty){var c=MUS.ctx,o=c.createOscillator(),g=c.createGain();
+  if(tipo==="tri")o.type="triangle";else o.setPeriodicWave(musOnda(c,duty||.25));
+  o.frequency.setValueAtTime(mHz(m),t);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.setValueAtTime(vol*.8,t+dur*.6);g.gain.exponentialRampToValueAtTime(.0005,t+dur);
+  o.connect(g);g.connect(MUS.saida);o.start(t);o.stop(t+dur+.02)}
+function musRuido(t,dur,vol,freq,tipo){var c=MUS.ctx,sr=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
+  sr.buffer=MUS.ruido;f.type=tipo||"highpass";f.frequency.value=freq;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0005,t+dur);
+  sr.connect(f);f.connect(g);g.connect(MUS.saida);sr.start(t,Math.random()*.1);sr.stop(t+dur+.02)}
+function musAcorde(T,i){var a=T.acordes[i%T.acordes.length];return {r:T.tom+a[1],iv:TIPOS[a[0]],tipo:a[0]}}
+// toca um compasso (8 colcheias) a partir do tempo t
+function musCompasso(t){
+  var T=TEMAS[MUS.tema],seis=60/T.bpm,i=MUS.passo,A=musAcorde(T,i),B=musAcorde(T,i+1),k;
+  function tempo(col){var b=Math.floor(col/2),off=col%2?T.swing:0;return t+(b+off)*seis}
+  // baixo: caminhando (swing/blues) ou raiz-quinta (bossa)
+  var rb=A.r;while(rb>40)rb-=12;while(rb<28)rb+=12;
+  if(T.estilo==="bossa"){musNota(tempo(0),rb,seis*1.4,.5,"tri");musNota(tempo(3),rb+7,seis*.9,.4,"tri");musNota(tempo(4),rb+7,seis*1.4,.45,"tri");musNota(tempo(7),rb,seis*.9,.35,"tri")}
+  else{var nb=B.r;while(nb>40)nb-=12;while(nb<28)nb+=12;
+    var v=[rb,rb+A.iv[Math.random()<.5?1:2],rb+(Math.random()<.7?A.iv[2]:A.iv[3]),nb+(Math.random()<.5?1:-1)];
+    for(k=0;k<4;k++)musNota(tempo(k*2),v[k],seis*.9,.5,"tri")}
+  // acordes curtos (3ª, 7ª e 9ª) no ritmo do estilo
+  var voz=[A.r+A.iv[1],A.r+A.iv[3],A.r+14];voz=voz.map(function(m){while(m>66)m-=12;while(m<52)m+=12;return m});
+  var golpes=T.estilo==="bossa"?[0,3,5]:T.estilo==="blues"?[1,5]:(Math.random()<.5?[3,6]:[1,4]);
+  golpes.forEach(function(c){voz.forEach(function(m){musNota(tempo(c),m,seis*(T.estilo==="bossa"?.7:.45),.07,"pul",.25)})});
+  // bateria: prato de condução, chimbal no 2 e 4, bumbo leve, vassourinha
+  if(T.estilo==="bossa"){for(k=0;k<8;k++)musRuido(tempo(k),.04,k%2?.05:.08,7000);[0,3,6].forEach(function(c){musRuido(tempo(c),.05,.12,1800,"bandpass")})}
+  else{[0,2,3,4,6,7].forEach(function(c){if(c===3||c===7){if(Math.random()<.85)musRuido(tempo(c),.12,.05,6500)}else musRuido(tempo(c),.22,.08,6500)});
+    [2,6].forEach(function(c){musRuido(tempo(c),.03,.1,9000)});musRuido(tempo(0),.12,.18,140,"lowpass");
+    if(Math.random()<.5)musRuido(tempo(Math.random()<.5?3:5),.18,.06,2400,"bandpass")}
+  // melodia: frases de 2 compassos, depois respira 2 compassos
+  MUS.frase=(MUS.frase+1)%4;
+  if(MUS.frase<2){var esc=A.iv.concat([2,5,9]).sort(function(a,b){return a-b}),ult=null;
+    for(k=0;k<8;k++){if(Math.random()<(k%2?.45:.3))continue;
+      var g=esc[Math.floor(Math.random()*esc.length)],m=A.r+g;while(m<67)m+=12;while(m>81)m-=12;
+      if(ult!==null&&Math.abs(m-ult)>7)m+=m>ult?-12:12;ult=m;
+      var d=k===7||Math.random()<.25?seis*1.6:seis*.55;musNota(tempo(k),m,d,.06,"pul",.125)}}
+  MUS.passo++;
+  if(MUS.passo%T.acordes.length===0){MUS.volta++;if(MUS.volta>=3){MUS.volta=0;MUS.tema=(MUS.tema+1)%TEMAS.length;MUS.passo=0;MUS.frase=0}}
+  return t+4*seis;   // 4 tempos
+}
+function musLaco(){
+  if(!MUS.tocando||!MUS.ctx)return;var c=MUS.ctx;
+  if(MUS.prox<c.currentTime+.05)MUS.prox=c.currentTime+.1;
+  while(MUS.prox<c.currentTime+.6)MUS.prox=musCompasso(MUS.prox);
+}
+function musicaToca(){
+  if(!MUS.on||mudo||MUS.tocando)return;var c=audio();if(!c)return;
+  if(MUS.ctx!==c){MUS.ctx=c;MUS.ondas={};musMonta(c)}
+  MUS.tocando=true;MUS.prox=c.currentTime+.15;MUS.ganho.gain.cancelScheduledValues(c.currentTime);MUS.ganho.gain.setValueAtTime(MUS.ganho.gain.value,c.currentTime);MUS.ganho.gain.linearRampToValueAtTime(MUS.vol,c.currentTime+2.5);
+  MUS.timer=setInterval(musLaco,120);musLaco();
+}
+function musicaPara(){
+  if(!MUS.tocando)return;MUS.tocando=false;clearInterval(MUS.timer);
+  try{var c=MUS.ctx;MUS.ganho.gain.cancelScheduledValues(c.currentTime);MUS.ganho.gain.setValueAtTime(MUS.ganho.gain.value,c.currentTime);MUS.ganho.gain.linearRampToValueAtTime(0,c.currentTime+.4)}catch(e){}
+}
+function pintaMusica(){var v=$("ini-mus-v");if(v)v.textContent=MUS.on&&!mudo?"ligada":"desligada"}
+$("ini-mus").addEventListener("click",function(){MUS.on=!MUS.on;try{localStorage.setItem("matraq-musica",MUS.on?"1":"0")}catch(e){}if(MUS.on){if(mudo){mudo=false;try{localStorage.setItem("general5-mudo","0")}catch(e){}pintaInicio()}musicaToca()}else musicaPara();pintaMusica()});
+// o navegador só deixa tocar som depois de um toque
+document.addEventListener("pointerdown",function(){if(MUS.on&&!mudo)musicaToca()},true);
+document.addEventListener("keydown",function(){if(MUS.on&&!mudo)musicaToca()},true);
+document.addEventListener("visibilitychange",function(){if(document.hidden)musicaPara();else if(MUS.on&&!mudo)musicaToca()});
+(function(){var a0=alternaSom;alternaSom=function(){a0.apply(this,arguments);if(mudo)musicaPara();else musicaToca();pintaMusica()}})();
+pintaMusica();
+window.MUST={MUS:MUS,musMonta:musMonta,musCompasso:musCompasso,TEMAS:TEMAS};   // para gravar amostras nos testes
 // ganchos para os testes automáticos
 window.MQT={get R(){return R},get S(){return S},fimDeFase:function(){fimDeFase()},encerra:function(v,p){encerraRun(v,p)}};
 // segunda chance: guarda a noitada no começo de cada fase
@@ -2892,7 +2981,7 @@ $("ini-comecar").addEventListener("click",function(){
   cancelaCena();R=null;recalcMods();modoItem=-1;S=novoEstado(nIni,nomes);vendo=0;fecharInicio();desenha();window.scrollTo(0,0);somFica(true)});
 $("ini-menos").addEventListener("click",function(){if(nIni>1)nIni--;pintaInicio()});
 $("ini-mais").addEventListener("click",function(){if(nIni<2)nIni++;pintaInicio()});
-$("ini-som").addEventListener("click",alternaSom);
+$("ini-som").addEventListener("click",function(){alternaSom()});
 $("ini-fx").addEventListener("click",function(){
   fxOff=!fxOff;try{localStorage.setItem("general5-fx",fxOff?"0":"1")}catch(e){}
   pintaInicio();if(S)desenha();
