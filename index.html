@@ -888,25 +888,30 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
   #lado-pc small{opacity:.75}
 }
 
-/* home: Noitada em destaque, demais botões no tamanho do clássico */
-#ini-survival{min-height:168px!important;justify-content:center!important;align-items:center!important;text-align:center;flex-direction:column!important;gap:6px!important;padding:10px 14px!important}
-#ini-survival .ini-txt{font-size:30px!important;align-items:center;white-space:normal;border:0!important;padding:0!important;margin:0!important}
-#ini-survival .ini-txt small{font-size:14px!important;white-space:normal}
-#ini-survival .ini-txt::before,#ini-survival .ini-ico::after{display:none!important}
-#ini-survival .ini-ico{width:96px!important;height:60px!important}
+/* home no estilo da arte de referência */
+#ini-survival{min-height:150px!important;padding:12px 16px!important;gap:0!important;align-items:center!important}
+#ini-survival .ini-ico{width:76px!important;height:48px!important;margin:0 10px 0 0!important;padding-right:10px!important}
+#ini-survival .ini-txt{align-items:center;text-align:center;gap:6px!important}
+#ini-survival .nt-tit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding-bottom:7px;margin-bottom:2px;
+  border-bottom:2px solid rgba(227,179,65,.55);font-family:var(--f-display);font-size:24px;line-height:1;color:#fff2d6;text-shadow:2px 2px 0 #3a0a0a;white-space:nowrap}
+#ini-survival .nt-tit i{display:block;flex:none;width:7px;height:7px;background:#e3b341;transform:rotate(45deg)}
+#ini-survival .ini-txt small{font-size:14px!important;color:#ffe2b0!important;white-space:nowrap}
 .ini-dupla{display:grid!important;grid-template-columns:1fr 1fr;gap:10px}
 .inicio.cfg .ini-dupla{display:none!important}
 .ini-dupla #ini-comecar{grid-column:1/-1}
-#ini-comecar,#ini-cont,#ini-tuto,#ini-cfg{min-height:58px!important;height:58px;padding:2px 10px!important;justify-content:center!important;gap:8px!important}
-#ini-comecar .ini-txt,#ini-cont .ini-txt{font-size:18px!important;flex-direction:row}
-#ini-comecar .ini-txt small,#ini-cont .ini-txt small{display:none!important}
-#ini-comecar .ini-ico,#ini-cont .ini-ico{width:38px!important;height:24px!important}
-#ini-tuto span,#ini-cfg span,#ini-comecar .ini-txt,#ini-cont .ini-txt{font-size:17px!important}
-#ini-cont .ini-seta{display:none}
+#ini-cont{border-image-source:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABAElEQVR42u3bIQ7CMBTG8VdCEEOQIAjZAZBkCoHmADsCikOhOMIOgEagFiQHWJaFkCCYwAyPaDsMvPb/bGve732p6jPiqGSUdKK42ldrbOcDibyMa/LPMlfd4DgrrEkgAa7JP84n1Q1OVmtrEkhAqJP3TQIJcE0+3TWqG6z2M2sSok/A0PficZmpamxzKb3uRZ8AAHgDeta1qv+6oUU6JwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACD9/gn6/r39ed1qEiBsjAgbI19vjRXbaRdyw/nhztaY1+ZoaEn4nDwJcCWA7fFI6g1S/klRJC4f5wAAAABJRU5ErkJggg==)!important;min-height:66px!important;height:66px;justify-content:center!important;gap:12px!important;padding:2px 12px!important}
 #ini-cont[hidden]{display:none!important}
-#ini-tuto,#ini-cfg{padding:2px 4px!important;gap:5px!important}
-#ini-cfg .ini-ico{width:22px!important;height:22px!important}
-#ini-tuto span,#ini-cfg span{font-size:14px!important;white-space:nowrap;overflow:visible}
+#ini-cont .ini-ico{width:46px!important;height:30px!important;margin:0!important;padding:0!important;border:0!important}
+#ini-cont .ini-txt{flex:0 1 auto!important;flex-direction:row!important;font-family:var(--f-display)!important;font-size:24px!important;white-space:nowrap;color:#ffd27a!important;text-shadow:2px 2px 0 #3a0a0a;text-transform:uppercase}
+#ini-cont .ini-txt small,#ini-cont .ini-seta{display:none!important}
+#ini-comecar,#ini-tuto,#ini-cfg{min-height:58px!important;height:58px;padding:2px 8px!important;justify-content:center!important;gap:10px!important}
+#ini-comecar .ini-ico{width:44px!important;height:28px!important;margin:0!important;padding:0!important;border:0!important}
+#ini-comecar .ini-txt{flex:0 1 auto!important;font-family:var(--f-display)!important;font-size:24px!important;color:#1a0a0e!important}
+#ini-tuto,#ini-cfg{gap:7px!important;padding:2px 4px!important}
+#ini-tuto span,#ini-cfg span{font-family:var(--f-display)!important;font-size:15px!important;text-transform:uppercase;color:#fff2d6!important;white-space:nowrap;overflow:visible!important;letter-spacing:.5px}
+#ini-tuto .ini-ico{width:32px!important;height:24px!important}
+#ini-cfg .ini-ico{width:24px!important;height:24px!important}
+@media (max-width:370px){#ini-survival .nt-tit{font-size:20px}#ini-survival .ini-ico{width:70px!important;height:44px!important}#ini-tuto span,#ini-cfg span{font-size:14px!important}#ini-cont .ini-txt{font-size:20px!important}}
 </style>
 </head>
 <body>
@@ -953,7 +958,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
   <div class="col">
     <div class="capa px"><canvas class="banner" width="841" height="250" role="img" aria-label="KAT4 House"></canvas><div class="tit">MATRAQUEADO</div></div>
     
-    <button class="rolar px modo sv" id="ini-survival" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt">MODO NOITADA<small>3 mesas e 4 duelos, até o Black Cat</small></span></button>
+    <button class="rolar px modo sv" id="ini-survival" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span class="nt-tit"><i></i>MODO NOITADA<i></i></span><small id="nt-l1">3 mesas e 4 duelos</small><small id="nt-l2">até o Black Cat</small></span></button>
     <button class="opc px cont" id="ini-cont" type="button" hidden><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span>Continuar partida</span><small id="ini-cont-d"></small></span><i class="ini-seta" aria-hidden="true"></i></button>
     <div class="sep" aria-hidden="true"></div>
     <div class="opc px" hidden><span id="ini-rot">Jogadores</span>
@@ -972,7 +977,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
     <button class="opc px cf" id="ini-fx" type="button"><span>Efeitos</span><b id="ini-fx-v">ligados</b></button>
     <button class="opc px cf" id="ini-regras" type="button"><span>Regras</span><b>?</b></button>
     <button class="rolar px" id="ini-voltar" type="button">VOLTAR</button>
-    <div class="ini-dupla"><button class="rolar px modo" id="ini-comecar" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt">MODO CLÁSSICO<small>10 rodadas, uma cartela</small></span></button>
+    <div class="ini-dupla"><button class="rolar px modo" id="ini-comecar" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt">MODO CLÁSSICO</span></button>
       <button class="opc px" id="ini-tuto" type="button"><i class="ini-ico" aria-hidden="true"></i><span>Tutorial</span></button>
       <button class="opc px" id="ini-cfg" type="button"><i class="ini-ico" aria-hidden="true"></i><span>Configurações</span></button>
     </div>
@@ -2179,12 +2184,18 @@ function passaFase(pts){
     gj?"Gorjeta da casa: <b>+"+gj+"</b> na próxima.":"",du?"Agora: duelo com <b>"+du.nome+"</b>.":""].filter(Boolean),
     [{txt:"CONTINUAR",cb:function(){if(!R)return;R.fase++;comecaFase(true)}}]);
 }
+var RECORDE_K="matraq-recorde-v1",BONUS_BC=100;
+function recorde(){try{return parseInt(localStorage.getItem(RECORDE_K),10)||0}catch(e){return 0}}
+function pontosEtapa(h){return h.pts+(h.pts>=h.alvo?h.pts-h.alvo:0)}   // cartela inteira + sobra (acima da meta / vantagem sobre o rival) conta em dobro
+function pontosNoite(){var t=0;if(!R)return 0;(R.hist||[]).forEach(function(h){t+=pontosEtapa(h)});return t+(R.bcBonus?BONUS_BC:0)}
 function melhor(){try{return parseInt(localStorage.getItem("matraq-melhor-v7"),10)||0}catch(e){return 0}}
 function encerraRun(venceu,pts){
   if(!venceu&&usaSegundaChance()){somAnota(0);clarao("#4a0c0c");tremer(2);return}
   if(venceu){ganhaFichas(10);contaSt("vitorias")}
   var feitas=venceu?FASES:R.fase-1;
-  R.estado="fim";
+  R.estado="fim";if(venceu)R.bcBonus=1;
+  var noite=pontosNoite(),recAnt=recorde(),novoRec=noite>recAnt;
+  try{if(novoRec)localStorage.setItem(RECORDE_K,String(noite))}catch(e){}
   try{if(feitas>melhor())localStorage.setItem("matraq-melhor-v7",String(feitas))}catch(e){}
   limpaRun();
   if(venceu){somFim();clarao("#e3b341");chuva(OURO,160);setTimeout(function(){chuva(OURO,120)},500)}
@@ -2195,6 +2206,7 @@ function encerraRun(venceu,pts){
     venceu?'<span class="pn-meta">Você venceu o <b>Black Cat</b>!</span>':
       du?'<span class="pn-meta"><b>'+du.eu+'</b> × '+du.ele+'</span>'+(du.bomba?"A bomba estourou na sua mão.":D.nome+" venceu."):
       '<span class="pn-meta"><b>'+pts+'</b> de '+R.alvo+'</span>Faltaram '+(R.alvo-pts)+'.',
+    'Pontos da noite: <b style="font-size:1.35em;color:#8a1414">'+noite.toLocaleString("pt-BR")+'</b>'+(novoRec?' <b style="color:#a8560e">· Novo recorde!</b>':'<span class="pn-pouco">Recorde: '+recAnt.toLocaleString("pt-BR")+'</span>'),
     "Chegou até: <b>"+melhorTxt(feitas)+"</b>",
     '<b style="color:#c98a1a">+'+(R.fichas||0)+' fichas</b> <span class="pn-pouco">(total '+lerSave().fichas+')</span>'].filter(Boolean),
     [{txt:"NOVA NOITADA",cb:novaRun},{txt:"MENU",cls:"opc",cb:function(){abrirInicio(false)}}]);
@@ -2542,7 +2554,7 @@ function abrirSlot(retomar){
   var s=R.slot;
   preparaSlot();
   $("sl-tit").textContent=(function(){var e=etapa(R.fase);return e.duelo?"Venceu "+e.nome+"!":e.conf>=e.n?"Mesa "+e.mesa+" fechada":"Conferência "+e.conf+" superada"})();
-  $("sl-sub").innerHTML=subSlot();
+  $("sl-sub").innerHTML=subSlot()+(function(){var h=R.hist[R.hist.length-1];return h?'<br><span class="sl-noite">+'+pontosEtapa(h)+' · Noite: <b>'+pontosNoite().toLocaleString("pt-BR")+'</b> pts</span>':""})();
   $("sl-res").hidden=true;$("sl-res").innerHTML="";$("slot").classList.remove("com-res");$("sl-ok").hidden=true;$("sl-girar").hidden=false;$("sl-girar").disabled=false;
   pintaSlot(0,false);
   $("slot").hidden=false;$("slot").scrollTop=0;requestAnimationFrame(setaSlot);
@@ -2672,7 +2684,7 @@ $("bc-voltar").addEventListener("click",function(){$("balcao").hidden=true;psPer
 // código de backup: save + personagens liberados + melhor noitada
 function codigoSave(){
   var o={s:lerSave(),p:null,m:melhor()};try{o.p=JSON.parse(localStorage.getItem("matraq-perso-v1"))}catch(e){}
-  return "MTQ1-"+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+  o.rc=recorde();return "MTQ1-"+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
 }
 $("bc-copia").addEventListener("click",function(){
   var c=codigoSave(),msg=$("bc-msg");
@@ -2687,7 +2699,7 @@ $("bc-importa").addEventListener("click",function(){
     if(t.indexOf("MTQ1-")!==0)throw 0;
     var o=JSON.parse(decodeURIComponent(escape(atob(t.slice(5)))));if(!o||!o.s||typeof o.s!=="object")throw 0;
     gravaSave(o.s);if(o.p)localStorage.setItem("matraq-perso-v1",JSON.stringify(o.p));
-    if(o.m>melhor())localStorage.setItem("matraq-melhor-v7",String(o.m));
+    if(o.m>melhor())localStorage.setItem("matraq-melhor-v7",String(o.m));if(o.rc>recorde())localStorage.setItem(RECORDE_K,String(o.rc));
     msg.textContent="Progresso carregado!";somFim();pintaBalcao();psPerfil();
   }catch(e){msg.textContent="Código inválido. Confira se copiou inteiro.";somAnota(0)}
 });
@@ -2946,7 +2958,7 @@ document.addEventListener("visibilitychange",function(){if(document.hidden)ambPa
 (function(){var a0=alternaSom;alternaSom=function(){a0.apply(this,arguments);if(mudo)ambPara();else ambToca();pintaAmb()}})();
 pintaAmb();
 // ganchos para os testes automáticos
-window.MQT={get R(){return R},get S(){return S},fimDeFase:function(){fimDeFase()},encerra:function(v,p){encerraRun(v,p)}};
+window.MQT={get R(){return R},get S(){return S},fimDeFase:function(){fimDeFase()},encerra:function(v,p){encerraRun(v,p)},nova:function(p){novaRunCom(p)},noite:function(){return pontosNoite()},recorde:function(){return recorde()}};
 // segunda chance: guarda a noitada no começo de cada fase
 function guardaInicioFase(){if(!R)return;var r=Object.assign({},R);delete r.snap;R.snap=JSON.stringify({R:r,S:S})}
 function usaSegundaChance(){
@@ -3113,8 +3125,10 @@ function pintaInicio(){
   $("ini-som-v").textContent=mudo?"desligado":"ligado";
   $("ini-fx-v").textContent=fxOff?"desligados":"ligados";
 }
-function pintaPerfilInicio(){var d=lerSave(),sm=document.querySelector("#ini-survival small");if(!sm)return;
-  sm.textContent=d.st.noitadas?(d.nome||"Jogador")+" · "+d.fichas+" fichas · melhor: "+melhorTxt(melhor()):"3 mesas e 4 duelos, até o Black Cat"}
+function pintaPerfilInicio(){var d=lerSave(),l1=document.getElementById("nt-l1"),l2=document.getElementById("nt-l2");if(!l1)return;
+  if(!d.st.noitadas){l1.textContent="3 mesas e 4 duelos";l2.textContent="até o Black Cat";return}
+  var rc=recorde();l1.textContent=(d.nome||"Jogador")+" • "+d.fichas+" fichas";
+  l2.textContent=rc?"Recorde: "+rc.toLocaleString("pt-BR")+" pts":"Recorde: —"}
 function abrirInicio(cont,soMenu){pintaPerfilInicio();   // soMenu: só Som, Efeitos, Regras e Voltar ao jogo (botão Menu); sem ele, a tela inicial completa (botão Sair)
   nIni=1;$("inicio").classList.toggle("so-menu",!!soMenu);$("inicio").classList.remove("cfg");$("ini-voltar").textContent=soMenu?"VOLTAR AO JOGO":"VOLTAR";
   var nm=(S&&S.nomes&&S.nomes.length)?S.nomes:lerNomes();
