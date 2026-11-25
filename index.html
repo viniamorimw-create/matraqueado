@@ -2710,7 +2710,7 @@ document.addEventListener("keydown",function(e){
 });
 
 // ---------- música ambiente (jazz 8-bit original, gerado por código) ----------
-var MUS={on:true,vol:.05,tocando:false,ctx:null,saida:null,prox:0,passo:0,tema:0,volta:0,timer:null,ondas:{},ruido:null,frase:0};
+var MUS={on:true,vol:.16,tocando:false,ctx:null,saida:null,prox:0,passo:0,tema:0,volta:0,timer:null,ondas:{},ruido:null,frase:0};
 try{MUS.on=localStorage.getItem("matraq-musica")!=="0"}catch(e){}
 var TEMAS=[
   {nome:"Balcão",bpm:118,swing:.62,estilo:"swing",tom:53,   // Fá
@@ -2725,7 +2725,7 @@ function musOnda(c,duty){var k="p"+duty;if(MUS.ondas[k])return MUS.ondas[k];var 
   for(var i=1;i<n;i++)im[i]=2/(i*Math.PI)*Math.sin(i*Math.PI*duty);return MUS.ondas[k]=c.createPeriodicWave(re,im)}
 function musMonta(c){
   var ent=c.createGain(),lp=c.createBiquadFilter(),g=c.createGain(),conv=c.createConvolver(),seco=c.createGain(),mol=c.createGain();
-  lp.type="lowpass";lp.frequency.value=1500;lp.Q.value=.4;
+  lp.type="lowpass";lp.frequency.value=2200;lp.Q.value=.4;
   var n=Math.floor(c.sampleRate*1.4),b=c.createBuffer(2,n,c.sampleRate);   // "eco de salão": ruído que se apaga
   for(var ch=0;ch<2;ch++){var d=b.getChannelData(ch);for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3)}
   conv.buffer=b;seco.gain.value=.75;mol.gain.value=.35;
