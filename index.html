@@ -887,6 +887,26 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
   #lado-pc .lp-ben i{font-style:normal;font-size:14px;padding:2px 7px;border:2px solid;background:#1d1520}
   #lado-pc small{opacity:.75}
 }
+
+/* home: Noitada em destaque, demais botões no tamanho do clássico */
+#ini-survival{min-height:168px!important;justify-content:center!important;align-items:center!important;text-align:center;flex-direction:column!important;gap:6px!important;padding:10px 14px!important}
+#ini-survival .ini-txt{font-size:30px!important;align-items:center;white-space:normal;border:0!important;padding:0!important;margin:0!important}
+#ini-survival .ini-txt small{font-size:14px!important;white-space:normal}
+#ini-survival .ini-txt::before,#ini-survival .ini-ico::after{display:none!important}
+#ini-survival .ini-ico{width:96px!important;height:60px!important}
+.ini-dupla{display:grid!important;grid-template-columns:1fr 1fr;gap:10px}
+.inicio.cfg .ini-dupla{display:none!important}
+.ini-dupla #ini-comecar{grid-column:1/-1}
+#ini-comecar,#ini-cont,#ini-tuto,#ini-cfg{min-height:58px!important;height:58px;padding:2px 10px!important;justify-content:center!important;gap:8px!important}
+#ini-comecar .ini-txt,#ini-cont .ini-txt{font-size:18px!important;flex-direction:row}
+#ini-comecar .ini-txt small,#ini-cont .ini-txt small{display:none!important}
+#ini-comecar .ini-ico,#ini-cont .ini-ico{width:38px!important;height:24px!important}
+#ini-tuto span,#ini-cfg span,#ini-comecar .ini-txt,#ini-cont .ini-txt{font-size:17px!important}
+#ini-cont .ini-seta{display:none}
+#ini-cont[hidden]{display:none!important}
+#ini-tuto,#ini-cfg{padding:2px 4px!important;gap:5px!important}
+#ini-cfg .ini-ico{width:22px!important;height:22px!important}
+#ini-tuto span,#ini-cfg span{font-size:14px!important;white-space:nowrap;overflow:visible}
 </style>
 </head>
 <body>
@@ -932,7 +952,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
 <div class="inicio" id="inicio" hidden>
   <div class="col">
     <div class="capa px"><canvas class="banner" width="841" height="250" role="img" aria-label="KAT4 House"></canvas><div class="tit">MATRAQUEADO</div></div>
-    <button class="rolar px modo" id="ini-comecar" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt">MODO CLÁSSICO<small>10 rodadas, uma cartela</small></span></button>
+    
     <button class="rolar px modo sv" id="ini-survival" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt">MODO NOITADA<small>3 mesas e 4 duelos, até o Black Cat</small></span></button>
     <button class="opc px cont" id="ini-cont" type="button" hidden><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span>Continuar partida</span><small id="ini-cont-d"></small></span><i class="ini-seta" aria-hidden="true"></i></button>
     <div class="sep" aria-hidden="true"></div>
@@ -952,7 +972,7 @@ h1.tit{flex:1;min-width:0;height:36px;font-size:0;background:var(--placa) center
     <button class="opc px cf" id="ini-fx" type="button"><span>Efeitos</span><b id="ini-fx-v">ligados</b></button>
     <button class="opc px cf" id="ini-regras" type="button"><span>Regras</span><b>?</b></button>
     <button class="rolar px" id="ini-voltar" type="button">VOLTAR</button>
-    <div class="ini-dupla">
+    <div class="ini-dupla"><button class="rolar px modo" id="ini-comecar" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt">MODO CLÁSSICO<small>10 rodadas, uma cartela</small></span></button>
       <button class="opc px" id="ini-tuto" type="button"><i class="ini-ico" aria-hidden="true"></i><span>Tutorial</span></button>
       <button class="opc px" id="ini-cfg" type="button"><i class="ini-ico" aria-hidden="true"></i><span>Configurações</span></button>
     </div>
