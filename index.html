@@ -933,6 +933,18 @@ url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABAElEQV
 #lado-pc .lp-jog{display:flex;justify-content:space-between;align-items:baseline;padding:6px 10px;border:2px solid #3a4560;background:#1d2438;font-size:18px}
 #lado-pc .lp-jog b{font-family:var(--f-display);font-weight:400;font-size:30px;color:#fff2d6}
 #lado-pc .lp-jog.vez{border-color:#e3a33a}#lado-pc .lp-jog.vez span{color:#ffcf6a}
+
+.pt-noite{position:fixed;z-index:60;pointer-events:none;display:flex;flex-direction:column;align-items:flex-end;gap:0;padding:3px 8px 4px;
+  background:rgba(14,18,32,.88);border:2px solid #d49a48;box-shadow:inset 0 0 0 1px #2a1408,0 2px 0 rgba(0,0,0,.5);font-family:var(--f-corpo);line-height:1}
+.pt-noite span{font-size:9px;font-weight:700;letter-spacing:1px;color:#e3a33a}
+.pt-noite b{font-family:var(--f-display);font-weight:400;font-size:24px;color:#fff2d6;text-shadow:2px 2px 0 #000}
+.pt-noite small{font-size:9px;color:#b9ad92}.pt-noite small:empty{display:none}
+.pt-noite i{position:absolute;right:4px;top:-4px;font-style:normal;font-family:var(--f-display);font-size:22px;color:#ffd75a;text-shadow:2px 2px 0 #000;opacity:0}
+.pt-noite i.on{animation:ptnMais 1.4s ease-out}
+.pt-noite.pulsa{animation:ptnPulsa .5s ease-out}
+@keyframes ptnMais{0%{opacity:0;transform:translateY(6px)}15%{opacity:1}100%{opacity:0;transform:translateY(-26px)}}
+@keyframes ptnPulsa{0%{transform:scale(1)}40%{transform:scale(1.12);border-color:#ffd75a}100%{transform:scale(1)}}
+@media (min-width:960px) and (min-aspect-ratio:4/3){.pt-noite{padding:5px 12px 6px}.pt-noite span{font-size:12px}.pt-noite b{font-size:34px}.pt-noite small{font-size:12px}}
 </style>
 </head>
 <body>
@@ -2757,6 +2769,27 @@ function pintaLadoPC(){
 }
 (function(){var d0=desenha;desenha=function(){var r=d0.apply(this,arguments);try{pintaLadoPC()}catch(e){}return r}})();
 window.addEventListener("resize",function(){try{pintaLadoPC()}catch(e){}});
+// ---------- quadro fixo: pontos acumulados da noitada (mesas + duelos + chefes), nunca zera na run ----------
+var HUDN={el:null,mostra:0,alvo:0,anim:0};
+function hudNoite(){
+  var el=HUDN.el;if(!el){document.body.insertAdjacentHTML("beforeend",'<div id="pt-noite" class="pt-noite" hidden><span>PONTOS DA NOITE</span><b id="ptn-v">0</b><small id="ptn-r"></small><i id="ptn-mais"></i></div>');el=HUDN.el=$("pt-noite")}
+  var x1=document.getElementById("x1"),noX1=x1&&!x1.hidden&&x1.shadowRoot,cena=noX1?x1.shadowRoot.getElementById("cena"):$("cena-n");
+  var ve=R&&cena&&!cena.hidden&&cena.offsetParent!==null&&$("inicio").hidden&&$("slot").hidden;
+  if(!ve){el.hidden=true;return}
+  var r=cena.getBoundingClientRect();if(r.height<20){el.hidden=true;return}
+  var w=Math.min(r.width,r.height*2.075),dir=r.left+(r.width+w)/2;
+  el.hidden=false;el.style.top=Math.round(r.bottom-el.offsetHeight-6)+"px";el.style.left=Math.round(dir-el.offsetWidth-6)+"px";
+  var v=pontosNoite();
+  if(v!==HUDN.alvo){var ganho=v-HUDN.alvo;HUDN.alvo=v;
+    var mesma=HUDN.run===R;HUDN.run=R;
+    if(ganho>0&&mesma){var m=$("ptn-mais");m.textContent="+"+ganho.toLocaleString("pt-BR");m.classList.remove("on");void m.offsetWidth;m.classList.add("on");el.classList.remove("pulsa");void el.offsetWidth;el.classList.add("pulsa");
+      var de=HUDN.mostra,t0=performance.now();cancelAnimationFrame(HUDN.anim);
+      (function q(t){var u=Math.min(1,(t-t0)/900);HUDN.mostra=Math.round(de+(v-de)*(1-Math.pow(1-u,3)));$("ptn-v").textContent=HUDN.mostra.toLocaleString("pt-BR");if(u<1)HUDN.anim=requestAnimationFrame(q)})(t0)}
+    else{HUDN.mostra=v;$("ptn-v").textContent=v.toLocaleString("pt-BR")}}
+  var rc=recorde();$("ptn-r").textContent=rc?"Recorde "+rc.toLocaleString("pt-BR"):"";
+}
+setInterval(function(){try{hudNoite()}catch(e){}},250);
+
 document.addEventListener("keydown",function(e){
   if(e.ctrlKey||e.metaKey||e.altKey)return;var t=e.target;if(t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"))return;
   var x1=document.getElementById("x1");if(x1&&!x1.hidden)return;   // o duelo tem os atalhos dele
