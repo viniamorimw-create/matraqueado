@@ -4005,8 +4005,8 @@ var SPR={},SPR_Y=1;
 function sprCarrega(look,src,w,h){var im=new Image();SPR[look]={img:im,w:w,h:h||w,ok:false};im.onload=function(){SPR[look].ok=true};im.src=src}
 function rivalArte(look,e){
   var s=SPR[look];if(!s||!s.ok)return false;
-  var q=e.morto?5:(e.vence&&s.img.naturalWidth>=7*s.w)?6:e.abre<.5?1:e.humor==="bravo"?2:e.humor==="calmo"?3:e.humor==="tenso"?4:0,
-      dy=e.morto?2:(Math.sin(e.t*1.8)>.2?1:0);                 // respira: sobe e desce 1 pixel
+  var q=e.morto?2:(e.vence&&s.img.naturalWidth>=7*s.w)?6:e.abre<.5?1:e.humor==="bravo"?2:e.humor==="calmo"?3:e.humor==="tenso"?4:0,
+      dy=e.morto?0:(Math.sin(e.t*1.8)>.2?1:0);                 // respira: sobe e desce 1 pixel
   var gl=g.createRadialGradient(97,26,4,97,26,38);gl.addColorStop(0,"rgba(255,96,60,.22)");gl.addColorStop(1,"rgba(255,96,60,0)");
   g.fillStyle=gl;g.fillRect(55,0,85,53);                        // brilho da luminária atrás dele: separa a silhueta do fundo escuro
   g.imageSmoothingEnabled=false;
@@ -4017,7 +4017,7 @@ function rivalArte(look,e){
 function rivalPinta(look,e){
   var arte=rivalArte(look,e);
   if(!arte){g.save();g.translate(0,-6);[rival0,rival1,rival2,rival3,rival4].at(look)(e);g.restore()}
-  if(e.morto&&!arte){g.fillStyle="rgba(8,6,8,.62)";g.fillRect(64,0,68,57)}   // chamuscado pela bomba (a arte já vem chamuscada)
+   // chamuscado pela bomba (a arte já vem chamuscada)
   else if(!arte){var gr=g.createLinearGradient(0,10,0,53);gr.addColorStop(0,"rgba(5,5,7,0)");gr.addColorStop(1,"rgba(5,5,7,.45)");g.fillStyle=gr;g.fillRect(64,10,68,47)}   // a luz da luminária cai de cima
 }
 function rivalNaMesa(look,e){   // o que fica na frente da mesa
