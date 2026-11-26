@@ -3793,9 +3793,9 @@ function garrafaAlvo(now){
   if(CENA.boom)return;
   var perde=J.eu.tot<J.ele.tot?"eu":J.ele.tot<J.eu.tot?"ele":GAR.lado;
   if(!perde)perde="eu";
-  if(GAR.ang==null){GAR.ang=GAR.fim=perde==="eu"?-2.4:Math.PI-2.4;GAR.lado=perde;return}
+  if(GAR.ang==null){GAR.ang=GAR.fim=perde==="eu"?Math.PI:0;GAR.lado=perde;return}
   if(perde===GAR.lado)return;
-  var d=perde==="eu"?-2.4:Math.PI-2.4,dd=((d-GAR.ang)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+  var d=perde==="eu"?Math.PI:0,dd=((d-GAR.ang)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
   GAR.ini=GAR.ang;GAR.fim=GAR.ang+dd+2*Math.PI*2;GAR.t0=now;GAR.dur=2600;GAR.lado=perde;somTapa()}
 function garrafaGiro(now){   // gira só num sentido: sai embalada e perde velocidade (atrito constante)
   if(GAR.t0==null)return;var u=Math.min(1,(now-GAR.t0)/GAR.dur);
