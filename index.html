@@ -1129,10 +1129,10 @@ body.surv #slots .slot.b4.usado{filter:grayscale(.7) brightness(.7)}
 body.surv #slots .slot.b4.ativo{filter:brightness(1.3) drop-shadow(0 0 4px #ffd75a)}
 @media (max-width:380px){body.surv #slots .slot.b4{font-size:13px!important;height:32px!important;letter-spacing:0!important}}
 
-.pn.t-azul:has(.mapa){display:flex!important;flex-direction:column;align-items:center}
-.pn.t-azul:has(.mapa)>p:first-of-type{order:-1;margin:6px 0 12px!important}
-.pn.t-azul:has(.mapa)>h2{margin:0 0 4px!important}
-.pn.t-azul:has(.mapa)>.bts{width:100%;margin-top:6px!important}
+.pn:has(.mapa){display:flex!important;flex-direction:column;align-items:center}
+.pn:has(.mapa)>p:first-of-type{order:-1;margin:6px 0 12px!important}
+.pn:has(.mapa)>h2{margin:0 0 4px!important}
+.pn:has(.mapa)>.bts{width:100%;margin-top:6px!important}
 body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_slot_b4_hab.png)!important;color:#ffe08a!important;filter:drop-shadow(0 0 4px #ffcf4a)}body.surv #slots .slot.b4.hab.usado{filter:grayscale(.7) brightness(.7)}body.surv #slots .slot.b4.hab.ativo{filter:brightness(1.3) drop-shadow(0 0 5px #ffd75a)}
 
 @keyframes mpPulso{0%,100%{transform:scale(1);filter:drop-shadow(0 0 3px #ffd23e)}50%{transform:scale(1.14);filter:drop-shadow(0 0 7px #ffd23e) brightness(1.12)}}
@@ -2342,9 +2342,6 @@ function comecaFase(mostra){
 function abrePainelFase(){
   if(R.duelo){abrePainelDuelo();return}
   var m=R.mald&&MALD[R.mald],et=etapa(R.fase),iniMesa=!!INI_BLOCO[R.fase],l=[mapaNoite(R.fase)];
-  l.push('<span class="pn-meta">Meta: <b>'+R.alvo+'</b> pontos</span>');
-  if(m)l.push(linhaMald(m,R.mald));
-  if(m&&iniMesa)PAINEL_TEMA="t-vinho";
   abrePainel("Mesa "+et.mesa,l,[{txt:iniMesa?"SENTAR NA MESA":"CONTINUAR",cb:function(){
     faixa(iniMesa?"MESA "+et.mesa:"CONFERÊNCIA "+et.conf,iniMesa?"":"até a rodada "+R.k);tremer(1);
     if(m&&iniMesa)setTimeout(function(){if(!R)return;faixa(m.nome.toUpperCase(),"","m");clarao("#4a0c0c");tremer(2);somDiabo()},1250);
@@ -2361,9 +2358,6 @@ function cenaNoite(){   // anima a mesa vazia (X1UI.pintaVazia, no bloco do X1) 
 }
 function abrePainelDuelo(){
   var D=DUELOS[R.fase],L=limitesDuelo(D),l=[mapaNoite(R.fase)];
-  if(D.pod)l.push('<span class="pn-pouco">Poderes: '+D.pod+'</span>');
-  if(D.forca>0)l.push(D.nome+' joga com <b>+'+Math.round(D.forca*100)+'%</b> nos pontos.');
-  PAINEL_TEMA="t-azul";
   abrePainel(R.fase>=FASES?"Chefe final: "+D.nome:R.chefe?"Chefe: "+D.nome:"Duelo: "+D.nome,l,[{txt:"COMEÇAR DUELO",cb:abrirDuelo}]);
 }
 function abrirDuelo(){
