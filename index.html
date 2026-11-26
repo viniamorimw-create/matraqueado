@@ -4010,7 +4010,7 @@ function rivalArte(look,e){
   var s=SPR[look];if(!s||!s.ok)return false;
   if(e.morto&&QUEDA[look]&&CENA.boom){var Qd=QUEDA[look],el=performance.now()-CENA.boom.t0,T=[0,150,330,520,700,880,1060,1300],TL=2900,TU=600;
     if(el<TL){var f=0;for(var i=0;i<T.length;i++)if(el>=T[i])f=i;var im=Qd.img[f];
-      if(im.complete&&im.naturalWidth){g.save();g.beginPath();g.rect(0,0,195,58);g.clip();g.imageSmoothingEnabled=false;g.drawImage(im,Math.round(99-Qd.w/2),58-Qd.h+3-[0,0,0,0,0,2,5,13][f],Qd.w,Qd.h);g.restore()}
+      if(im.complete&&im.naturalWidth){g.save();g.beginPath();g.rect(0,0,195,58);g.clip();g.imageSmoothingEnabled=false;g.drawImage(im,Math.round(99-Qd.w/2),58-Qd.h+3-[0,0,0,0,0,1,2,3][f],Qd.w,Qd.h);g.restore()}
       return true}
     var u=Math.min(1,(el-TL)/TU),dy=Math.round((1-u)*s.h);
     g.save();g.beginPath();g.rect(0,0,195,58);g.clip();g.imageSmoothingEnabled=false;g.drawImage(s.img,0,0,s.w,s.h,Math.round(97-s.w/2),SPR_Y+dy,s.w,s.h);g.restore();
