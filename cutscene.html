@@ -10,7 +10,7 @@
 html,body{height:100%;background:#0b0507;color:#f3e3c3;font-family:"Jersey 15",system-ui,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none}
 #app{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:max(10px,env(safe-area-inset-top)) 0 max(10px,env(safe-area-inset-bottom))}
 /* quadro da página (2:3) + faixa da legenda embaixo */
-#tela{position:relative;width:min(100vw,calc((100dvh - 150px)*2/3));aspect-ratio:2/3;overflow:hidden;background:#140a0c;box-shadow:0 0 0 2px #2a1410,0 10px 30px rgba(0,0,0,.7)}
+#tela{position:relative;width:min(100vw,calc((100dvh - 20px)*2/3));aspect-ratio:2/3;overflow:hidden;background:#140a0c;box-shadow:0 0 0 2px #2a1410,0 10px 30px rgba(0,0,0,.7)}
 #pag{position:absolute;inset:0;transform-origin:0 0;transition:transform 1.4s cubic-bezier(.45,.05,.25,1)}
 .cena{position:absolute;inset:0;opacity:0;transition:opacity .7s}
 .cena.on{opacity:1}
@@ -35,6 +35,7 @@ html,body{height:100%;background:#0b0507;color:#f3e3c3;font-family:"Jersey 15",s
 /* legenda */
 #leg{width:min(100vw,calc((100dvh - 150px)*2/3));min-height:92px;padding:10px 16px;font-size:clamp(18px,4.8vw,24px);line-height:1.28;letter-spacing:.4px;text-shadow:2px 2px 0 #000;
   border-top:2px solid #c9952e;border-bottom:2px solid #c9952e;background:linear-gradient(#1c0b0d,#120709);display:flex;align-items:center}
+#leg[hidden]{display:none!important}
 #leg b{color:#ffcf4a;font-weight:400}
 #leg .c{display:inline-block;width:.5em;color:#c9952e;animation:pisca 1s steps(2) infinite}
 @keyframes pisca{50%{opacity:0}}
@@ -62,7 +63,7 @@ html,body{height:100%;background:#0b0507;color:#f3e3c3;font-family:"Jersey 15",s
     <div id="flash"></div><div id="vin"></div><div id="grao"></div>
     <div id="fim"><button id="bt-jogar" type="button">VAMOS JOGAR?</button></div>
   </div>
-  <div id="leg"><span id="lt"></span></div>
+  <div id="leg" hidden><span id="lt"></span></div>
 </div>
 <div id="topo"><button id="bt-rec" type="button" title="Recomeçar">↺</button><button id="bt-pular" type="button">Pular ▸</button></div>
 <div id="carrega">carregando…</div>
@@ -135,9 +136,7 @@ var R=[
  {ms:3200,txt:"…e os dois fogem pelo beco.",f:function(){quadro("c1",2);foca(faixa(P1,2),1.35)}},
  {ms:4000,txt:"Mas voltam. E não estão sozinhos.",f:function(){quadro("c1",3);foca(faixa(P1,3,0,.75),1.35);setTimeout(treme,700)}},
  {ms:2800,txt:"Sem chance. Só resta <b>correr</b>.",f:function(){todosAcesos("c1");foca(TODA,1,1100)}},
- {ms:5600,txt:"Entre as ruas escuras, uma porta iluminada.",f:function(){cena("c2");foca(TODA,1,10);setTimeout(function(){foca({x:.05,y:.45,w:.6,h:.5},1.45,5000)},80);corre={t0:performance.now()+700,ms:4300}}},
- {ms:1700,txt:"Sem pensar duas vezes…",f:function(){corre=null;insercao(U("porta1.png"))}},
- {ms:2300,txt:"…ele entra.",f:function(){insercao(U("porta2.png"));setTimeout(function(){flash(700)},900)}},
+ {ms:5600,txt:"Entre as ruas escuras, uma porta iluminada.",f:function(){cena("c2");foca(TODA,1,10);setTimeout(function(){foca({x:.05,y:.45,w:.6,h:.5},1.45,5000)},80)}},
  {ms:5600,txt:"Lá dentro, outro mundo: o <b>KAT4 House</b>.",f:function(){insercao();cena("c3");flash(1100);foca(TODA,1,10);setTimeout(function(){foca({x:.1,y:.1,w:.8,h:.8},1.22,5500)},80)}},
  {ms:2600,txt:"Dados rolando…",f:function(){cena("c4");foca(TODA,1,10);quadro("c4",0);setTimeout(function(){foca(faixa(P4,0),1.35)},60)}},
  {ms:2600,txt:"…garrafas estourando…",f:function(){quadro("c4",1);foca(faixa(P4,1),1.35);setTimeout(treme,350)}},
@@ -149,7 +148,7 @@ var R=[
 
 /* ---------- legenda com máquina de escrever ---------- */
 var tw=0,cheio="";
-function escreve(h){clearInterval(tw);cheio=h;var p=h.replace(/<[^>]+>/g,""),n=0;leg.innerHTML='<span class="c">▌</span>';
+function escreve(h){return;clearInterval(tw);cheio=h;var p=h.replace(/<[^>]+>/g,""),n=0;leg.innerHTML='<span class="c">▌</span>';
   tw=setInterval(function(){n++;if(n>=p.length){clearInterval(tw);tw=0;leg.innerHTML=h;return}leg.innerHTML=p.slice(0,n)+'<span class="c">▌</span>'},24)}
 
 var passo=-1,auto=0;
@@ -159,12 +158,12 @@ function vai(i){
   s.f();escreve(s.txt);
   if(s.ms)auto=setTimeout(function(){vai(i+1)},s.ms);
 }
-function toque(){if(tw){clearInterval(tw);tw=0;leg.innerHTML=cheio;return}if(passo<R.length-1)vai(passo+1)}
+function toque(){if(passo<R.length-1)vai(passo+1)}
 tela.addEventListener("click",function(e){if(e.target.closest("#fim"))return;toque()});
 $("leg").addEventListener("click",toque);
 $("bt-pular").onclick=function(){vai(R.length-1)};
 $("bt-rec").onclick=function(){["c1","c4"].forEach(function(c){quadro(c,-1)});vai(0)};
-$("bt-jogar").onclick=function(){leg.innerHTML="(no jogo, aqui abre a escolha do personagem)"};
+$("bt-jogar").onclick=function(){$("bt-jogar").textContent="(no jogo: escolha do personagem)"};
 
 /* pré-carrega tudo antes de começar */
 var L=["cena1.jpg","cena2.jpg","cena3.jpg","cena4.jpg","cena5.jpg","corrida.png","porta1.png","porta2.png"],falta=L.length;
