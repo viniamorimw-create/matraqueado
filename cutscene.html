@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Matraqueado — Abertura (teste)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jersey+15&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#07020a;color:#f6e7c8;font-family:"Jersey 15",system-ui,sans-serif;overflow:hidden}
+#palco{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+/* quadro 2:3 que cabe na tela */
+#quadro{position:relative;width:min(100vw,66.67vh);height:min(150vw,100vh);overflow:hidden;background:#000}
+.cam{position:absolute;inset:0;transform-origin:0 0;will-change:transform}
+.cam img,.cam canvas.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#sprite{position:absolute;image-rendering:auto;pointer-events:none}
+#flash{position:absolute;inset:0;background:#ffd58a;opacity:0;pointer-events:none}
+#vinheta{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.7) 100%)}
+#leg{position:absolute;left:5%;right:5%;bottom:5%;padding:12px 14px;background:rgba(8,2,6,.82);border:3px solid #c9952e;
+  box-shadow:0 0 0 2px #2a0a0a,0 6px 16px rgba(0,0,0,.6);font-size:clamp(17px,4.6vw,23px);line-height:1.3;letter-spacing:.4px;text-shadow:2px 2px 0 #000;
+  opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s;min-height:2.9em}
+#leg.on{opacity:1;transform:none}
+#leg b{color:#ffcf4a;font-weight:400}
+#fim{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:16%;gap:12px}
+#fim.on{display:flex}
+#fim button{font:inherit;font-size:clamp(22px,6vw,30px);letter-spacing:2px;color:#2a0a0a;background:#f3d58a;border:3px solid #7a1420;box-shadow:0 0 0 3px #f3d58a,0 6px 0 #4a0a12;padding:10px 28px;cursor:pointer}
+#fim small{font-size:15px;color:#e8d3a8;text-shadow:2px 2px 0 #000}
+#barra{position:fixed;top:0;left:0;right:0;display:flex;gap:8px;justify-content:flex-end;padding:max(8px,env(safe-area-inset-top)) 10px 8px;z-index:5;pointer-events:none}
+#barra>*{pointer-events:auto;font:inherit;font-size:15px;color:#f6e7c8;background:rgba(0,0,0,.55);border:2px solid #c9952e;border-radius:4px;padding:5px 10px;cursor:pointer}
+#barra label input{display:none}
+#prog{position:fixed;left:0;bottom:0;height:3px;background:#c9952e;width:0;z-index:5;transition:width .3s}
+#info{position:fixed;left:10px;top:calc(max(8px,env(safe-area-inset-top)) + 40px);z-index:5;font-size:13px;color:#c9b38a;background:rgba(0,0,0,.5);padding:4px 8px;border-radius:4px;max-width:46vw}
+</style>
+</head>
+<body>
+<div id="palco"><div id="quadro">
+  <div class="cam" id="cam"></div>
+  <canvas id="sprite"></canvas>
+  <div id="vinheta"></div><div id="flash"></div>
+  <div id="leg"></div>
+  <div id="fim"><button id="bt-jogar" type="button">VAMOS JOGAR?</button><small>toque para recomeçar a abertura</small></div>
+</div></div>
+<div id="info">Abertura — teste</div>
+<div id="barra">
+  <label>Carregar imagens<input id="arq" type="file" accept="image/*" multiple></label>
+  <button id="bt-rec" type="button">↺</button>
+  <button id="bt-pular" type="button">Pular ▸</button>
+</div>
+<div id="prog"></div>
+
+<script>
+/* ===== Abertura do Matraqueado (protótipo separado do jogo) =====
+   Imagens esperadas (pasta assets/cutscene/ ou botão "Carregar imagens", pelo nome do arquivo):
+   cena1  briga em 4 quadros (empilhados de cima pra baixo)
+   cena2  fachada sem personagens
+   cena2b protagonista correndo: 8 quadros numa linha, fundo magenta
+   cena3  bar em primeira pessoa
+   cena4  4 closes (grade 2x2)
+   cena5  placar e barman
+   Toque na tela avança; "Pular" vai pro fim. */
+var NOMES=["cena1","cena2","cena2b","cena3","cena4","cena5"];
+var IMG={};           // nome -> HTMLImageElement carregada
+var $=function(id){return document.getElementById(id)};
+var cam=$("cam"),leg=$("leg"),flash=$("flash"),sp=$("sprite"),sctx=sp.getContext("2d");
+
+/* ---------- roteiro: cada passo = imagem, câmera (x,y,zoom em fração da imagem), legenda, duração ---------- */
+// região {x,y,w,h} em fração da imagem (0..1). A câmera enquadra a região.
+var R4=function(i){return {x:0,y:i/4,w:1,h:1/4}};                 // 4 faixas empilhadas
+var G4=function(i){return {x:(i%2)/2,y:Math.floor(i/2)/2,w:.5,h:.5}}; // grade 2x2
+var TODO={x:0,y:0,w:1,h:1};
+var ROTEIRO=[
+  {img:"cena1",de:TODO,para:R4(0),ms:3600,txt:"Uma noite qualquer. Uma briga de rua."},
+  {img:"cena1",para:R4(1),ms:2800,txt:"O protagonista leva a melhor…",treme:1},
+  {img:"cena1",para:R4(2),ms:2800,txt:"…e os dois fogem pelo beco."},
+  {img:"cena1",para:R4(3),ms:3600,txt:"Mas voltam. E não estão sozinhos.",treme:1},
+  {img:"cena1",para:TODO,ms:2200,txt:"Sem chance. Só resta <b>correr</b>."},
+  {img:"cena2",de:{x:0,y:.25,w:1,h:.75},para:{x:0,y:.35,w:1,h:.65},ms:5200,corre:1,txt:"Uma porta iluminada no meio da noite."},
+  {img:"cena3",de:TODO,para:{x:.12,y:.12,w:.76,h:.76},ms:5200,flash:1,txt:"Lá dentro, outro mundo: o <b>KAT4 House</b>."},
+  {img:"cena4",de:G4(0),para:G4(0),ms:2400,txt:"Dados rolando…"},
+  {img:"cena4",para:G4(1),ms:2400,txt:"…garrafas estourando…",treme:1},
+  {img:"cena4",para:G4(2),ms:2400,txt:"…copos tilintando…"},
+  {img:"cena4",para:G4(3),ms:2600,txt:"…e reputações em jogo a cada mesa."},
+  {img:"cena5",de:TODO,para:{x:.3,y:.2,w:.7,h:.7},ms:5600,txt:"O barman encara, com meio sorriso. Impressionado?"},
+  {img:"cena5",para:{x:.3,y:.2,w:.7,h:.7},ms:1,fim:1}
+];
+
+/* ---------- imagens provisórias (enquanto as artes não chegam) ---------- */
+function provisoria(nome){
+  var c=document.createElement("canvas");c.width=512;c.height=768;var g=c.getContext("2d");
+  var cores={cena1:["#1b0d1f","#3a1020"],cena2:["#0e1022","#3a2310"],cena3:["#2a0d06","#7a3a10"],cena4:["#2a0808","#6a2a10"],cena5:["#1a0806","#6a3a14"]}[nome]||["#111","#333"];
+  var gr=g.createLinearGradient(0,0,0,768);gr.addColorStop(0,cores[0]);gr.addColorStop(1,cores[1]);g.fillStyle=gr;g.fillRect(0,0,512,768);
+  g.strokeStyle="#000";g.lineWidth=10;
+  if(nome==="cena1")for(var i=1;i<4;i++){g.beginPath();g.moveTo(0,i*192);g.lineTo(512,i*192);g.stroke()}
+  if(nome==="cena4"){g.beginPath();g.moveTo(256,0);g.lineTo(256,768);g.moveTo(0,384);g.lineTo(512,384);g.stroke()}
+  g.fillStyle="rgba(246,231,200,.85)";g.font="34px 'Jersey 15',sans-serif";g.textAlign="center";
+  var n=nome==="cena1"||nome==="cena4"?4:1;
+  for(var k=0;k<n;k++){var r=nome==="cena1"?R4(k):nome==="cena4"?G4(k):TODO;g.fillText(nome.toUpperCase()+(n>1?" · "+(k+1):""),(r.x+r.w/2)*512,(r.y+r.h/2)*768);}
+  g.font="20px 'Jersey 15',sans-serif";g.fillText("(arte provisória)",256,740);
+  var im=new Image();im.src=c.toDataURL();im.provisoria=1;return im;
+}
+function provisoriaSprite(){ // 8 quadros de um vulto correndo, fundo magenta
+  var c=document.createElement("canvas");c.width=8*96;c.height=128;var g=c.getContext("2d");
+  g.fillStyle="#ff00ff";g.fillRect(0,0,c.width,c.height);
+  for(var i=0;i<8;i++){var x=i*96+48,b=Math.sin(i/6*Math.PI*2)*6;g.fillStyle="#6b3a1c";
+    g.beginPath();g.ellipse(x,52+b,16,24,0,0,7);g.fill();g.beginPath();g.arc(x+4,22+b,12,0,7);g.fill();
+    g.fillStyle="#c01818";g.fillRect(x-8,36+b,18,5);
+    g.strokeStyle="#4a2410";g.lineWidth=7;g.beginPath();g.moveTo(x,72+b);g.lineTo(x+(i<6?Math.sin(i)*16:6),112);g.moveTo(x,72+b);g.lineTo(x-(i<6?Math.sin(i)*16:-10),112);g.stroke();
+    if(i>=6){g.beginPath();g.moveTo(x+6,46);g.lineTo(x+34,40);g.stroke()}}
+  var im=new Image();im.src=c.toDataURL();im.provisoria=1;return im;
+}
+
+/* ---------- carregar imagens: assets/cutscene/<nome>.png, senão provisória ---------- */
+function carregaPadrao(cb){
+  var falta=NOMES.length;
+  NOMES.forEach(function(n){
+    var im=new Image();im.onload=function(){IMG[n]=im;if(!--falta)cb()};
+    im.onerror=function(){IMG[n]=n==="cena2b"?provisoriaSprite():provisoria(n);IMG[n].decode?IMG[n].decode().then(ok,ok):ok();function ok(){if(!--falta)cb()}};
+    im.src="assets/cutscene/"+n+".png";
+  });
+}
+$("arq").onchange=function(){
+  var fs=[].slice.call(this.files),livres=NOMES.slice(),pend=fs.length;
+  // primeiro pelos nomes dos arquivos, depois o resto na ordem
+  var ordem=[];fs.forEach(function(f){var m=(f.name.toLowerCase().match(/cena\s*([1-5])\s*(b)?/));var n=m?"cena"+m[1]+(m[2]?"b":""):null;
+    if(n&&livres.indexOf(n)>=0){livres.splice(livres.indexOf(n),1);ordem.push([f,n])}else ordem.push([f,null])});
+  ordem.forEach(function(p){if(!p[1])p[1]=livres.shift()});
+  ordem.forEach(function(p){if(!p[1]){if(!--pend)recomeca();return}var im=new Image();im.onload=function(){IMG[p[1]]=im;if(p[1]==="cena2b")prepSprite();if(!--pend)recomeca()};im.src=URL.createObjectURL(p[0])});
+  info();
+};
+function info(){$("info").textContent="Abertura — "+NOMES.map(function(n){return n+(IMG[n]&&!IMG[n].provisoria?" ✓":" ·")}).join("  ")}
+
+/* ---------- sprite: tira o magenta e corta 8 quadros ---------- */
+var QUAD=[];
+function prepSprite(){
+  var im=IMG.cena2b;if(!im)return;var c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;var g=c.getContext("2d");g.drawImage(im,0,0);
+  var d=g.getImageData(0,0,c.width,c.height),p=d.data;
+  for(var i=0;i<p.length;i+=4){var r=p[i],gg=p[i+1],b=p[i+2];if(r>150&&b>150&&gg<120&&r-gg>70&&b-gg>70)p[i+3]=0;else{var s=Math.min(r,b)-gg;if(s>40){p[i]-=s*.5;p[i+2]-=s*.5}}}
+  g.putImageData(d,0,0);
+  // acha as colunas com conteúdo pra separar os quadros (cai pra divisão em 8 iguais)
+  var W=c.width,H=c.height,col=new Array(W).fill(0);for(var x=0;x<W;x++)for(var y=0;y<H;y+=2)if(p[(y*W+x)*4+3]>0){col[x]=1;break}
+  var seg=[],ini=-1;for(x=0;x<=W;x++){if(x<W&&col[x]){if(ini<0)ini=x}else if(ini>=0){if(x-ini>W/40)seg.push([ini,x]);ini=-1}}
+  if(seg.length<6){seg=[];for(var k=0;k<8;k++)seg.push([Math.round(k*W/8),Math.round((k+1)*W/8)])}
+  QUAD=seg.map(function(s){var top=H,bot=0;for(var y=0;y<H;y++)for(var x=s[0];x<s[1];x+=2)if(p[(y*W+x)*4+3]>0){if(y<top)top=y;if(y>bot)bot=y}
+    return {c:c,x:s[0],y:0,w:s[1]-s[0],h:H,base:bot}});
+}
+
+/* ---------- câmera ---------- */
+var atual=null,camDe=null,camPara=null,t0=0,dur=1,passo=-1,raf=0,auto=0,cor=null;
+function poeImagem(nome){
+  if(atual===nome)return;atual=nome;cam.innerHTML="";var im=IMG[nome].cloneNode();cam.appendChild(im);
+}
+function aplica(r){ // enquadra a região r da imagem no quadro
+  var Q=$("quadro"),W=Q.clientWidth,H=Q.clientHeight,z=Math.min(1/r.w,1/r.h);if(z<1.2&&(r.w<1||r.h<1))z=1.22;  // faixa larga: zoom leve e o resto escurece
+  luz(r);
+  // a imagem ocupa 100%x100% do quadro (2:3); região -> escala e deslocamento
+  var cx=(r.x+r.w/2),cy=(r.y+r.h/2),tx=W/2-cx*W*z,ty=H/2-cy*H*z;
+  tx=Math.min(0,Math.max(W-W*z,tx));ty=Math.min(0,Math.max(H-H*z,ty));
+  cam.style.transform="translate("+tx+"px,"+ty+"px) scale("+z+")";
+}
+function luz(r){ // escurece tudo fora do quadro atual (só nas páginas de quadrinhos)
+  var L=$("luz");if(!L){L=document.createElement("div");L.id="luz";cam.appendChild(L)}
+  if(L.parentNode!==cam)cam.appendChild(L);
+  var cheio=r.w>.99&&r.h>.99;L.style.cssText="position:absolute;left:"+r.x*100+"%;top:"+r.y*100+"%;width:"+r.w*100+"%;height:"+r.h*100+"%;box-shadow:0 0 0 2000px rgba(0,0,0,"+(cheio?0:.62)+");pointer-events:none;transition:box-shadow .4s";
+}
+function mistura(a,b,k){return {x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k,w:a.w+(b.w-a.w)*k,h:a.h+(b.h-a.h)*k}}
+var suave=function(k){return k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2};
+
+function laco(t){
+  raf=requestAnimationFrame(laco);
+  var k=Math.min(1,(t-t0)/dur);
+  if(camDe&&camPara){aplica(mistura(camDe,camPara,suave(Math.min(1,k*1.15))));luz(camPara)}
+  desenhaCorrida(t);
+}
+
+/* protagonista correndo até a porta na cena 2 */
+function desenhaCorrida(t){
+  var Q=$("quadro");sp.width=Q.clientWidth;sp.height=Q.clientHeight;sp.style.left=sp.style.top="0";
+  sctx.clearRect(0,0,sp.width,sp.height);
+  if(!cor||!QUAD.length)return;
+  var k=(t-cor.t0)/cor.ms;if(k<0||k>1.05)return;
+  var nCorre=Math.min(6,QUAD.length),f,x;
+  var xi=-.15,xf=.30;                      // vai da esquerda até a porta (fração da largura)
+  if(k<.78){x=xi+(xf-xi)*(k/.78);f=Math.floor(t/90)%nCorre}
+  else {x=xf;f=Math.min(QUAD.length-1,nCorre+Math.floor((k-.78)/.12))}
+  var q=QUAD[f],hh=sp.height*.30,ww=q.w*hh/q.h;
+  sctx.globalAlpha=k>.97?Math.max(0,(1.05-k)/.08):1;
+  sctx.drawImage(q.c,q.x,q.y,q.w,q.h,x*sp.width,sp.height*.86-hh,ww,hh);
+  sctx.globalAlpha=1;
+}
+
+/* ---------- legenda com máquina de escrever ---------- */
+var tw=0;
+function escreve(html){
+  clearInterval(tw);leg.classList.remove("on");if(!html)return;
+  var plano=html.replace(/<[^>]+>/g,""),n=0;leg.textContent="";void leg.offsetWidth;leg.classList.add("on");
+  tw=setInterval(function(){n++;if(n>=plano.length){clearInterval(tw);leg.innerHTML=html;return}leg.textContent=plano.slice(0,n)},26);
+}
+
+function vai(i){
+  clearTimeout(auto);passo=i;var s=ROTEIRO[i];if(!s)return;
+  $("prog").style.width=(100*i/(ROTEIRO.length-1))+"%";
+  $("fim").classList.remove("on");
+  var trocou=atual!==s.img;poeImagem(s.img);
+  camDe=s.de||(trocou?TODO:(camPara||TODO));camPara=s.para||camDe;t0=performance.now();dur=Math.max(600,s.ms*.9);
+  if(trocou){cam.animate([{opacity:0},{opacity:1}],{duration:500})}
+  if(s.flash)flash.animate([{opacity:0},{opacity:.95,offset:.2},{opacity:0}],{duration:1100});
+  if(s.treme)$("quadro").animate([{transform:"none"},{transform:"translate(-6px,3px)"},{transform:"translate(5px,-4px)"},{transform:"translate(-3px,2px)"},{transform:"none"}],{duration:380});
+  cor=s.corre?{t0:performance.now()+300,ms:s.ms-300}:null;
+  if(s.fim){escreve("");$("fim").classList.add("on");return}
+  escreve(s.txt);
+  auto=setTimeout(function(){vai(i+1)},s.ms);
+}
+function proximo(){
+  var plano=(ROTEIRO[passo]&&ROTEIRO[passo].txt||"").replace(/<[^>]+>/g,"");
+  if(tw&&leg.textContent.length<plano.length){clearInterval(tw);leg.innerHTML=ROTEIRO[passo].txt;return}  // 1º toque completa o texto
+  if(passo<ROTEIRO.length-1)vai(passo+1);
+}
+function recomeca(){atual=null;info();vai(0)}
+$("quadro").addEventListener("click",function(e){if(e.target.closest("#fim"))return;proximo()});
+$("fim").addEventListener("click",function(e){if(e.target.id==="bt-jogar"){$("fim").querySelector("small").textContent="(no jogo, aqui abre a escolha do personagem)";return}recomeca()});
+$("bt-pular").onclick=function(){vai(ROTEIRO.length-1)};
+$("bt-rec").onclick=recomeca;
+addEventListener("resize",function(){if(camPara)aplica(camPara)});
+
+carregaPadrao(function(){prepSprite();info();raf=requestAnimationFrame(laco);setTimeout(recomeca,200)});
+</script>
+</body>
+</html>
