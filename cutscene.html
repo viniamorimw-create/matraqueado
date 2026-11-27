@@ -21,6 +21,7 @@ html,body{height:100%;background:#07020a;color:#f6e7c8;font-family:"Jersey 15",s
   box-shadow:0 0 0 2px #2a0a0a,0 6px 16px rgba(0,0,0,.6);font-size:clamp(17px,4.6vw,23px);line-height:1.3;letter-spacing:.4px;text-shadow:2px 2px 0 #000;
   opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s;min-height:2.9em}
 #leg.on{opacity:1;transform:none}
+#leg.cima{bottom:auto;top:9%}
 #leg b{color:#ffcf4a;font-weight:400}
 #fim{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:16%;gap:12px}
 #fim.on{display:flex}
@@ -56,33 +57,36 @@ html,body{height:100%;background:#07020a;color:#f6e7c8;font-family:"Jersey 15",s
    cena2  fachada sem personagens
    cena2b protagonista correndo: 8 quadros numa linha, fundo magenta
    cena3  bar em primeira pessoa
-   cena4  4 closes (grade 2x2)
+   cena4  4 closes empilhados
    cena5  placar e barman
    Toque na tela avança; "Pular" vai pro fim. */
-var NOMES=["cena1","cena2","cena2b","cena3","cena4","cena5"];
+var NOMES=["cena1","cena2","cena2b","cena3","cena4","cena5","porta1","porta2"];
 var IMG={};           // nome -> HTMLImageElement carregada
 var $=function(id){return document.getElementById(id)};
 var cam=$("cam"),leg=$("leg"),flash=$("flash"),sp=$("sprite"),sctx=sp.getContext("2d");
 
 /* ---------- roteiro: cada passo = imagem, câmera (x,y,zoom em fração da imagem), legenda, duração ---------- */
 // região {x,y,w,h} em fração da imagem (0..1). A câmera enquadra a região.
-var R4=function(i){return {x:0,y:i/4,w:1,h:1/4}};                 // 4 faixas empilhadas
+var F1=[[.013,.254],[.264,.508],[.518,.706],[.719,.986]],F4=[[.006,.258],[.267,.486],[.495,.723],[.732,.996]];
+var R4=function(i,F){F=F||F1;return {x:0,y:F[i][0],w:1,h:F[i][1]-F[i][0]}};   // quadros empilhados
 var G4=function(i){return {x:(i%2)/2,y:Math.floor(i/2)/2,w:.5,h:.5}}; // grade 2x2
 var TODO={x:0,y:0,w:1,h:1};
 var ROTEIRO=[
-  {img:"cena1",de:TODO,para:R4(0),ms:3600,txt:"Uma noite qualquer. Uma briga de rua."},
-  {img:"cena1",para:R4(1),ms:2800,txt:"O protagonista leva a melhor…",treme:1},
-  {img:"cena1",para:R4(2),ms:2800,txt:"…e os dois fogem pelo beco."},
-  {img:"cena1",para:R4(3),ms:3600,txt:"Mas voltam. E não estão sozinhos.",treme:1},
-  {img:"cena1",para:TODO,ms:2200,txt:"Sem chance. Só resta <b>correr</b>."},
-  {img:"cena2",de:{x:0,y:.25,w:1,h:.75},para:{x:0,y:.35,w:1,h:.65},ms:5200,corre:1,txt:"Uma porta iluminada no meio da noite."},
-  {img:"cena3",de:TODO,para:{x:.12,y:.12,w:.76,h:.76},ms:5200,flash:1,txt:"Lá dentro, outro mundo: o <b>KAT4 House</b>."},
-  {img:"cena4",de:G4(0),para:G4(0),ms:2400,txt:"Dados rolando…"},
-  {img:"cena4",para:G4(1),ms:2400,txt:"…garrafas estourando…",treme:1},
-  {img:"cena4",para:G4(2),ms:2400,txt:"…copos tilintando…"},
-  {img:"cena4",para:G4(3),ms:2600,txt:"…e reputações em jogo a cada mesa."},
-  {img:"cena5",de:TODO,para:{x:.3,y:.2,w:.7,h:.7},ms:5600,txt:"O barman encara, com meio sorriso. Impressionado?"},
-  {img:"cena5",para:{x:.3,y:.2,w:.7,h:.7},ms:1,fim:1}
+  {img:"cena1",de:TODO,para:R4(0),ms:3800,txt:"Uma noite qualquer. Uma briga de rua."},
+  {img:"cena1",para:R4(1),ms:2800,txt:"O soco entra em cheio…",treme:1},
+  {img:"cena1",para:R4(2),ms:3000,txt:"…e os dois fogem pelo beco."},
+  {img:"cena1",para:{x:0,y:.719,w:.75,h:.267},ms:3800,txt:"Mas voltam. E não estão sozinhos.",treme:1},
+  {img:"cena1",para:TODO,ms:2400,txt:"Sem chance. Só resta <b>correr</b>."},
+  {img:"cena2",de:TODO,para:{x:.08,y:.42,w:.62,h:.56},ms:5600,corre:1,txt:"Uma porta iluminada no meio da noite."},
+  {img:"porta1",painel:1,ms:1300,txt:""},
+  {img:"porta2",painel:1,ms:1500,txt:""},
+  {img:"cena3",de:{x:0,y:0,w:1,h:1},para:{x:.1,y:.12,w:.8,h:.8},ms:5600,flash:1,txt:"Lá dentro, outro mundo: o <b>KAT4 House</b>."},
+  {img:"cena4",de:R4(0,F4),para:R4(0,F4),ms:2500,txt:"Dados rolando…"},
+  {img:"cena4",para:R4(1,F4),ms:2500,txt:"…garrafas estourando…",treme:1},
+  {img:"cena4",para:R4(2,F4),ms:2500,txt:"…copos tilintando…"},
+  {img:"cena4",para:R4(3,F4),ms:2800,txt:"…e reputações em jogo a cada mesa."},
+  {img:"cena5",de:TODO,para:{x:.3,y:.18,w:.7,h:.7},ms:5600,txt:"O barman encara, com meio sorriso. Impressionado?"},
+  {img:"cena5",para:{x:.3,y:.18,w:.7,h:.7},ms:1,fim:1}
 ];
 
 /* ---------- imagens provisórias (enquanto as artes não chegam) ---------- */
@@ -116,7 +120,7 @@ function carregaPadrao(cb){
   NOMES.forEach(function(n){
     var im=new Image();im.onload=function(){IMG[n]=im;if(!--falta)cb()};
     im.onerror=function(){IMG[n]=n==="cena2b"?provisoriaSprite():provisoria(n);IMG[n].decode?IMG[n].decode().then(ok,ok):ok();function ok(){if(!--falta)cb()}};
-    im.src="assets/cutscene/"+n+".png";
+    im.src="assets/cutscene/"+({cena2b:"corrida.png",porta1:"porta1.png",porta2:"porta2.png"}[n]||n+".jpg");
   });
 }
 $("arq").onchange=function(){
@@ -148,10 +152,12 @@ function prepSprite(){
 /* ---------- câmera ---------- */
 var atual=null,camDe=null,camPara=null,t0=0,dur=1,passo=-1,raf=0,auto=0,cor=null;
 function poeImagem(nome){
-  if(atual===nome)return;atual=nome;cam.innerHTML="";var im=IMG[nome].cloneNode();cam.appendChild(im);
+  if(atual===nome)return;atual=nome;cam.innerHTML="";var im=IMG[nome].cloneNode();
+  if(/^porta/.test(nome)){im.style.cssText="position:absolute;left:8%;width:84%;height:auto;top:50%;transform:translateY(-58%);object-fit:contain";}
+  cam.appendChild(im);if(nome==="cena2")cam.appendChild(sp);
 }
 function aplica(r){ // enquadra a região r da imagem no quadro
-  var Q=$("quadro"),W=Q.clientWidth,H=Q.clientHeight,z=Math.min(1/r.w,1/r.h);if(z<1.2&&(r.w<1||r.h<1))z=1.22;  // faixa larga: zoom leve e o resto escurece
+  var Q=$("quadro"),W=Q.clientWidth,H=Q.clientHeight,z=Math.min(1/r.w,1/r.h);if(z<1.5&&(r.w<1||r.h<1))z=Math.min(1/r.h,1.5);  // faixa larga: zoom leve e o resto escurece
   luz(r);
   // a imagem ocupa 100%x100% do quadro (2:3); região -> escala e deslocamento
   var cx=(r.x+r.w/2),cy=(r.y+r.h/2),tx=W/2-cx*W*z,ty=H/2-cy*H*z;
@@ -161,7 +167,7 @@ function aplica(r){ // enquadra a região r da imagem no quadro
 function luz(r){ // escurece tudo fora do quadro atual (só nas páginas de quadrinhos)
   var L=$("luz");if(!L){L=document.createElement("div");L.id="luz";cam.appendChild(L)}
   if(L.parentNode!==cam)cam.appendChild(L);
-  var cheio=r.w>.99&&r.h>.99;L.style.cssText="position:absolute;left:"+r.x*100+"%;top:"+r.y*100+"%;width:"+r.w*100+"%;height:"+r.h*100+"%;box-shadow:0 0 0 2000px rgba(0,0,0,"+(cheio?0:.62)+");pointer-events:none;transition:box-shadow .4s";
+  var cheio=r.w>.99&&r.h>.99;L.style.cssText="position:absolute;left:"+r.x*100+"%;top:"+r.y*100+"%;width:"+r.w*100+"%;height:"+r.h*100+"%;box-shadow:0 0 0 2000px rgba(0,0,0,"+(cheio?0:.8)+");pointer-events:none;transition:box-shadow .4s";
 }
 function mistura(a,b,k){return {x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k,w:a.w+(b.w-a.w)*k,h:a.h+(b.h-a.h)*k}}
 var suave=function(k){return k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2};
@@ -175,17 +181,16 @@ function laco(t){
 
 /* protagonista correndo até a porta na cena 2 */
 function desenhaCorrida(t){
-  var Q=$("quadro");sp.width=Q.clientWidth;sp.height=Q.clientHeight;sp.style.left=sp.style.top="0";
+  var Q=$("quadro");if(sp.width!==Q.clientWidth||sp.height!==Q.clientHeight){sp.width=Q.clientWidth;sp.height=Q.clientHeight}sp.style.left=sp.style.top="0";
   sctx.clearRect(0,0,sp.width,sp.height);
   if(!cor||!QUAD.length)return;
   var k=(t-cor.t0)/cor.ms;if(k<0||k>1.05)return;
-  var nCorre=Math.min(6,QUAD.length),f,x;
-  var xi=-.15,xf=.30;                      // vai da esquerda até a porta (fração da largura)
-  if(k<.78){x=xi+(xf-xi)*(k/.78);f=Math.floor(t/90)%nCorre}
-  else {x=xf;f=Math.min(QUAD.length-1,nCorre+Math.floor((k-.78)/.12))}
-  var q=QUAD[f],hh=sp.height*.30,ww=q.w*hh/q.h;
-  sctx.globalAlpha=k>.97?Math.max(0,(1.05-k)/.08):1;
-  sctx.drawImage(q.c,q.x,q.y,q.w,q.h,x*sp.width,sp.height*.86-hh,ww,hh);
+  var nCorre=QUAD.length,f,x;
+  var xi=-.2,xf=.25;                       // da esquerda até a porta (fração da largura da imagem)
+  x=xi+(xf-xi)*Math.min(1,k/.85);f=Math.floor(t/85)%nCorre;
+  var q=QUAD[f],hh=sp.height*.15,ww=q.w*hh/q.h;
+  sctx.globalAlpha=k>.85?Math.max(0,(1-k)/.15):1;
+  sctx.drawImage(q.c,q.x,q.y,q.w,q.h,x*sp.width,sp.height*.872-hh,ww,hh);
   sctx.globalAlpha=1;
 }
 
@@ -202,12 +207,13 @@ function vai(i){
   $("prog").style.width=(100*i/(ROTEIRO.length-1))+"%";
   $("fim").classList.remove("on");
   var trocou=atual!==s.img;poeImagem(s.img);
-  camDe=s.de||(trocou?TODO:(camPara||TODO));camPara=s.para||camDe;t0=performance.now();dur=Math.max(600,s.ms*.9);
+  camDe=s.painel?TODO:(s.de||(trocou?TODO:(camPara||TODO)));camPara=s.painel?TODO:(s.para||camDe);t0=performance.now();dur=Math.max(600,s.ms*.9);
   if(trocou){cam.animate([{opacity:0},{opacity:1}],{duration:500})}
   if(s.flash)flash.animate([{opacity:0},{opacity:.95,offset:.2},{opacity:0}],{duration:1100});
   if(s.treme)$("quadro").animate([{transform:"none"},{transform:"translate(-6px,3px)"},{transform:"translate(5px,-4px)"},{transform:"translate(-3px,2px)"},{transform:"none"}],{duration:380});
   cor=s.corre?{t0:performance.now()+300,ms:s.ms-300}:null;
   if(s.fim){escreve("");$("fim").classList.add("on");return}
+  var cy=camPara.y+camPara.h/2;leg.classList.toggle("cima",camPara.h<.5&&cy>.55);
   escreve(s.txt);
   auto=setTimeout(function(){vai(i+1)},s.ms);
 }
