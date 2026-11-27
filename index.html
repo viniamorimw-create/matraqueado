@@ -1147,6 +1147,7 @@ html body #tuto #tuto-corpo p{font-size:19px!important;line-height:1.22!importan
 #tuto .tm-tent{border-style:solid!important;border-width:9px!important;border-image:url(assets/ui/tuto_tm-tent.png?a41c4d2e) 14 fill/9px stretch!important;background:none!important;box-shadow:none!important;min-width:80px;text-align:center;color:#fff2d6!important;line-height:1}
 #tuto .tm-tent small{display:block;font-size:12px!important;color:#e8d3a8!important}
 #tuto .tm-tent b{font-size:24px!important;color:#fff2d6!important}
+#tuto .tm-reset{display:block;margin:6px auto 0;padding:4px 14px;font-size:17px!important;color:#7a1420!important;background:#f3e2bd;border:2px solid #c9952e;border-radius:4px;cursor:pointer}
 html body #tuto #tuto-corpo .tuto-msg{font-size:18px!important;color:#7a1420!important;min-height:2.4em;margin:4px 0 0!important}
 /* cartela igual à da mesa */
 #tuto .tm-cart{display:grid;grid-template-columns:repeat(3,1fr);border:3px solid #3a1a0c;background:#fbf0d6;margin:4px 0}
@@ -1200,6 +1201,7 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
     fr.remove();fr=null;try{localStorage.setItem("matraq-abertura-v1","1")}catch(x){}var f=cb;cb=null;if(f)f();
   });
   addEventListener("DOMContentLoaded",function(){
+    var ab=document.getElementById("ini-abertura");if(ab)ab.onclick=function(){MQAbertura()};
     var tst=document.getElementById("tst");if(!tst)return;
     var bt=document.createElement("button");bt.type="button";bt.textContent="Ver abertura";
     bt.onclick=function(){tst.hidden=true;MQAbertura(function(){var t=document.getElementById("ini-tuto");if(t)t.click()})};
@@ -1270,6 +1272,7 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
     <button class="opc px cf" id="ini-amb" type="button"><span>Ambiente</span><b id="ini-amb-v">ligado</b></button>
     <button class="opc px cf" id="ini-fx" type="button"><span>Efeitos</span><b id="ini-fx-v">ligados</b></button>
     <button class="opc px cf" id="ini-regras" type="button"><span>Regras</span><b>?</b></button>
+    <button class="opc px cf" id="ini-abertura" type="button"><span>Ver abertura</span><b>▶</b></button>
     <button class="rolar px" id="ini-voltar" type="button">VOLTAR</button>
     <div class="ini-dupla"><button class="rolar px modo" id="ini-comecar" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt">MODO CLÁSSICO</span></button>
       <button class="opc px" id="ini-tuto" type="button"><i class="ini-ico" aria-hidden="true"></i><span>Tutorial</span></button>
@@ -3682,13 +3685,14 @@ var TUTO=[
     $("tuto-demo").innerHTML=feltro(D.d,D.g,resta>0)+
       '<div class="tm-acao"><button type="button" class="tm-rolar" id="tuto-rola">'+(resta?"JOGAR":"DE NOVO")+'</button>'+
       '<div class="tm-tent"><small>Tentativas</small><b>'+resta+'</b></div></div>'+
+      '<button type="button" class="tm-reset" id="tuto-reset">↺ Recomeçar</button>'+
       '<p class="tuto-msg" aria-live="polite">'+msg+'</p>';
   };
   TUTO=[
     {t:"Bem-vindo ao Matraqueado",h:function(){return feltro([5,5,5,2,2])+
       '<p>O Matraqueado tem 5 dados, uma cartela com 10 casas e 10 rodadas.</p>'+
       '<p>A cada rodada você monta uma jogada e anota numa casa. No fim, ganha quem somou mais.</p>'}},
-    {t:"Jogue até 3 vezes",h:function(){return '<p>Toque em <b>JOGAR</b>. Depois toque nos dados que quer manter: aparece <b>FICA</b> e eles não rolam mais.</p><div id="tuto-demo"></div>'},
+    {t:"Jogue até 3 vezes",h:function(){return '<p>Toque em <b>JOGAR</b>. Depois toque nos dados que quer manter: aparece <b>FICA</b> e eles não rolam mais.</p><p><b>Experimente:</b></p><div id="tuto-demo"></div>'},
      depois:function(){tutoDemoNovo();tutoDemoPinta()}},
     {t:"Anote na cartela",h:function(){return feltro([6,6,6,2,4])+cart({Sena:"18"},"Sena")+
       '<p>No fim da rodada, toque numa casa livre. De <b>Ás a Sena</b>, soma os dados daquele número: três 6 na Sena valem <b>18</b>.</p>'}},
@@ -3707,6 +3711,7 @@ var TUTO=[
       '<p>Para rever, toque em <b>Tutorial</b> na tela inicial.</p>'}}
   ];
   // no último passo, JOGAR já abre o modo clássico
+  $("tuto-corpo").addEventListener("click",function(e){if(e.target.closest("#tuto-reset")){e.stopPropagation();tutoDemoNovo();tutoDemoPinta()}},true);
   $("tuto-prox").addEventListener("click",function(){if(tutoPasso>=TUTO.length-1)setTimeout(function(){var c=$("ini-comecar");if(c&&$("tuto").hidden)c.click()},60)},true);
 })();
 function tutoPinta(){
