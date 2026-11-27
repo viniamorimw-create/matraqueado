@@ -1129,6 +1129,23 @@ body.surv #slots .slot.b4.usado{filter:grayscale(.7) brightness(.7)}
 body.surv #slots .slot.b4.ativo{filter:brightness(1.3) drop-shadow(0 0 4px #ffd75a)}
 @media (max-width:380px){body.surv #slots .slot.b4{font-size:13px!important;height:32px!important;letter-spacing:0!important}}
 
+#placar{position:fixed;left:50%;top:max(58px,calc(env(safe-area-inset-top) + 52px));transform:translateX(-50%) scale(.9);width:min(92vw,400px);z-index:800;
+  border-style:solid;border-width:14px 16px;border-image:url(assets/ui/cartela.png?635814aa) 32 fill/14px 16px stretch;padding:2px 10px 8px;text-align:center;color:#2a1208;opacity:0;transition:opacity .35s,transform .45s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
+#placar.on{opacity:1;transform:translateX(-50%) scale(1);pointer-events:auto}
+#placar *{font-family:"PixB","JerseyG",sans-serif!important;font-weight:400!important}
+#placar .pl-logo{height:46px;margin:0 auto 2px;background:url(assets/ui/placa_matraqueado_2.png?0edcd259) center/contain no-repeat}
+#placar .pl-modo{font-size:14px;letter-spacing:3px;color:#7a4a28}
+#placar .pl-nome{font-size:26px;line-height:1;color:#8a1420;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#placar .pl-pts{font-size:64px;line-height:.9;color:#2a1208;margin:2px 0 0;text-shadow:3px 3px 0 #e8c98a}
+#placar .pl-pts small{font-size:22px;color:#7a4a28;margin-left:4px}
+#placar .pl-rec{font-size:16px;color:#7a4a28;margin-top:2px}
+#placar .pl-rec.novo{color:#fff2d6;background:#8a1420;display:inline-block;padding:2px 10px;border-radius:3px;animation:plPisca 1s steps(2) infinite}
+@keyframes plPisca{50%{opacity:.55}}
+#placar .pl-data{font-size:13px;color:#9a7a58;margin-top:3px}
+#placar .pl-bts{display:flex;gap:8px;justify-content:center;margin-top:6px}
+#placar .pl-bts button{font-size:16px;padding:5px 14px;color:#fff2d6;background:#3a0c10;border:2px solid #c9952e;border-radius:4px;cursor:pointer}
+#placar .pl-x{position:absolute;right:6px;top:2px;background:none;border:0;color:#7a4a28;font-size:20px;cursor:pointer}
+
 /* ===== tutorial (clássico) no visual da mesa ===== */
 #tuto{background:rgba(10,3,5,.82)!important}
 #tuto .tuto-card{border-style:solid!important;border-width:16px 18px!important;border-image:url(assets/ui/cartela.png?635814aa) 32 fill/16px 18px stretch!important;background:none!important;box-shadow:none!important;max-width:390px!important;padding:6px 8px 10px!important;color:#2a1208!important;gap:8px!important}
@@ -1210,6 +1227,7 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
 })();
 </script><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1a0508"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Matraqueado"></head>
 <body>
+<div id="placar" role="dialog" aria-label="Resultado"></div>
 <canvas id="pano" width="96" height="170" aria-hidden="true"></canvas>
 <div class="cenario" aria-hidden="true"></div>
 <div class="pagina">
@@ -2137,6 +2155,26 @@ function riscaVelha(bz,sc){   // traço de pincel vermelho por cima das linhas f
   bz.insertAdjacentHTML("beforeend",'<svg class="velha" width="'+r.width+'" height="'+r.height+'" aria-hidden="true">'+h+'</svg>');
 }
 window.addEventListener("resize",function(){if(R&&S&&!$("tabela").hidden)desenhaTabela()});
+
+/* cartão do resultado (clássico, 1 jogador) — feito para print */
+function mostraPlacar(){
+  if(!S||!S.fim||R)return;
+  var pts=total(S.scores[0]),rec=lerRecorde(),novo=pts>0&&pts>=rec,d=new Date();
+  var dt=("0"+d.getDate()).slice(-2)+"/"+("0"+(d.getMonth()+1)).slice(-2)+"/"+d.getFullYear();
+  var el=$("placar");
+  el.innerHTML='<button type="button" class="pl-x" aria-label="Fechar">✕</button><div class="pl-logo"></div><div class="pl-modo">MODO CLÁSSICO</div>'+
+    '<div class="pl-nome">'+esc(nomeJog(0))+'</div><div class="pl-pts">'+pts+'<small>pts</small></div>'+
+    (novo?'<div class="pl-rec novo">NOVO RECORDE!</div>':'<div class="pl-rec">Recorde: '+rec+'</div>')+
+    '<div class="pl-data">'+dt+'</div>'+
+    '<div class="pl-bts"><button type="button" class="pl-nova">Jogar de novo</button></div>';
+  el.classList.add("on");
+}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+$("placar").addEventListener("click",function(e){
+  if(e.target.closest(".pl-x")){this.classList.remove("on");return}
+  if(e.target.closest(".pl-nova")){this.classList.remove("on");$("ini-comecar").click()}
+});
+document.addEventListener("click",function(e){var pl=$("placar");if(pl.classList.contains("on")&&!e.target.closest("#placar")&&S&&!S.fim)pl.classList.remove("on")},true);
 function textoFim(){
   var tot=S.scores.map(total),max=Math.max.apply(null,tot),venc=[];
   tot.forEach(function(t,i){if(t===max)venc.push(nomeJog(i))});
@@ -3525,6 +3563,7 @@ function anotar(id){
     if(!R&&max>lerRecorde())gravarRecorde(max);
     vendo=S.scores.map(total).indexOf(max);
     if(!R)setTimeout(somFim,700);
+    if(!R&&S.jogadores===1)setTimeout(mostraPlacar,1400);
   }
   else vendo=S.vez;
   ultCasa=id;
