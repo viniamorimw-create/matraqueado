@@ -159,24 +159,32 @@ function insercao(src){var i=$("ins"),im=$("ins-img");if(!src){i.classList.remov
   i.classList.add("on");$("sombra").classList.add("on")}
 
 
-/* chuva por cima das páginas da rua (mais forte na fuga) */
-var CHUVA={c0:70,c1:110,c2:190},gotas=[],cc=$("chuva"),cg=cc.getContext("2d"),tAnt=0;
+/* chuva por cima das páginas da rua: cada quadro tem a sua (ângulo, força e ritmo próprios) */
+var CHUVA={c0:1,c1:1.4,c2:2.3},PQ={},cc=$("chuva"),cg=cc.getContext("2d"),tAnt=0;
+function chuvaDo(id,i){var k=id+i;if(PQ[k])return PQ[k];
+  var sd=(id.charCodeAt(1)*7+i*13)%17/17;            // cada quadro sorteia um jeito
+  return PQ[k]={ang:.12+sd*.38*(i%2?-1:1),vel:.75+((i*5+3)%7)/7*.7,dens:.6+((i*3+1)%5)/5*.8,gotas:[]}}
 function chove(t){
   requestAnimationFrame(chove);
-  var n=CHUVA[CENA_AT]||0;cc.classList.toggle("on",n>0);
+  var forca=CHUVA[CENA_AT]||0;cc.classList.toggle("on",forca>0);
   var W=cc.clientWidth,H=cc.clientHeight;if(!W)return;if(cc.width!==W){cc.width=W;cc.height=H}
-  var dt=Math.min(50,t-(tAnt||t));tAnt=t;
-  while(gotas.length<n)gotas.push({x:Math.random()*W*1.3,y:Math.random()*H,v:.9+Math.random()*.9,l:8+Math.random()*16,a:.25+Math.random()*.45});
-  if(gotas.length>n)gotas.length=n;
-  cg.clearRect(0,0,W,H);cg.lineCap="round";
-  // só chove dentro dos quadros que já apareceram
-  var T=tela.getBoundingClientRect(),qs=$(CENA_AT)?$(CENA_AT).querySelectorAll(".q.on"):[];cg.save();cg.beginPath();
-  [].forEach.call(qs,function(q){if(q.style.display==="none")return;var r=q.getBoundingClientRect();cg.rect(r.left-T.left,r.top-T.top,r.width,r.height)});cg.clip();
-  for(var i=0;i<gotas.length;i++){var g=gotas[i];g.y+=g.v*dt*.9;g.x-=g.v*dt*.22;
-    if(g.y>H+20||g.x<-20){g.y=-20-Math.random()*40;g.x=Math.random()*W*1.3}
-    cg.strokeStyle="rgba(214,226,240,"+g.a+")";cg.lineWidth=g.l>18?1.6:1;
-    cg.beginPath();cg.moveTo(g.x,g.y);cg.lineTo(g.x+g.l*.24,g.y-g.l);cg.stroke()}
-  cg.restore();
+  var dt=Math.min(50,t-(tAnt||t));tAnt=t;cg.clearRect(0,0,W,H);if(!forca)return;
+  var T=tela.getBoundingClientRect();cg.lineCap="round";
+  [].forEach.call($(CENA_AT).querySelectorAll(".q.on"),function(q){
+    if(q.style.display==="none")return;var r=q.getBoundingClientRect(),x0=r.left-T.left,y0=r.top-T.top,w=r.width,h=r.height;
+    var c=chuvaDo(CENA_AT,+q.dataset.i),n=Math.round(w*h/1900*forca*c.dens);
+    while(c.gotas.length<n)c.gotas.push({x:Math.random(),y:Math.random(),v:.8+Math.random()*.6,l:6+Math.random()*14,a:.35+Math.random()*.45});
+    if(c.gotas.length>n)c.gotas.length=n;
+    cg.save();cg.beginPath();cg.rect(x0,y0,w,h);cg.clip();
+    var bril=q.classList.contains("apaga")?.35:1;
+    c.gotas.forEach(function(g){
+      g.y+=g.v*c.vel*dt*.85/h;g.x+=c.ang*g.v*c.vel*dt*.85/w;
+      if(g.y>1.05){g.y=-.05-Math.random()*.1;g.x=Math.random()*1.2-.1}
+      if(g.x>1.1)g.x-=1.2;if(g.x<-.1)g.x+=1.2;
+      var px=x0+g.x*w,py=y0+g.y*h;
+      cg.strokeStyle="rgba(214,226,240,"+(g.a*bril)+")";cg.lineWidth=g.l>15?1.5:1;
+      cg.beginPath();cg.moveTo(px,py);cg.lineTo(px-c.ang*g.l,py-g.l);cg.stroke()});
+    cg.restore()});
 }
 requestAnimationFrame(chove);
 /* quadro que respira: aproxima bem devagar enquanto o quadro está na tela */
