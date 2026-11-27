@@ -183,7 +183,7 @@ function chove(t){
       if(g.y>1.05){g.y=-.05-Math.random()*.1;g.x=Math.random()*1.2-.1}
       if(g.x>1.1)g.x-=1.2;if(g.x<-.1)g.x+=1.2;
       var px=x0+g.x*w,py=y0+g.y*h;
-      cg.strokeStyle="rgba(214,226,240,"+(g.a*bril)+")";cg.lineWidth=g.l>15?1.5:1;
+      cg.strokeStyle="rgba(150,168,190,"+(g.a*bril*.7)+")";cg.lineWidth=g.l>15?1.5:1;
       cg.beginPath();cg.moveTo(px,py);cg.lineTo(px-c.ang*g.l,py-g.l);cg.stroke()});
     cg.restore()});
 }
