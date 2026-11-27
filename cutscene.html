@@ -160,7 +160,8 @@ function insercao(src){var i=$("ins"),im=$("ins-img");if(!src){i.classList.remov
 
 
 /* chuva por cima das páginas da rua: cada quadro tem a sua (ângulo, força e ritmo próprios) */
-var CHUVA={c0:1,c1:1.4,c2:2.3},PQ={},cc=$("chuva"),cg=cc.getContext("2d"),tAnt=0;
+var SECO={c11:1},  // quadros sem chuva (c1 quadro 1 = o soco)
+    CHUVA={c0:1,c1:1.4,c2:2.3},PQ={},cc=$("chuva"),cg=cc.getContext("2d"),tAnt=0;
 function chuvaDo(id,i){var k=id+i;if(PQ[k])return PQ[k];
   var sd=(id.charCodeAt(1)*7+i*13)%17/17;            // cada quadro sorteia um jeito
   return PQ[k]={ang:.12+sd*.38*(i%2?-1:1),vel:.75+((i*5+3)%7)/7*.7,dens:.6+((i*3+1)%5)/5*.8,gotas:[]}}
@@ -171,7 +172,7 @@ function chove(t){
   var dt=Math.min(50,t-(tAnt||t));tAnt=t;cg.clearRect(0,0,W,H);if(!forca)return;
   var T=tela.getBoundingClientRect();cg.lineCap="round";
   [].forEach.call($(CENA_AT).querySelectorAll(".q.on"),function(q){
-    if(q.style.display==="none")return;var r=q.getBoundingClientRect(),x0=r.left-T.left,y0=r.top-T.top,w=r.width,h=r.height;
+    if(q.style.display==="none"||SECO[CENA_AT+q.dataset.i])return;var r=q.getBoundingClientRect(),x0=r.left-T.left,y0=r.top-T.top,w=r.width,h=r.height;
     var c=chuvaDo(CENA_AT,+q.dataset.i),n=Math.round(w*h/1900*forca*c.dens);
     while(c.gotas.length<n)c.gotas.push({x:Math.random(),y:Math.random(),v:.8+Math.random()*.6,l:6+Math.random()*14,a:.35+Math.random()*.45});
     if(c.gotas.length>n)c.gotas.length=n;
