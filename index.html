@@ -2948,7 +2948,7 @@ $("ini-cont").addEventListener("click",continuar);
 var SAVE_K="matraq-save-v1";
 var UPG=[
   {id:"meta",nome:"Meta mais leve",preco:[6,10,15,20,25],desc:function(n){return n?"Metas "+(2*n)+"% menores.":"Metas 2% menores por nível."}},
-  {id:"pavio",nome:"Pavio longo",preco:[8,14,20],desc:function(n){return n?"Nos duelos, a bomba aguenta +"+(5*n)+" pontos.":"Nos duelos, a bomba aguenta +5 pontos por nível."}},
+  {id:"pavio",nome:"Pavio longo",preco:[8,14,20],desc:function(n){return n?"Nos duelos, a garrafa aguenta +"+(5*n)+" pontos.":"Nos duelos, a garrafa aguenta +5 pontos por nível."}},
   {id:"gorj",nome:"Couvert da casa",preco:[4,8,12],desc:function(n){return n?"Cada mesa começa com +"+(3*n)+" pontos.":"Cada mesa começa com +3 pontos por nível."}},
   {id:"benc",nome:"Bênção de entrada",preco:[10,20],desc:function(n){return n===2?"Começa com 2 bênçãos comuns.":n?"Começa com 1 bênção comum (próximo nível: 2).":"Começa a noitada com 1 bênção comum (depois 2)."}},
   {id:"item",nome:"Item no bolso",preco:[12],desc:function(){return "Começa a noitada com 1 item comum ou incomum."}},
@@ -3327,11 +3327,11 @@ function usaSegundaChance(){
   return true;
 }
 
-var PERSO_ARTE={"tamandua": {"b": {"src": "assets/personagens/tamandua_busto.png", "w": 72, "h": 66}, "c": {"src": "assets/personagens/tamandua_corpo.png", "w": 82, "h": 124}}, "onca": {"b": {"src": "assets/personagens/onca_busto.png", "w": 72, "h": 72}, "c": {"src": "assets/personagens/onca_corpo.png", "w": 64, "h": 125}}, "lobo": {"b": {"src": "assets/personagens/lobo_busto.png", "w": 72, "h": 76}, "c": {"src": "assets/personagens/lobo_corpo.png", "w": 63, "h": 125}}, "arara": {"b": {"src": "assets/personagens/arara_busto.png", "w": 72, "h": 68}, "c": {"src": "assets/personagens/arara_corpo.png", "w": 85, "h": 124}}, "capivara": {"b": {"src": "assets/personagens/capivara_busto.png", "w": 72, "h": 61}, "c": {"src": "assets/personagens/capivara_corpo.png", "w": 71, "h": 125}}};
+var PERSO_ARTE={"tamandua": {"b": {"src": "assets/personagens/tamandua_busto.png", "w": 72, "h": 66}, "c": {"src": "assets/personagens/tamandua_corpo.png", "w": 82, "h": 124}}, "onca": {"b": {"src": "assets/personagens/onca_busto.png", "w": 72, "h": 72}, "c": {"src": "assets/personagens/onca_corpo.png", "w": 64, "h": 124}}, "lobo": {"b": {"src": "assets/personagens/lobo_busto.png", "w": 72, "h": 76}, "c": {"src": "assets/personagens/lobo_corpo.png", "w": 63, "h": 125}}, "arara": {"b": {"src": "assets/personagens/arara_busto.png", "w": 72, "h": 68}, "c": {"src": "assets/personagens/arara_corpo.png", "w": 85, "h": 124}}, "capivara": {"b": {"src": "assets/personagens/capivara_busto.png", "w": 72, "h": 61}, "c": {"src": "assets/personagens/capivara_corpo.png", "w": 71, "h": 125}}};
 
 // Personagens jogáveis: cada um com uma vantagem fixa na noitada. Os bloqueados abrem por conquista (guardada no aparelho).
 var PERSOS=[
-  {id:"capivara",nome:"Capivara",poder:"Tranquilona",desc:"Nos duelos, a bomba aguenta 10 pontos a mais de diferença antes de estourar."},
+  {id:"capivara",nome:"Capivara",poder:"Tranquilona",desc:"Nos duelos, a garrafa aguenta 10 pontos a mais de diferença antes de estourar."},
   {id:"tamandua",nome:"Tamanduá",poder:"Língua comprida",desc:"Uma vez por mesa, rola de novo um dado sem gastar lance (botão Língua)."},
   {id:"arara",nome:"Arara-azul",poder:"Olho vivo",desc:"A caça-níquel mostra sempre uma opção a mais para escolher."},
   {id:"lobo",nome:"Lobo-guará",poder:"Notívago",desc:"Nas mesas com maldição, o desconto na meta é o dobro.",trava:"Vença o duelo da Mesa 2 (Rival 2) para liberar."},
