@@ -1128,7 +1128,7 @@ body.surv #slots .slot.b4.hab{color:#ffd75a!important}
 body.surv #slots .slot.b4.usado{filter:grayscale(.7) brightness(.7)}
 body.surv #slots .slot.b4.ativo{filter:brightness(1.3) drop-shadow(0 0 4px #ffd75a)}
 @media (max-width:380px){body.surv #slots .slot.b4{font-size:13px!important;height:32px!important;letter-spacing:0!important}}
-
+#abertura-hq{position:fixed;inset:0;z-index:9500;border:0;width:100%;height:100%;background:#0b0507}
 #ini-logo{display:none}
 #inicio:not(.cfg):not(.so-menu) #ini-logo{display:block;flex:none;width:min(80vw,416px);aspect-ratio:640/434;margin:0 auto 2px;
   max-height:max(150px,calc(100dvh - 430px - min(100vw,520px)*.42));background:url(assets/home/fundo.png?ad627060) center top/contain no-repeat;filter:drop-shadow(2px 4px 4px rgba(10,0,0,.6))}
@@ -1145,7 +1145,27 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
 .mapa .mp.ag{animation:mpPulso 1.2s ease-in-out infinite;z-index:1}
 .pn:has(.mapa)>h2{display:block;animation:mpPulsoT 1.2s ease-in-out infinite;transform-origin:center}
 </style>
-<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1a0508"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Matraqueado"></head>
+<script>
+/* abertura em HQ (cutscene.html num quadro por cima do jogo) */
+(function(){
+  var cb=null,fr=null;
+  window.MQAbertura=function(fim){
+    cb=fim||null;if(fr)fr.remove();
+    fr=document.createElement("iframe");fr.id="abertura-hq";fr.title="Abertura";fr.src="cutscene.html?embed";
+    document.body.appendChild(fr);
+  };
+  addEventListener("message",function(e){
+    if(e.data!=="abertura-fim"||!fr)return;
+    fr.remove();fr=null;try{localStorage.setItem("matraq-abertura-v1","1")}catch(x){}var f=cb;cb=null;if(f)f();
+  });
+  addEventListener("DOMContentLoaded",function(){
+    var tst=document.getElementById("tst");if(!tst)return;
+    var bt=document.createElement("button");bt.type="button";bt.textContent="Ver abertura";
+    bt.onclick=function(){tst.hidden=true;MQAbertura(function(){var t=document.getElementById("ini-tuto");if(t)t.click()})};
+    (tst.querySelector("section,div")||tst).appendChild(bt);
+  });
+})();
+</script><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1a0508"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Matraqueado"></head>
 <body>
 <canvas id="pano" width="96" height="170" aria-hidden="true"></canvas>
 <div class="cenario" aria-hidden="true"></div>
@@ -3658,7 +3678,7 @@ function start(d){
   desenha();pintaInicio();
   if(R&&R.estado==="slot"&&R.slot)abrirSlot(true);
   else if(!salvo)abrirInicio(false);
-  if(!tutoVisto()){if($("inicio").hidden&&!(R&&R.estado==="slot"))abrirInicio(false);abrirTuto()}   // primeiro acesso
+  if(!tutoVisto()){if($("inicio").hidden&&!(R&&R.estado==="slot"))abrirInicio(false);setTimeout(function(){var v;try{v=localStorage.getItem("matraq-abertura-v1")}catch(e){v=1}(window.MQAbertura&&!v)?MQAbertura(abrirTuto):abrirTuto()},0)}   // primeiro acesso: abertura e depois tutorial
 }
 /* ---------- MODO X1 (duelo com bomba) ----------
    Vive numa tela própria, isolada do resto do jogo (shadow DOM): o visual e os nomes daqui não se misturam com os do jogo.

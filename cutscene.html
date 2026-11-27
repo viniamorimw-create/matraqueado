@@ -234,7 +234,9 @@ tela.addEventListener("click",function(e){if(e.target.closest("#fim"))return;toq
 $("leg").addEventListener("click",toque);
 $("bt-pular").onclick=function(){vai(R.length-1)};
 $("bt-rec").onclick=function(){["c0","c1","c2","c4","c6","c7"].forEach(function(c){quadro(c,-1)});vai(0)};
-$("bt-jogar").onclick=function(){var u="https://viniamorimw-create.github.io/matraqueado/?tutorial";try{if(/github\.io$/.test(location.hostname))u="./?tutorial"}catch(e){}location.href=u};
+var EMBUTIDO=window.parent!==window;
+$("bt-jogar").onclick=function(){if(EMBUTIDO){parent.postMessage("abertura-fim","*");return}
+  var u="https://viniamorimw-create.github.io/matraqueado/?tutorial";try{if(/github\.io$/.test(location.hostname))u="./?tutorial"}catch(e){}location.href=u};
 
 /* pré-carrega tudo antes de começar */
 var L=["cena0.jpg","cena1.jpg","cena1b.jpg","cena2.jpg","cena3.jpg","cena4.jpg","cena6.jpg","cena7.jpg"],falta=L.length;
