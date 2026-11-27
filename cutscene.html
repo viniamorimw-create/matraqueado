@@ -106,7 +106,7 @@ function montaPagina(id,img,faixas){
     el.appendChild(d)});
 }
 [].forEach.call(document.querySelectorAll("[data-img]"),function(e){e.style.backgroundImage="url("+U(e.dataset.img)+")"});
-montaPagina("c0","cena0.jpg",P0);montaPagina("c1","cena1.jpg",P1);montaPagina("c2","cena2.jpg",P2);montaPagina("c6","cena6.jpg",P6);montaPagina("c7","cena7.jpg",P7);
+montaPagina("c0","cena0.jpg",P0);montaPagina("c1","cena1.jpg",P1);$("c1").querySelector('.q[data-i="0"]').style.display="none";montaPagina("c2","cena2.jpg",P2);montaPagina("c6","cena6.jpg",P6);montaPagina("c7","cena7.jpg",P7);
 /* balões de fala: posição em fração do quadro; cauda aponta pra quem fala (d = direita) */
 function balao(id,i,x,y,w,txt,cauda){var q=$(id).querySelector('.q[data-i="'+i+'"]');var b=document.createElement("div");b.className="bal "+(cauda||"d");
   b.style.left=x*100+"%";b.style.top=y*100+"%";b.style.width=w*100+"%";b.innerHTML=txt;q.appendChild(b)}
@@ -157,8 +157,7 @@ var R=[
  {ms:3800,txt:"",f:function(){cena("c0");insercao();quadro("c0",0);foca(faixa(P0,0),1.3)}},
  {ms:3600,txt:"",f:function(){quadro("c0",1);foca(faixa(P0,1),1.3)}},
  {ms:3600,txt:"",f:function(){quadro("c0",2);foca(faixa(P0,2),1.12);setTimeout(treme,450)}},
- {ms:3400,txt:"",f:function(){cena("c1");foca(TODA,1,10);quadro("c1",0);setTimeout(function(){foca(faixa(P1,0),1.35)},60)}},
- {ms:2900,txt:"O soco entra em cheio…",f:function(){quadro("c1",1);foca(faixa(P1,1),1.35);setTimeout(treme,500)}},
+ {ms:3200,txt:"O soco entra em cheio…",f:function(){cena("c1");foca(faixa(P1,1),1.35,10);quadro("c1",1);setTimeout(treme,600)}},
  {ms:3200,txt:"…e os dois fogem pelo beco.",f:function(){quadro("c1",2);foca(faixa(P1,2),1.35)}},
  {ms:4000,txt:"Mas voltam. E não estão sozinhos.",f:function(){quadro("c1",3);foca(faixa(P1,3,0,.75),1.35);setTimeout(treme,700)}},
  {ms:3600,txt:"",f:function(){cena("c2");foca(TODA,1,10);quadro("c2",0);setTimeout(function(){foca(faixa(P2,0),1.3)},60)}},
