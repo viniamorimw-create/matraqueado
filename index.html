@@ -1398,7 +1398,7 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
     <div class="capa px"><canvas class="banner" width="841" height="250" role="img" aria-label="KAT4 House"></canvas><div class="tit">MATRAQUEADO</div></div>
     <div id="ini-logo" role="img" aria-label="KAT4 House — Matraqueado"></div>
     
-    <button class="rolar px modo sv" id="ini-survival" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span class="nt-tit"><i></i>NOVA NOITADA<i></i></span><small id="nt-l1">3 mesas e 4 duelos</small><small id="nt-l2">até o Black Cat</small></span></button>
+    <button class="rolar px modo sv" id="ini-survival" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span class="nt-tit"><i></i>NOITADA<i></i></span><small id="nt-l1">3 mesas e 4 duelos</small><small id="nt-l2">até o Black Cat</small></span></button>
     <button class="opc px cont" id="ini-cont" type="button" hidden><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span>Continuar noitada</span><small id="ini-cont-d"></small></span><i class="ini-seta" aria-hidden="true"></i></button>
     <div class="sep" aria-hidden="true"></div>
     <div class="opc px" hidden><span id="ini-rot">Jogadores</span>
@@ -3794,7 +3794,7 @@ function pintaInicio(){
   $("ini-som-v").textContent=mudo?"desligado":"ligado";
   $("ini-fx-v").textContent=fxOff?"desligados":"ligados";
 }
-function pintaPerfilInicio(){var d=lerSave(),l1=document.getElementById("nt-l1"),l2=document.getElementById("nt-l2");if(!l1)return;
+function pintaPerfilInicio(){var d=lerSave(),l1=document.getElementById("nt-l1"),l2=document.getElementById("nt-l2");if(!l1)return;l1.textContent="Encare a noite na KAT4 House";l2.textContent="";return;
   if(!d.st.noitadas){l1.textContent="3 mesas e 4 duelos";l2.textContent="até o Black Cat";return}
   var rc=recorde();l1.textContent=(d.nome||"Jogador")+" • "+d.fichas+" Fichas";
   l2.textContent=""}
