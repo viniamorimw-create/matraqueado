@@ -117,8 +117,8 @@ montaPagina("c0","cena0.jpg",P0);montaPagina("c1","cena1.jpg",P1);$("c1").queryS
 /* balões de fala: posição em fração do quadro; cauda aponta pra quem fala (d = direita) */
 function balao(id,i,x,y,w,txt,cauda){var q=$(id).querySelector('.q[data-i="'+i+'"]');var b=document.createElement("div");b.className="bal "+(cauda||"d");
   b.style.left=x*100+"%";b.style.top=y*100+"%";b.style.width=w*100+"%";b.innerHTML=txt;q.appendChild(b)}
-balao("c6",0,.13,.05,.50,"Acabei de passar pano nesse chão… e você me entra correndo, todo encharcado.","d");
-balao("c6",1,.14,.32,.36,"Não precisa explicar, meu chapa. Lá fora é problema seu.","d");
+balao("c6",0,.19,.20,.46,"Acabei de passar pano nesse chão, e você me entra correndo, todo encharcado…","d");
+balao("c6",1,.14,.32,.36,"Mas são ossos do ofício, meu camarada.","d");
 balao("c6",2,.15,.04,.34,"Senta aí, esse chopp é por conta da casa.","d");
 balao("c7",1,.10,.05,.40,"Não tá entendendo nada, não é? É fácil, vou te explicar.","d");montaPagina("c4","cena4.jpg",P4);
 
