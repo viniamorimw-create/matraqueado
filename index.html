@@ -1552,7 +1552,7 @@ function degrau(v,n){return Math.round(v*n)/n}                      // v arredon
 var PATAS_ARTE={"capivara": [{"src": "assets/patas/capivara_fechada.png?f9521e95", "w": 197, "h": 68}, {"src": "assets/patas/capivara_aberta.png?1dc0ac62", "w": 211, "h": 75}], "tamandua": [{"src": "assets/patas/tamandua_fechada.png?3152cc6b", "w": 189, "h": 68}, {"src": "assets/patas/tamandua_aberta.png?55968ed4", "w": 201, "h": 74}], "arara": [{"src": "assets/patas/arara_fechada.png?2d3c7a11", "w": 177, "h": 68}, {"src": "assets/patas/arara_aberta.png?d1f6a055", "w": 191, "h": 72}], "lobo": [{"src": "assets/patas/lobo_fechada.png?372a344a", "w": 175, "h": 68}, {"src": "assets/patas/lobo_aberta.png?9bc39bb8", "w": 188, "h": 73}], "onca": [{"src": "assets/patas/onca_fechada.png?c378cc48", "w": 175, "h": 68}, {"src": "assets/patas/onca_aberta.png?b06556a9", "w": 190, "h": 73}], "purim": [{"src": "assets/patas/purim_fechada.png?a1b78758", "w": 110, "h": 68}, {"src": "assets/patas/purim_aberta.png?c41105a9", "w": 113, "h": 73}]},PATAS_IMG={};
 Object.keys(PATAS_ARTE).forEach(function(k){PATAS_IMG[k]=PATAS_ARTE[k].map(function(a){var im=new Image();im.src=a.src;return im})});
 function pintaPataPerso(c,d,aberta){
-  var id=(typeof R!=="undefined"&&R&&R.perso)||(function(){try{return localStorage.getItem("matraq-perso-ult")}catch(e){return null}})()||"capivara";
+  var id=(typeof R!=="undefined"&&R&&R.perso)||(function(){try{return localStorage.getItem("matraq-perso-ult")}catch(e){return null}})()||"purim";
   var q=PATAS_IMG[id]||PATAS_IMG.capivara,a=PATAS_ARTE[id]||PATAS_ARTE.capivara,k=aberta?1:0,im=q[k],m=a[k];
   if(!im||!im.complete||!im.naturalWidth)return false;
   var w=m.w/4,h=m.h/4,fx=w-h*.55,fy=h*.5;     // centro do punho dentro do sprite
@@ -2574,7 +2574,7 @@ function extDuelo(){
 function fimDuelo(res){
   if(!R)return;
   R.duelo={res:res};R.hist.push({f:R.fase,pts:res.eu,alvo:res.ele,duelo:1});salvaRun();
-  if(res.vence&&R.fase===4&&persoLibera("lobo"))setTimeout(function(){faixa("NOVO PERSONAGEM","Lobo-guará liberado","o");somFim()},400);
+  if(res.vence&&R.fase===2)liberaMeta("capivara","Capivara");if(res.vence&&R.fase===4)liberaMeta("lobo","Lobo-guará");
   if(res.vence){ganhaFichas(3+(res.bomba?2:0));contaSt("duelos");contaSt("fases");
     if(nivel("garcom")&&R.itens.length<MAX_ITENS){var ic=BONUS.filter(function(b){return b.t==="item"&&b.r==="c"});if(ic.length){R.itens.push(ic[Math.floor(Math.random()*ic.length)].id);salvaRun()}}}
   if(!res.vence)encerraRun(false,res.eu);
@@ -2587,7 +2587,8 @@ function fimDeFase(){
   setTimeout(function(){
     if(!R)return;
     if(pts<R.alvo){encerraRun(false,pts);return}
-    if(R.fichaFase!==R.fase){R.fichaFase=R.fase;ganhaFichas(3);contaSt("fases")}   // mesa vencida: 3 fichas
+    if(R.fichaFase!==R.fase){R.fichaFase=R.fase;ganhaFichas(3);contaSt("fases")}
+    if(R.fase===1&&pts>=120)liberaMeta("tamandua","Tamanduá");if(nivelMaq(pts)===2)liberaMeta("arara","Arara-azul");   // mesa vencida: 3 fichas
     if(R.fase>=FASES)encerraRun(true,pts);
     else if(SLOT_FASES[R.fase])abrirSlot(false);
     else passaFase(pts);
@@ -3568,18 +3569,19 @@ var PERSO_ARTE={"tamandua": {"b": {"src": "assets/personagens/tamandua_busto.png
 // Personagens jogáveis: cada um com uma vantagem fixa na noitada. Os bloqueados abrem por conquista (guardada no aparelho).
 var PERSOS=[
   {id:"purim",nome:"Purim",poder:"Faro de rua",desc:"Nas mesas, prata e ouro ficam 25% mais perto da meta."},
-  {id:"capivara",nome:"Capivara",poder:"Tranquilona",desc:"Nos duelos, a garrafa aguenta 10 pontos a mais de diferença antes de estourar."},
-  {id:"tamandua",nome:"Tamanduá",poder:"Língua comprida",desc:"Uma vez por mesa, rola de novo um dado sem gastar lance (botão Língua)."},
-  {id:"arara",nome:"Arara-azul",poder:"Olho vivo",desc:"A caça-níquel mostra sempre uma opção a mais para escolher."},
-  {id:"lobo",nome:"Lobo-guará",poder:"Notívago",desc:"Nas mesas com maldição, o desconto na meta é o dobro.",trava:"Vença o duelo da Mesa 2 (Rival 2) para liberar."},
-  {id:"onca",nome:"Onça-pintada",poder:"Rainha da noite",desc:"Começa a noitada com uma bênção rara.",trava:"Vença uma noitada para liberar."}];
+  {id:"capivara",nome:"Capivara",poder:"Tranquilona",desc:"Nos duelos, a garrafa aguenta 10 pontos a mais de diferença antes de estourar.",trava:"Vença o Rival 1 para liberar."},
+  {id:"tamandua",nome:"Tamanduá",poder:"Língua comprida",desc:"Uma vez por mesa, rola de novo um dado sem gastar lance (botão Língua).",trava:"Faça 120 pontos na Mesa 1 para liberar."},
+  {id:"arara",nome:"Arara-azul",poder:"Olho vivo",desc:"A caça-níquel mostra sempre uma opção a mais para escolher.",trava:"Tire ouro em uma mesa para liberar."},
+  {id:"lobo",nome:"Lobo-guará",poder:"Notívago",desc:"Nas mesas com maldição, o desconto na meta é o dobro.",trava:"Chegue à Mesa 3 para liberar."},
+  {id:"onca",nome:"Onça-pintada",poder:"Rainha da noite",desc:"Começa a noitada com uma bênção rara.",trava:"Vença o Black Cat para liberar."}];
 function persoPor(id){for(var i=0;i<PERSOS.length;i++)if(PERSOS[i].id===id)return PERSOS[i];return null}
-function persoLib(){var o={};try{o=JSON.parse(localStorage.getItem("matraq-perso-v1"))||{}}catch(e){}if(typeof TESTE!=="undefined"&&TESTE){o.lobo=1;o.onca=1}return o}
+function persoLib(){var o={};try{o=JSON.parse(localStorage.getItem("matraq-perso-v1"))||{}}catch(e){}if(typeof TESTE!=="undefined"&&TESTE){o.capivara=o.tamandua=o.arara=o.lobo=o.onca=1}return o}
 function persoLiberado(id){var p=persoPor(id);return p&&(!p.trava||!!persoLib()[id])}
 function persoLibera(id){   // devolve true se acabou de liberar
   var o={};try{o=JSON.parse(localStorage.getItem("matraq-perso-v1"))||{}}catch(e){}
   if(o[id])return false;o[id]=1;try{localStorage.setItem("matraq-perso-v1",JSON.stringify(o))}catch(e){}return true;
 }
+function liberaMeta(id,nome){if(persoLibera(id))setTimeout(function(){faixa("NOVO PERSONAGEM",nome+" liberado","o");somFim()},900)}
 function temPerso(id){return !!(R&&R.perso===id)}
 var PS={sel:null,cb:null,pisca:0,quadro:0};
 function psFundo(el,a,q,n,alt){   // quadro q de uma tira de n quadros, escalada para a altura alt
