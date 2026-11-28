@@ -1129,6 +1129,12 @@ body.surv #slots .slot.b4.usado{filter:grayscale(.7) brightness(.7)}
 body.surv #slots .slot.b4.ativo{filter:brightness(1.3) drop-shadow(0 0 4px #ffd75a)}
 @media (max-width:380px){body.surv #slots .slot.b4{font-size:13px!important;height:32px!important;letter-spacing:0!important}}
 
+#balcao:not(.stats) .bc-caixa{display:none!important}
+#balcao.stats .bc-banner,#balcao.stats .bc-topo,#balcao.stats .bc-lista{display:none!important}
+#balcao.stats .col{justify-content:center}
+#ps-stats{display:block;width:100%;margin:6px 0 2px;padding:7px 0;font-size:17px;letter-spacing:1px;color:#e8d3a8;background:rgba(20,6,8,.75);border:2px solid #7a5a2e;border-radius:4px;cursor:pointer}
+#ps-stats:active{transform:translateY(1px)}
+
 .ps-perfil label[for="ps-nomej"],#ps-nomej{display:none!important}
 .ps-perfil{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:6px 10px!important}
 #perso .ps-perfil .ps-fichas.ps-fichas{font-size:26px!important}
@@ -1380,7 +1386,7 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
 
 <div class="inicio" id="painel" hidden><div class="col" id="painel-col"></div></div>
 <div class="inicio" id="balcao" hidden><div class="col"><div class="bc-banner" role="img" aria-label="Black Cat no balcão"></div><div class="bc-topo"><h2 class="bc-tit px">BALCÃO DO BLACK CAT<small>Vantagens fixas, para todas as noitadas.</small></h2><span class="bc-fichas px" id="bc-fichas"></span></div><div class="bc-lista" id="bc-lista"></div><div class="bc-caixa"><h3 class="px" id="bc-nome"></h3><div class="bc-stats" id="bc-stats"></div></div><div class="bc-caixa"><h3 class="px">Levar para outro aparelho</h3>O progresso fica salvo neste navegador. Copie o código e cole no outro aparelho.<div class="bc-bk"><button class="rolar px opc" id="bc-copia" type="button">COPIAR CÓDIGO</button><button class="rolar px opc" id="bc-cola" type="button">COLAR CÓDIGO</button></div><div id="bc-colar" hidden><textarea id="bc-cod" placeholder="Cole aqui o código"></textarea><div class="bc-bk"><button class="rolar px" id="bc-importa" type="button">CARREGAR</button></div></div><div id="bc-msg"></div></div><button class="rolar px" id="bc-voltar" type="button">VOLTAR</button></div></div>
-<div class="inicio" id="perso" hidden><div class="col"><h2 class="ps-tit px">ESCOLHA SEU PERSONAGEM</h2><div class="ps-perfil"><label class="px" for="ps-nomej">Jogador</label><input id="ps-nomej" maxlength="14" autocomplete="off" placeholder="Seu nome"><span class="ps-fichas px" id="ps-fichas"></span><button class="rolar px opc" id="ps-balcao" type="button">BALCÃO</button></div><div class="ps-palco"><div class="ps-corpo" id="ps-corpo"></div><div class="ps-info"><div class="ps-nome px" id="ps-nome"></div><div class="ps-poder px" id="ps-poder"></div><div class="ps-desc" id="ps-desc"></div><div class="ps-tranca px" id="ps-tranca"></div></div></div><div class="ps-fila" id="ps-fila"></div><div class="ps-bts"><button class="rolar px opc" id="ps-voltar" type="button">VOLTAR</button><button class="rolar px" id="ps-ok" type="button">COMEÇAR</button></div></div></div>
+<div class="inicio" id="perso" hidden><div class="col"><h2 class="ps-tit px">ESCOLHA SEU PERSONAGEM</h2><div class="ps-perfil"><label class="px" for="ps-nomej">Jogador</label><input id="ps-nomej" maxlength="14" autocomplete="off" placeholder="Seu nome"><span class="ps-fichas px" id="ps-fichas"></span><button class="rolar px opc" id="ps-balcao" type="button">BALCÃO</button></div><div class="ps-palco"><div class="ps-corpo" id="ps-corpo"></div><div class="ps-info"><div class="ps-nome px" id="ps-nome"></div><div class="ps-poder px" id="ps-poder"></div><div class="ps-desc" id="ps-desc"></div><div class="ps-tranca px" id="ps-tranca"></div></div></div><div class="ps-fila" id="ps-fila"></div><button class="px" id="ps-stats" type="button">Suas noitadas</button><div class="ps-bts"><button class="rolar px opc" id="ps-voltar" type="button">VOLTAR</button><button class="rolar px" id="ps-ok" type="button">COMEÇAR</button></div></div></div>
 
 <div class="inicio" id="slot" hidden>
   <button type="button" id="sl-seta" hidden aria-label="Ver mais opções abaixo">▼</button>
@@ -3100,7 +3106,7 @@ function contaSt(k,n){var d=lerSave();d.st[k]=(d.st[k]|0)+(n||1);gravaSave(d)}
 function fichasTxt(n){return '<i></i>'+n}
 function psPerfil(){var d=lerSave();$("ps-nomej").value=d.nome;$("ps-fichas").innerHTML=fichasTxt(d.fichas)}
 $("ps-nomej").addEventListener("change",function(){var d=lerSave();d.nome=this.value.trim().slice(0,14);gravaSave(d)});
-$("ps-balcao").addEventListener("click",function(){var d=lerSave();d.nome=$("ps-nomej").value.trim().slice(0,14);gravaSave(d);abreBalcao()});
+$("ps-balcao").addEventListener("click",function(){$("balcao").classList.remove("stats");abreBalcao()});
 function abreBalcao(){$("bc-colar").hidden=true;$("bc-msg").textContent="";pintaBalcao();$("balcao").hidden=false;$("balcao").scrollTop=0}
 function pintaBalcao(ok){
   var d=lerSave();$("bc-fichas").innerHTML=fichasTxt(d.fichas);
@@ -3124,6 +3130,7 @@ $("bc-lista").addEventListener("click",function(e){
   var o=centro(b);particulas(o.x,o.y,22,["#e3b341","#fff6dc"],{v:220});pintaBalcao(id);psPerfil();
 });
 $("bc-voltar").addEventListener("click",function(){$("balcao").hidden=true;psPerfil()});
+$("ps-stats").addEventListener("click",function(){$("balcao").classList.add("stats");abreBalcao()});
 // código de backup: save + personagens liberados + melhor noitada
 function codigoSave(){
   var o={s:lerSave(),p:null,m:melhor()};try{o.p=JSON.parse(localStorage.getItem("matraq-perso-v1"))}catch(e){}
