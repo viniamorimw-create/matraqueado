@@ -1269,6 +1269,66 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
 #perso .ps-grandes .rolar::after{display:none!important}
 #perso .ps-perfil{justify-content:center!important}
 :root{--vt-pavio:url(assets/ui/vt-pavio_2.png?2e9c303b)}
+
+#inicio label[for="ini-nome1"]{display:none!important}
+#inicio.cfg #ini-survival,#inicio.cfg #ini-cont{display:none!important}
+#perso .ps-extras{display:none!important}
+#inicio #ini-survival{min-height:84px!important;height:84px!important}
+#inicio #ini-survival .nt-tit{font-size:28px!important}
+#inicio #ini-survival .ini-txt small{font-size:16px!important}
+#inicio #ini-survival #nt-l2{display:none!important}
+#inicio #ini-cont{min-height:50px!important;height:50px!important}
+#inicio #ini-cont .ini-txt>span{font-size:21px!important}
+#inicio #ini-cont .ini-txt small{font-size:12px!important}
+#inicio #ini-comecar{min-height:46px!important;height:46px!important}
+#inicio #ini-comecar .ini-txt{font-size:22px!important}
+#inicio #ini-tuto,#inicio #ini-cfg{min-height:40px!important;height:40px!important}
+#inicio .ini-dupla{--gapb:10px}
+#ini-sair{display:block;width:60%;margin:2px auto 0;padding:5px 0;font-size:16px;letter-spacing:2px;color:#e8d3a8;background:rgba(20,6,8,.78);border:2px solid #7a5a2e;border-radius:4px;cursor:pointer}
+#ini-sair:active{transform:translateY(2px)}
+.inicio.cfg #ini-sair,.inicio.so-menu #ini-sair{display:none}
+/* slots */
+#mqperfis,#mqsenha{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(10,3,5,.95);overflow:auto;padding:14px}
+#mqperfis[hidden],#mqsenha[hidden]{display:none}
+.sl-col{width:min(100%,420px);display:flex;flex-direction:column;gap:12px}
+.sl-tit{margin:0;text-align:center;font-family:var(--f-display);font-weight:400;font-size:34px;line-height:1;color:#fff2c8;text-shadow:3px 3px 0 #000;letter-spacing:1px}
+.sl-sub{margin:-6px 0 4px;text-align:center;font-size:16px;color:#e3b341}
+.sl-card{position:relative;display:flex;align-items:center;gap:12px;min-height:92px;padding:10px 12px;text-align:left;color:#f1d9a8;background:#1d0b0c;border:3px solid #6b4220;box-shadow:inset 0 0 0 2px #000,0 3px 0 #000;cursor:pointer;font:inherit}
+.sl-card:active{transform:translateY(2px)}
+.sl-card.ativo{border-color:#e3b341;box-shadow:inset 0 0 0 2px #000,0 0 10px rgba(227,179,65,.45),0 3px 0 #000}
+.sl-num{position:absolute;left:-3px;top:-12px;padding:1px 7px;font-size:13px;color:#2a1208;background:#e3b341;border:2px solid #000}
+.sl-rosto{flex:none;width:64px;height:64px;background-color:#2c1410;background-repeat:no-repeat;image-rendering:pixelated;border:2px solid #000}
+.sl-info{flex:1;min-width:0}
+.sl-nome{font-size:24px;line-height:1;color:#fff2c8;text-shadow:2px 2px 0 #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl-lin{margin-top:5px;font-size:15px;line-height:1.2;color:#e8d6b0}
+.sl-lin b{color:#ffd75a;font-weight:400}
+.sl-run{margin-top:3px;font-size:13px;color:#ff9a7a}
+.sl-vazio{flex:1;text-align:center;font-size:24px;letter-spacing:2px;color:#a88a5c}
+.sl-del{position:absolute;right:6px;top:6px;width:28px;height:28px;padding:0;font-size:16px;line-height:1;color:#e8a090;background:#2a0e0e;border:2px solid #6b2a20;cursor:pointer}
+.sl-form{display:flex;flex-direction:column;gap:8px;width:100%}
+.sl-form input{font:inherit;font-size:22px;padding:6px 8px;color:#2a1208;background:#f4e3bd;border:3px solid #000;width:100%;box-sizing:border-box}
+.sl-bts{display:flex;gap:8px}
+.sl-bts button,.se-bt{flex:1;font:inherit;font-size:18px;letter-spacing:1px;padding:7px 0;color:#2a1208;background:#e3b341;border:3px solid #000;box-shadow:0 3px 0 #000;cursor:pointer}
+.sl-bts button.nao,.se-bt.nao{color:#f1d9a8;background:#3a1a12}
+.sl-msg{font-size:17px;line-height:1.2;color:#f1d9a8;text-align:center}
+/* password */
+.se-abas{display:flex;gap:8px}
+.se-abas button{flex:1;font:inherit;font-size:17px;padding:6px 0;color:#e8d3a8;background:#1d0b0c;border:2px solid #6b4220;cursor:pointer}
+.se-abas button.on{color:#2a1208;background:#e3b341;border-color:#000}
+.se-caixa{padding:14px 10px;background:#0d0607;border:3px solid #6b4220;box-shadow:inset 0 0 0 2px #000;text-align:center}
+.se-cod{display:flex;justify-content:center;gap:8px;flex-wrap:nowrap}
+.se-cod span{display:flex;gap:2px}
+.se-cod i{display:inline-block;width:17px;height:30px;text-align:center;font-style:normal;font-size:23px;line-height:30px;color:#7dff8a;text-shadow:0 0 6px rgba(80,255,120,.6);border-bottom:2px solid #2f5a33}
+.se-cod i.vaz{color:transparent}
+.se-cod i.cur{border-bottom-color:#7dff8a;animation:sePisca .6s steps(1) infinite}
+@keyframes sePisca{50%{border-bottom-color:transparent}}
+.se-dica{margin-top:10px;font-size:14px;line-height:1.25;color:#c9b48a}
+.se-tec{display:grid;grid-template-columns:repeat(9,1fr);gap:4px}
+.se-tec button{font:inherit;font-size:19px;padding:6px 0;color:#f1d9a8;background:#2a1410;border:2px solid #000;box-shadow:inset 0 -2px 0 rgba(0,0,0,.4);cursor:pointer}
+.se-tec button:active{background:#e3b341;color:#2a1208}
+.se-tec button.apaga{grid-column:span 2;background:#4a1a12}
+.se-tec button.ok{grid-column:span 2;background:#1f4a22;color:#c8ffcc}
+.se-erro{min-height:18px;font-size:15px;color:#ff8a7a;text-align:center}
 </style>
 <script>
 /* abertura em HQ (cutscene.html num quadro por cima do jogo) */
@@ -1338,8 +1398,8 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
     <div class="capa px"><canvas class="banner" width="841" height="250" role="img" aria-label="KAT4 House"></canvas><div class="tit">MATRAQUEADO</div></div>
     <div id="ini-logo" role="img" aria-label="KAT4 House — Matraqueado"></div>
     
-    <button class="rolar px modo sv" id="ini-survival" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span class="nt-tit"><i></i>MODO NOITADA<i></i></span><small id="nt-l1">3 mesas e 4 duelos</small><small id="nt-l2">até o Black Cat</small></span></button>
-    <button class="opc px cont" id="ini-cont" type="button" hidden><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span>Continuar partida</span><small id="ini-cont-d"></small></span><i class="ini-seta" aria-hidden="true"></i></button>
+    <button class="rolar px modo sv" id="ini-survival" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span class="nt-tit"><i></i>NOVA NOITADA<i></i></span><small id="nt-l1">3 mesas e 4 duelos</small><small id="nt-l2">até o Black Cat</small></span></button>
+    <button class="opc px cont" id="ini-cont" type="button" hidden><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt"><span>Continuar noitada</span><small id="ini-cont-d"></small></span><i class="ini-seta" aria-hidden="true"></i></button>
     <div class="sep" aria-hidden="true"></div>
     <div class="opc px" hidden><span id="ini-rot">Jogadores</span>
       <span class="passo" role="group" aria-labelledby="ini-rot">
@@ -1348,7 +1408,7 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
         <button type="button" id="ini-mais" aria-label="Mais jogadores">+</button>
       </span>
     </div>
-    <h2 class="cfg-tit">Configurações</h2>
+    <h2 class="cfg-tit">Opções</h2>
     <label class="opc px cf" for="ini-nome1"><span id="ini-rot1">Nome</span><input id="ini-nome1" type="text" maxlength="12" autocomplete="off" placeholder="Você"></label>
     <label class="opc px cf" id="ini-linha2" for="ini-nome2" hidden><span>Nome 2</span><input id="ini-nome2" type="text" maxlength="12" autocomplete="off" placeholder="Jogador 2"></label>
     <button class="opc px cf" id="ini-som" type="button"><span>Som</span><b id="ini-som-v">ligado</b></button>
@@ -1357,11 +1417,14 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
     <button class="opc px cf" id="ini-fx" type="button"><span>Efeitos</span><b id="ini-fx-v">ligados</b></button>
     <button class="opc px cf" id="ini-regras" type="button"><span>Regras</span><b>?</b></button>
     <button class="opc px cf" id="ini-abertura" type="button"><span>Ver abertura</span><b>▶</b></button>
+    <button class="opc px cf" id="ini-tuto2" type="button"><span>Tutorial</span><b>▶</b></button>
+    <button class="opc px cf" id="ini-senha" type="button"><span>Password</span><b>#</b></button>
     <button class="rolar px" id="ini-voltar" type="button">VOLTAR</button>
     <div class="ini-dupla"><button class="rolar px modo" id="ini-comecar" type="button"><i class="ini-ico" aria-hidden="true"></i><span class="ini-txt">MODO CLÁSSICO</span></button>
-      <button class="opc px" id="ini-tuto" type="button"><i class="ini-ico" aria-hidden="true"></i><span>Tutorial</span></button>
-      <button class="opc px" id="ini-cfg" type="button"><i class="ini-ico" aria-hidden="true"></i><span>Configurações</span></button>
+      <button class="opc px" id="ini-tuto" type="button"><i class="ini-ico" aria-hidden="true"></i><span>Regras</span></button>
+      <button class="opc px" id="ini-cfg" type="button"><i class="ini-ico" aria-hidden="true"></i><span>Opções</span></button>
     </div>
+    <button class="px" id="ini-sair" type="button">SAIR</button>
   </div>
 </div>
 
@@ -2237,7 +2300,7 @@ function mostraPlacar(){
   var el=$("placar");
   var temNome=!!(S.nomes&&S.nomes[0]);
   el.innerHTML='<button type="button" class="pl-x" aria-label="Fechar">✕</button><div class="pl-modo">MODO CLÁSSICO</div>'+
-    (temNome?'<div class="pl-nome">'+esc(nomeJog(0))+'</div>':'<form class="pl-nomeform"><input id="pl-nome-in" maxlength="12" placeholder="Seu nome" autocomplete="off"><button type="submit">OK</button></form>')+
+    '<div class="pl-nome">'+esc(nomeJog(0))+'</div>'+
     '<div class="pl-pts">'+pts+'<small>pts</small></div>'+
     (novo?'<div class="pl-rec novo">NOVO RECORDE!</div>':'<div class="pl-rec">Recorde: '+rec+'</div>')+
     '<div class="pl-data">'+dt+'</div>'+
@@ -2813,7 +2876,7 @@ function continuar(){
 }
 function pintaCont(){
   var u=ultima(),b=$("ini-cont"),t,r,d,n=0;
-  b.hidden=!u;if(!u)return;
+  b.hidden=!u;if(!u)return;b.querySelector(".ini-txt>span").textContent=u.m==="s"?"Continuar noitada":"Continuar clássico";
   if(u.m==="s"){r=u.m===naMemoria()?R:u.d.R;t="Noitada · "+etapaTxt(r.fase)}
   else{
     d=u.m===naMemoria()?S:u.d;
@@ -3138,6 +3201,7 @@ $("ini-survival").addEventListener("click",function(){
   cancelaCena();fecharInicio();novaRun();
 });
 $("ini-cont").addEventListener("click",continuar);
+window.MQ={arte:function(){return PERSO_ARTE},abrirTuto:function(){abrirTuto()}};
 
 // ---------- save da Noitada: perfil, fichas e Balcão do Black Cat ----------
 var SAVE_K="matraq-save-v1";
@@ -3942,7 +4006,7 @@ function start(d){
   desenha();pintaInicio();
   if(R&&R.estado==="slot"&&R.slot)abrirSlot(true);
   else if(!salvo)abrirInicio(false);
-  if(!tutoVisto()){if($("inicio").hidden&&!(R&&R.estado==="slot"))abrirInicio(false);setTimeout(function(){var v;try{v=localStorage.getItem("matraq-abertura-v1")}catch(e){v=1}(window.MQAbertura&&!v)?MQAbertura(abrirTuto):abrirTuto()},0)}   // primeiro acesso: abertura e depois tutorial
+  if(!tutoVisto()){if($("inicio").hidden&&!(R&&R.estado==="slot"))abrirInicio(false);setTimeout(function(){var v;try{v=localStorage.getItem("matraq-abertura-v1")}catch(e){v=1}var tt=function(){window.MQSlots?MQSlots.abrir(abrirTuto):abrirTuto()};(window.MQAbertura&&!v)?MQAbertura(tt):tt()},0)}   // primeiro acesso: abertura e depois tutorial
 }
 /* ---------- MODO X1 (duelo com bomba) ----------
    Vive numa tela própria, isolada do resto do jogo (shadow DOM): o visual e os nomes daqui não se misturam com os do jogo.
@@ -4932,5 +4996,134 @@ if(hot&&hot.ready)hot.ready(start);else start((hot&&hot.data)||{});
       g.style.setProperty("margin-top",(u.getBoundingClientRect().top-g.getBoundingClientRect().top-3)+"px","important")}}
   new MutationObserver(ajusta).observe(f,{childList:true,subtree:true,attributes:true});addEventListener("resize",ajusta);setInterval(ajusta,800);
 })();
-</script><script>addEventListener("load",function(){if(/[?&#]tutorial\b/.test(location.search+location.hash)){setTimeout(function(){var b=document.getElementById("ini-tuto");if(b)b.click()},300)}});</script><script>(function(){var L=["assets/caca_niquel/carrega_1.png?c87a5c29", "assets/caca_niquel/carrega_2.png?cd78a070", "assets/caca_niquel/maquina.png?5d911ef3", "assets/caca_niquel/metais_0.png?75847cfa", "assets/caca_niquel/metais_1.png?3568c8e4", "assets/caca_niquel/metais_2.png?241b47a8", "assets/caca_niquel/metais_3.png?fe33927c", "assets/caca_niquel/metais_4.png?7ce027ef", "assets/caca_niquel/metais_5.png?7e5ca7d7", "assets/cenario/figurantes.png?dd3787a5", "assets/cenario/mesa.png?636b7461", "assets/cenario/salao.png?fce9cc22", "assets/dados/faces.png?d98d1cde", "assets/dados/pata.png?ad28e126", "assets/garrafa/giro_aberta/000.png?5dc11825", "assets/garrafa/giro_aberta/025.png?af9351f8", "assets/garrafa/giro_aberta/050.png?85da6647", "assets/garrafa/giro_aberta/070.png?5bac531d", "assets/garrafa/giro_aberta/090.png?a2b4d410", "assets/garrafa/giro_aberta/110.png?8ee6567b", "assets/garrafa/giro_aberta/130.png?67e87404", "assets/garrafa/giro_aberta/155.png?cf0317a9", "assets/garrafa/giro_aberta/180.png?c5fdd8a6", "assets/garrafa/giro_aberta/195.png?846f8f12", "assets/garrafa/giro_aberta/215.png?9da02250", "assets/garrafa/giro_aberta/235.png?9f6e9d2e", "assets/garrafa/giro_aberta/240.png?10683f87", "assets/garrafa/giro_aberta/260.png?e1a4d886", "assets/garrafa/giro_aberta/270.png?32df75ac", "assets/garrafa/giro_aberta/280.png?8bfb031c", "assets/garrafa/giro_aberta/300.png?1d00085a", "assets/garrafa/giro_aberta/305.png?36a6bdab", "assets/garrafa/giro_aberta/320.png?b24ed65d", "assets/garrafa/giro_aberta/325.png?20a009c5", "assets/garrafa/giro_aberta/345.png?6ff2c54d", "assets/garrafa/giro_fechada/000.png?33a3711c", "assets/garrafa/giro_fechada/025.png?831c61ed", "assets/garrafa/giro_fechada/050.png?305690e1", "assets/garrafa/giro_fechada/070.png?2c774543", "assets/garrafa/giro_fechada/090.png?1a63d8e8", "assets/garrafa/giro_fechada/110.png?a9e1f76d", "assets/garrafa/giro_fechada/130.png?583fe2db", "assets/garrafa/giro_fechada/155.png?c8f8c0bd", "assets/garrafa/giro_fechada/180.png?346fa986", "assets/garrafa/giro_fechada/195.png?5c64e7b2", "assets/garrafa/giro_fechada/215.png?36217f68", "assets/garrafa/giro_fechada/235.png?efd6dbf8", "assets/garrafa/giro_fechada/240.png?89a09a82", "assets/garrafa/giro_fechada/260.png?25365041", "assets/garrafa/giro_fechada/270.png?f357d77a", "assets/garrafa/giro_fechada/280.png?a2e8ccf0", "assets/garrafa/giro_fechada/300.png?4c6176c8", "assets/garrafa/giro_fechada/305.png?a0a5d648", "assets/garrafa/giro_fechada/320.png?b9428853", "assets/garrafa/giro_fechada/325.png?2bfbc34e", "assets/garrafa/giro_fechada/345.png?c0dc807f", "assets/garrafa/pressao_1.png?9ff53959", "assets/garrafa/pressao_2.png?9b1ccc23", "assets/garrafa/pressao_3.png?5ae1c8f5", "assets/garrafa/pressao_4.png?814638f5", "assets/garrafa/pressao_5.png?a973acca", "assets/garrafa/pressao_6.png?f6b21ba3", "assets/home/bt_classico.png?cd4bf280", "assets/home/bt_classico_2.png?7142d25d", "assets/home/bt_classico_icone.png?2364234e", "assets/home/bt_classico_icone_2.png?6ea508ae", "assets/home/bt_config.png?21e2251f", "assets/home/bt_config_2.png?ef0f7f20", "assets/home/bt_config_3.png?fcbda112", "assets/home/bt_config_icone.png?c5812abd", "assets/home/bt_continuar.png?652f7781", "assets/home/bt_continuar_2.png?c68c4b2c", "assets/home/bt_continuar_3.png?86cf6797", "assets/home/bt_continuar_4.png?939f8034", "assets/home/bt_continuar_icone.png?ebc131d4", "assets/home/bt_noitada.png?19066349", "assets/home/bt_noitada_2.png?6d34d80a", "assets/home/bt_noitada_3.png?482c80d1", "assets/home/bt_noitada_apertado.png?7923a5e4", "assets/home/bt_noitada_icone.png?535cc581", "assets/home/bt_noitada_icone_2.png?3db06c06", "assets/home/bt_noitada_icone_3.png?49c2394e", "assets/home/bt_tutorial.png?43cd1d42", "assets/home/bt_tutorial_icone.png?c0125752", "assets/home/fundo.png?ad627060", "assets/home/fundo_icone.png?7f4b48c5", "assets/home/fundo_icone_2.png?edc953e2", "assets/home/fundo_icone_3.png?376ba793", "assets/patas/arara_aberta.png?d1f6a055", "assets/patas/arara_fechada.png?2d3c7a11", "assets/patas/capivara_aberta.png?1dc0ac62", "assets/patas/capivara_fechada.png?f9521e95", "assets/patas/lobo_aberta.png?9bc39bb8", "assets/patas/lobo_fechada.png?372a344a", "assets/patas/onca_aberta.png?b06556a9", "assets/patas/onca_fechada.png?c378cc48", "assets/patas/purim_aberta.png?c41105a9", "assets/patas/purim_fechada.png?a1b78758", "assets/patas/tamandua_aberta.png?55968ed4", "assets/patas/tamandua_fechada.png?3152cc6b", "assets/personagens/arara_busto.png?2994e255", "assets/personagens/arara_corpo.png?c57e2ad9", "assets/personagens/capivara_busto.png?5df58329", "assets/personagens/capivara_corpo.png?b7bee469", "assets/personagens/lobo_busto.png?d638128e", "assets/personagens/lobo_corpo.png?224b63d8", "assets/personagens/onca_busto.png?47d52c58", "assets/personagens/onca_corpo.png?bce89dcc", "assets/personagens/purim_busto.png?fccbd40b", "assets/personagens/purim_corpo.png?8c1c8a12", "assets/personagens/tamandua_busto.png?af00c991", "assets/personagens/tamandua_corpo.png?6efc3df1", "assets/rivais/chegada_chefe1_coruja.png?f960168b", "assets/rivais/chegada_chefe_final_black-cat.png?c1d059c2", "assets/rivais/chegada_rival1_vira-lata.png?e30907b8", "assets/rivais/chegada_rival2_guaxinim.png?e10f8273", "assets/rivais/expressoes_chefe1_coruja.png?5f9e3dd3", "assets/rivais/expressoes_chefe_final_black-cat.png?b75fa6e0", "assets/rivais/expressoes_rival1_vira-lata.png?9a1dc129", "assets/rivais/expressoes_rival2_guaxinim.png?7e752556", "assets/rivais/queda_chefe1_coruja/01.png?d2e401aa", "assets/rivais/queda_chefe1_coruja/02.png?5ef2c8fc", "assets/rivais/queda_chefe1_coruja/03.png?e6277995", "assets/rivais/queda_chefe1_coruja/04.png?14ddcae5", "assets/rivais/queda_chefe1_coruja/05.png?d1002db6", "assets/rivais/queda_chefe1_coruja/06.png?4294f19a", "assets/rivais/queda_chefe1_coruja/07.png?e3f4fc86", "assets/rivais/queda_chefe_final_black-cat/01.png?4a328867", "assets/rivais/queda_chefe_final_black-cat/02.png?641b9518", "assets/rivais/queda_chefe_final_black-cat/03.png?070e8e8c", "assets/rivais/queda_chefe_final_black-cat/04.png?55bbf372", "assets/rivais/queda_chefe_final_black-cat/05.png?7de70421", "assets/rivais/queda_chefe_final_black-cat/06.png?14178a45", "assets/rivais/queda_chefe_final_black-cat/07.png?798edfc0", "assets/rivais/queda_rival1_vira-lata/01.png?955f35ab", "assets/rivais/queda_rival1_vira-lata/02.png?6e40e229", "assets/rivais/queda_rival1_vira-lata/03.png?e988405b", "assets/rivais/queda_rival1_vira-lata/04.png?22b15d15", "assets/rivais/queda_rival1_vira-lata/05.png?c7d22c73", "assets/rivais/queda_rival1_vira-lata/06.png?225728fb", "assets/rivais/queda_rival1_vira-lata/07.png?0d195571", "assets/rivais/queda_rival1_vira-lata/08.png?d4aedde5", "assets/rivais/queda_rival2_guaxinim/01.png?9f056cd0", "assets/rivais/queda_rival2_guaxinim/02.png?1364b64f", "assets/rivais/queda_rival2_guaxinim/03.png?b5b08c22", "assets/rivais/queda_rival2_guaxinim/04.png?9c9504e6", "assets/rivais/queda_rival2_guaxinim/05.png?3a8ad941", "assets/rivais/queda_rival2_guaxinim/06.png?ae8f6039", "assets/rivais/queda_rival2_guaxinim/07.png?237fe26b", "assets/ui/banner-src.png?5ad7e59b", "assets/ui/barra_dica.png?3d71a1a6", "assets/ui/barra_dica_2.png?b7192079", "assets/ui/body_surv_slots_slot_b4_hab.png?5ea317b9", "assets/ui/bt_menu.png?19a6502b", "assets/ui/bt_menu_icone.png?d63a6b64", "assets/ui/bt_menu_icone_2.png?1071cb6a", "assets/ui/bt_rolar.png?9887c7d2", "assets/ui/bt_rolar_apertado.png?bcf022c6", "assets/ui/bt_rolar_icone.png?ad9cca16", "assets/ui/caixa_tentativas.png?b3ae9c7d", "assets/ui/caixa_tentativas_2.png?fddff0a8", "assets/ui/caixa_tentativas_icone.png?1152f59c", "assets/ui/cartela.png?635814aa", "assets/ui/cartela_2.png?f57701ad", "assets/ui/cartela_3.png?c74fc763", "assets/ui/cartela_icone.png?4b2ec72e", "assets/ui/cartela_icone_2.png?c36c0a85", "assets/ui/dy_surv_bonus_data-ling_before.png?879c3c6c", "assets/ui/fita.png?415b26bc", "assets/ui/ic-escudo.png?7bcca296", "assets/ui/ic-perdida.png?ec2d6695", "assets/ui/ic-roubo.png?28aae295", "assets/ui/ic-tomada.png?65bd239a", "assets/ui/igual_a_mesa_tuto_tm-feltro.png?21ade33e", "assets/ui/mp-chefe.png?096cf607", "assets/ui/mp-duelo1.png?cba5df15", "assets/ui/mp-duelo2.png?dd9e9c57", "assets/ui/mp-gato.png?42e9f4f7", "assets/ui/mp-mesa1.png?11730d3a", "assets/ui/mp-mesa2.png?9dc7fd99", "assets/ui/mp-mesa3.png?a9917dbf", "assets/ui/mp-ouro.png?28b55862", "assets/ui/mp-seta.png?70d3bb98", "assets/ui/mp-x.png?fb7c23d1", "assets/ui/painel.png?5f5d7c3b", "assets/ui/painel_2.png?e36ccd25", "assets/ui/painel_icone.png?f3197aa7", "assets/ui/painel_icone_2.png?f27a90e7", "assets/ui/placa.png?a4f06713", "assets/ui/placa_matraqueado.png?08a25509", "assets/ui/placa_matraqueado_2.png?0edcd259", "assets/ui/quadro_noite.png?985e2b53", "assets/ui/quem_comeca_icone.svg?8acda5a3", "assets/ui/quem_comeca_icone_2.svg?8639c040", "assets/ui/quem_comeca_icone_3.svg?916c1ba8", "assets/ui/quem_comeca_icone_4.svg?bc793874", "assets/ui/quem_comeca_icone_5.svg?3d653817", "assets/ui/tuto_tm-rolar.png?74ffc0ec", "assets/ui/tuto_tm-tent.png?a41c4d2e", "assets/ui/tuto_tuto-volta.png?1048d5ff", "assets/ui/ui-balcao.png?9b30f3a4", "assets/ui/ui-bt.png?1cc9a382", "assets/ui/ui-bt2.png?506e6b51", "assets/ui/ui-bta.png?54ce2917", "assets/ui/ui-bta2.png?ad6cfd18", "assets/ui/ui-btc.png?0ce9814e", "assets/ui/ui-btc2.png?0ab5f42f", "assets/ui/ui-bto.png?15300d17", "assets/ui/ui-bto2.png?3fca566b", "assets/ui/ui-cad.png?51bcd9d1", "assets/ui/ui-ficha.png?7fb15734", "assets/ui/ui-jan-azul.png?f5a5b5d8", "assets/ui/ui-jan-vinho.png?507a53b8", "assets/ui/ui-jan.png?507ac9eb", "assets/ui/ui-mold-sel.png?f2784296", "assets/ui/ui-mold.png?e7acccab", "assets/ui/ui-palco.png?16e49c54", "assets/ui/ui-treino.png?7b4ca291", "assets/ui/vt-benc.png?75a31bd0", "assets/ui/vt-bocab.png?a4a54d13", "assets/ui/vt-bolso.png?0c6ae646", "assets/ui/vt-chance.png?2d775f31", "assets/ui/vt-ficha.png?1063f3e5", "assets/ui/vt-fregues.png?bfa81168", "assets/ui/vt-frio.png?d32c3f4f", "assets/ui/vt-garcom.png?40f14660", "assets/ui/vt-gelo.png?33fec190", "assets/ui/vt-gorj.png?c592c48f", "assets/ui/vt-gorjeta.png?2a3d9d09", "assets/ui/vt-item.png?8b40c123", "assets/ui/vt-mao.png?d65d886b", "assets/ui/vt-meta.png?d40574b0", "assets/ui/vt-pavio.png?d1fd39a1", "assets/ui/vt-pavio_2.png?2e9c303b", "assets/ui/vt-risco.png?85541520", "assets/ui/vt-saca.png?59066eff", "assets/ui/vt-sena.png?852e59e4", "assets/ui/vt-sorte.png?30fc7a4a", "assets/ui/vt-tampa.png?fb949157"],P=window.__PRE=[];function vai(){L.forEach(function(u){var i=new Image();i.decoding="async";i.src=u;P.push(i)})}if(document.readyState==="complete")vai();else addEventListener("load",vai)})();</script><script>if("serviceWorker"in navigator&&location.protocol==="https:")addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script></body>
+</script><script>addEventListener("load",function(){if(/[?&#]tutorial\b/.test(location.search+location.hash)){setTimeout(function(){var b=document.getElementById("ini-tuto");if(b)b.click()},300)}});</script><script>
+/* ===== perfis (3 slots) ===== */
+(function(){
+  var SK="matraq-slots-v1",OK="mq-slot-ok";
+  var CH=["matraq-save-v1","matraq-perso-v1","matraq-perso-ult","matraq-treino-v1","matraq-melhor-v7","matraq-recorde-v1",
+          "general5-run-v2","general5-classico-v1","general5-recorde-v4","general5-nomes","general5-ultimo"];
+  var PER=["capivara","tamandua","arara","lobo","onca"];
+  function $(i){return document.getElementById(i)}
+  function lj(t){try{return JSON.parse(t)}catch(e){return null}}
+  function ler(){var o=lj(localStorage.getItem(SK));if(!o||!o.s){o={ativo:null,s:[null,null,null]};
+      var tem=CH.some(function(k){return localStorage.getItem(k)!=null&&k!=="general5-nomes"});
+      if(tem){var n=(lj(localStorage.getItem("general5-nomes"))||[])[0]||((lj(localStorage.getItem("matraq-save-v1"))||{}).nome)||"Jogador 1";
+        o.s[0]={nome:n,d:{}};o.ativo=0;grava(o)}}
+    return o}
+  function grava(o){try{localStorage.setItem(SK,JSON.stringify(o))}catch(e){}}
+  function vivo(){var d={};CH.forEach(function(k){var v=localStorage.getItem(k);if(v!=null)d[k]=v});return d}
+  function carrega(d){CH.forEach(function(k){if(d&&d[k]!=null)localStorage.setItem(k,d[k]);else localStorage.removeItem(k)})}
+  function poeNome(n){localStorage.setItem("general5-nomes",JSON.stringify([n]));var sv=lj(localStorage.getItem("matraq-save-v1"))||{};sv.nome=n;localStorage.setItem("matraq-save-v1",JSON.stringify(sv));
+    var i=$("ini-nome1");if(i)i.value=n}
+  function dados(o,k){return k===o.ativo?vivo():(o.s[k]&&o.s[k].d)||{}}
+  function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  var cbFim=null,modo=null;
+  function rosto(id){try{var A=MQ.arte()[id]||MQ.arte().purim,b=A.b,k=64/b.h;
+    return 'background-image:url('+b.src+');background-size:'+(b.w*4*k)+'px 64px;background-position:'+((64-b.w*k)/2)+'px 0'}catch(e){return ""}}
+  function card(o,k){
+    var sl=o.s[k],at=k===o.ativo;
+    if(modo&&modo.k===k&&modo.t==="novo")return '<div class="sl-card"><span class="sl-num">SLOT '+(k+1)+'</span><form class="sl-form" data-f="novo"><div class="sl-msg">Nome do jogador</div><input maxlength="12" autocomplete="off" placeholder="Seu nome" required><div class="sl-bts"><button type="button" class="nao" data-a="cancela">VOLTAR</button><button type="submit">CRIAR</button></div></form></div>';
+    if(modo&&modo.k===k&&modo.t==="del")return '<div class="sl-card"><span class="sl-num">SLOT '+(k+1)+'</span><div class="sl-form"><div class="sl-msg">Apagar <b>'+esc(sl.nome)+'</b>? Todo o progresso deste slot some.</div><div class="sl-bts"><button type="button" class="nao" data-a="cancela">VOLTAR</button><button type="button" data-a="apaga" data-k="'+k+'">APAGAR</button></div></div></div>';
+    if(!sl)return '<button type="button" class="sl-card" data-a="novo" data-k="'+k+'"><span class="sl-num">SLOT '+(k+1)+'</span><span class="sl-vazio">— NOVO JOGO —</span></button>';
+    var d=dados(o,k),sv=lj(d["matraq-save-v1"])||{},st=sv.st||{},pl=lj(d["matraq-perso-v1"])||{},lib=1+PER.filter(function(p){return pl[p]}).length,
+        ult=d["matraq-perso-ult"]||"purim",rec=parseInt(d["matraq-recorde-v1"],10)||0,run=lj(d["general5-run-v2"]);
+    return '<div role="button" tabindex="0" class="sl-card'+(at?' ativo':'')+'" data-a="usa" data-k="'+k+'"><span class="sl-num">SLOT '+(k+1)+'</span>'+
+      '<span class="sl-rosto" style="'+rosto(ult)+'"></span><span class="sl-info"><div class="sl-nome">'+esc(sl.nome)+'</div>'+
+      '<div class="sl-lin">Fichas <b>'+(sv.fichas|0)+'</b> · Personagens <b>'+lib+'/6</b></div>'+
+      '<div class="sl-lin">Recorde <b>'+rec+'</b> · Noitadas <b>'+(st.noitadas|0)+'</b> · Vitórias <b>'+(st.vitorias|0)+'</b></div>'+
+      (run&&run.R&&run.R.estado!=="fim"?'<div class="sl-run">Noitada em andamento</div>':'')+'</span>'+
+      '<button type="button" class="sl-del" data-a="del" data-k="'+k+'" aria-label="Apagar slot">✕</button></div>';
+  }
+  function pinta(){var o=ler();$("mqperfis").innerHTML='<div class="sl-col"><h2 class="sl-tit">MATRAQUEADO</h2><div class="sl-sub px">Escolha seu jogo</div>'+[0,1,2].map(function(k){return card(o,k)}).join("")+'</div>';
+    var f=$("mqperfis").querySelector("form input");if(f)f.focus()}
+  function fecha(){$("mqperfis").hidden=true;modo=null;try{sessionStorage.setItem(OK,"1")}catch(e){}var f=cbFim;cbFim=null;if(f)f()}
+  function troca(o,k,novo){   // salva o slot ativo e carrega o k
+    if(o.ativo!=null&&o.s[o.ativo]){o.s[o.ativo].d=vivo()}
+    var precisa=o.ativo!=null&&o.ativo!==k;
+    if(novo){o.s[k]={nome:novo,d:{}};if(precisa)carrega({});}
+    else if(precisa)carrega(o.s[k].d);
+    o.ativo=k;if(o.s[k])o.s[k].d={};grava(o);if(novo)poeNome(novo);else{var n=o.s[k].nome;poeNome(n)}
+    return precisa;
+  }
+  function acao(e){
+    var el=e.target.closest("[data-a]");if(!el)return;var a=el.getAttribute("data-a"),k=+el.getAttribute("data-k"),o=ler();
+    if(a==="del"){e.stopPropagation();modo={t:"del",k:k};pinta();return}
+    if(a==="cancela"){modo=null;pinta();return}
+    if(a==="novo"){modo={t:"novo",k:k};pinta();return}
+    if(a==="apaga"){if(k===o.ativo){carrega({});o.ativo=null}o.s[k]=null;grava(o);modo=null;
+      if(!o.s.some(Boolean)){pinta();return}pinta();return}
+    if(a==="usa"){var rl=troca(o,k);try{sessionStorage.setItem(OK,"1")}catch(x){}if(rl){location.reload();return}fecha()}
+  }
+  function cria(e){e.preventDefault();var n=e.target.querySelector("input").value.trim().slice(0,12);if(!n)return;
+    var o=ler(),k=modo.k,rl=troca(o,k,n);try{sessionStorage.setItem(OK,"1")}catch(x){}if(rl){location.reload();return}fecha()}
+  window.MQSlots={abrir:function(cb){
+      var o=ler();
+      if(cb&&o.ativo!=null){var ok=null;try{ok=sessionStorage.getItem(OK)}catch(e){}if(ok){cb();return}}
+      cbFim=cb||null;modo=null;pinta();$("mqperfis").hidden=false}};
+  var d=document.createElement("div");d.id="mqperfis";d.hidden=true;d.className="px";document.body.appendChild(d);
+  d.addEventListener("click",acao);d.addEventListener("submit",cria);
+  var sair=$("ini-sair");if(sair)sair.addEventListener("click",function(){MQSlots.abrir(null)});
+  // botão Regras (antigo Tutorial) abre as regras; o tutorial vai para Opções
+  document.addEventListener("click",function(e){if(!e.isTrusted)return;var t=e.target.closest&&e.target.closest("#ini-tuto");if(!t)return;
+    e.stopPropagation();e.preventDefault();var r=$("ini-regras");if(r)r.click()},true);
+  var t2=$("ini-tuto2");if(t2)t2.addEventListener("click",function(){var c=$("ini-voltar");if(c)c.click();setTimeout(function(){var t=$("ini-tuto");if(t)t.click()},50)});
+  // ao abrir o app (fora do primeiro acesso): escolhe o slot
+  var tuto=null,ok=null;try{tuto=localStorage.getItem("matraqueado-tutorial-v1");ok=sessionStorage.getItem(OK)}catch(e){}
+  var o=ler();if(tuto&&(!ok||o.ativo==null))MQSlots.abrir(null);
+})();
+
+/* ===== password estilo SNES: 16 caracteres ===== */
+(function(){
+  var AL="23456789ABCDEFGHJKLMNPQRSTUVWXYZ@#$%",B=36n,LEN=16;
+  var UP=[["meta",5],["pavio",3],["gorj",3],["benc",2],["item",1],["chance",1],["sorte",2],["mao",3],["bocab",2],["sena",2],["risco",1],["fregues",2],["tampa",1],["gelo",2],["saca",2],["bolso",1],["ficha",1],["garcom",1],["frio",1],["gorjeta",2]];
+  var TR=[["purim",2],["capivara",3],["tamandua",2],["arara",1],["lobo",2],["onca",1]];
+  var PER=["capivara","tamandua","arara","lobo","onca"];
+  var RAD=[1000,32,8,2001,201].concat(UP.map(function(u){return u[1]+1}),TR.map(function(t){return t[1]+1}));
+  var T=RAD.reduce(function(a,r){return a*BigInt(r)},1n),M=B**BigInt(LEN),K=M/T,A=25214903917n,C=987654321987n;
+  function inv(a,m){var t=0n,nt=1n,r=m,nr=a%m;while(nr){var q=r/nr;var x=t-q*nt;t=nt;nt=x;x=r-q*nr;r=nr;nr=x}return (t%m+m)%m}
+  var AI=inv(A,M);
+  function chk(n){return ((n^(n>>17n))*2654435761n+40503n)%K}
+  function lj(t){try{return JSON.parse(t)}catch(e){return null}}
+  function li(k){return parseInt(localStorage.getItem(k),10)||0}
+  function valores(){var sv=lj(localStorage.getItem("matraq-save-v1"))||{},nv=sv.nv||{},pl=lj(localStorage.getItem("matraq-perso-v1"))||{},tr=lj(localStorage.getItem("matraq-treino-v1"))||{},bits=0;
+    PER.forEach(function(p,i){if(pl[p])bits|=1<<i});
+    var v=[Math.min(999,sv.fichas|0),bits,Math.min(7,li("matraq-melhor-v7")),Math.min(2000,Math.floor(li("matraq-recorde-v1")/5)),Math.min(200,Math.floor(li("general5-recorde-v4")/5))];
+    UP.forEach(function(u){v.push(Math.min(u[1],nv[u[0]]|0))});TR.forEach(function(t){v.push(Math.min(t[1],tr[t[0]]|0))});return v}
+  function gera(){var v=valores(),n=0n;for(var i=v.length-1;i>=0;i--)n=n*BigInt(RAD[i])+BigInt(v[i]);
+    var x=((n*K+chk(n))*A+C)%M,out="";for(var j=0;j<LEN;j++){out=AL[Number(x%B)]+out;x/=B}return out}
+  function le(cod){if(cod.length!==LEN)return null;var x=0n;for(var j=0;j<LEN;j++){var c=AL.indexOf(cod[j]);if(c<0)return null;x=x*B+BigInt(c)}
+    var y=(((x-C)%M+M)*AI)%M,n=y/K;if(n>=T||y%K!==chk(n))return null;
+    var v=[];for(var i=0;i<RAD.length;i++){v.push(Number(n%BigInt(RAD[i])));n/=BigInt(RAD[i])}return v}
+  function aplica(v){var sv=lj(localStorage.getItem("matraq-save-v1"))||{};sv.fichas=v[0];sv.nv=sv.nv||{};
+    UP.forEach(function(u,i){sv.nv[u[0]]=v[5+i]});localStorage.setItem("matraq-save-v1",JSON.stringify(sv));
+    var pl={};PER.forEach(function(p,i){if(v[1]&(1<<i))pl[p]=1});localStorage.setItem("matraq-perso-v1",JSON.stringify(pl));
+    var tr={};TR.forEach(function(t,i){tr[t[0]]=v[5+UP.length+i]});localStorage.setItem("matraq-treino-v1",JSON.stringify(tr));
+    localStorage.setItem("matraq-melhor-v7",String(Math.max(v[2],li("matraq-melhor-v7"))));
+    localStorage.setItem("matraq-recorde-v1",String(Math.max(v[3]*5,li("matraq-recorde-v1"))));
+    localStorage.setItem("general5-recorde-v4",String(Math.max(v[4]*5,li("general5-recorde-v4"))))}
+  function $(i){return document.getElementById(i)}
+  var ab="gera",dig="",conf=false;
+  function blocos(t,cur){var h="";for(var g=0;g<4;g++){h+="<span>";for(var j=0;j<4;j++){var i=g*4+j,c=t[i];h+='<i class="'+(c?"":"vaz")+(cur&&i===t.length?" cur":"")+'">'+(c?c.replace("<","&lt;"):"·")+'</i>'}h+="</span>"}return '<div class="se-cod">'+h+'</div>'}
+  function pinta(msg){
+    var h='<div class="sl-col"><h2 class="sl-tit">PASSWORD</h2><div class="se-abas px"><button type="button" data-ab="gera" class="'+(ab==="gera"?"on":"")+'">VER MEU</button><button type="button" data-ab="usa" class="'+(ab==="usa"?"on":"")+'">INSERIR</button></div>';
+    if(ab==="gera")h+='<div class="se-caixa">'+blocos(gera())+'<div class="se-dica">Anote este código. Ele guarda fichas, Balcão, Mesa de treino, personagens liberados e recordes. A noitada em andamento não vai junto.</div></div>';
+    else if(conf)h+='<div class="se-caixa">'+blocos(dig)+'<div class="sl-msg" style="margin-top:10px">Trocar o progresso deste slot pelo do password?</div></div><div class="sl-bts"><button type="button" class="nao" data-x="nao">NÃO</button><button type="button" data-x="sim">SIM</button></div>';
+    else{h+='<div class="se-caixa">'+blocos(dig,1)+'</div><div class="se-erro">'+(msg||"")+'</div><div class="se-tec px">';
+      for(var i=0;i<AL.length;i++)h+='<button type="button" data-c="'+i+'">'+AL[i]+'</button>';
+      h+='<button type="button" class="apaga" data-x="apaga">←</button><button type="button" class="ok" data-x="ok">OK</button></div>'}
+    h+='<button type="button" class="se-bt nao" data-x="fecha">VOLTAR</button></div>';$("mqsenha").innerHTML=h}
+  var d=document.createElement("div");d.id="mqsenha";d.hidden=true;d.className="px";document.body.appendChild(d);
+  d.addEventListener("click",function(e){var el=e.target.closest("button");if(!el)return;
+    var a=el.getAttribute("data-ab"),c=el.getAttribute("data-c"),x=el.getAttribute("data-x");
+    if(a){ab=a;conf=false;pinta();return}
+    if(c!=null){if(dig.length<LEN)dig+=AL[+c];pinta();return}
+    if(x==="apaga"){dig=dig.slice(0,-1);pinta();return}
+    if(x==="ok"){if(dig.length<LEN){pinta("Faltam "+(LEN-dig.length)+" caracteres.");return}if(!le(dig)){pinta("Password inválido. Confira os caracteres.");return}conf=true;pinta();return}
+    if(x==="nao"){conf=false;pinta();return}
+    if(x==="sim"){aplica(le(dig));try{sessionStorage.setItem("mq-slot-ok","1")}catch(e){}location.reload();return}
+    if(x==="fecha"){d.hidden=true}});
+  var bt=$("ini-senha");if(bt)bt.addEventListener("click",function(){ab="gera";dig="";conf=false;pinta();d.hidden=false});
+  window.MQSenha={gera:gera,le:le,T:T,K:K};
+})();
+</script><script>(function(){var L=["assets/caca_niquel/carrega_1.png?c87a5c29", "assets/caca_niquel/carrega_2.png?cd78a070", "assets/caca_niquel/maquina.png?5d911ef3", "assets/caca_niquel/metais_0.png?75847cfa", "assets/caca_niquel/metais_1.png?3568c8e4", "assets/caca_niquel/metais_2.png?241b47a8", "assets/caca_niquel/metais_3.png?fe33927c", "assets/caca_niquel/metais_4.png?7ce027ef", "assets/caca_niquel/metais_5.png?7e5ca7d7", "assets/cenario/figurantes.png?dd3787a5", "assets/cenario/mesa.png?636b7461", "assets/cenario/salao.png?fce9cc22", "assets/dados/faces.png?d98d1cde", "assets/dados/pata.png?ad28e126", "assets/garrafa/giro_aberta/000.png?5dc11825", "assets/garrafa/giro_aberta/025.png?af9351f8", "assets/garrafa/giro_aberta/050.png?85da6647", "assets/garrafa/giro_aberta/070.png?5bac531d", "assets/garrafa/giro_aberta/090.png?a2b4d410", "assets/garrafa/giro_aberta/110.png?8ee6567b", "assets/garrafa/giro_aberta/130.png?67e87404", "assets/garrafa/giro_aberta/155.png?cf0317a9", "assets/garrafa/giro_aberta/180.png?c5fdd8a6", "assets/garrafa/giro_aberta/195.png?846f8f12", "assets/garrafa/giro_aberta/215.png?9da02250", "assets/garrafa/giro_aberta/235.png?9f6e9d2e", "assets/garrafa/giro_aberta/240.png?10683f87", "assets/garrafa/giro_aberta/260.png?e1a4d886", "assets/garrafa/giro_aberta/270.png?32df75ac", "assets/garrafa/giro_aberta/280.png?8bfb031c", "assets/garrafa/giro_aberta/300.png?1d00085a", "assets/garrafa/giro_aberta/305.png?36a6bdab", "assets/garrafa/giro_aberta/320.png?b24ed65d", "assets/garrafa/giro_aberta/325.png?20a009c5", "assets/garrafa/giro_aberta/345.png?6ff2c54d", "assets/garrafa/giro_fechada/000.png?33a3711c", "assets/garrafa/giro_fechada/025.png?831c61ed", "assets/garrafa/giro_fechada/050.png?305690e1", "assets/garrafa/giro_fechada/070.png?2c774543", "assets/garrafa/giro_fechada/090.png?1a63d8e8", "assets/garrafa/giro_fechada/110.png?a9e1f76d", "assets/garrafa/giro_fechada/130.png?583fe2db", "assets/garrafa/giro_fechada/155.png?c8f8c0bd", "assets/garrafa/giro_fechada/180.png?346fa986", "assets/garrafa/giro_fechada/195.png?5c64e7b2", "assets/garrafa/giro_fechada/215.png?36217f68", "assets/garrafa/giro_fechada/235.png?efd6dbf8", "assets/garrafa/giro_fechada/240.png?89a09a82", "assets/garrafa/giro_fechada/260.png?25365041", "assets/garrafa/giro_fechada/270.png?f357d77a", "assets/garrafa/giro_fechada/280.png?a2e8ccf0", "assets/garrafa/giro_fechada/300.png?4c6176c8", "assets/garrafa/giro_fechada/305.png?a0a5d648", "assets/garrafa/giro_fechada/320.png?b9428853", "assets/garrafa/giro_fechada/325.png?2bfbc34e", "assets/garrafa/giro_fechada/345.png?c0dc807f", "assets/garrafa/pressao_1.png?9ff53959", "assets/garrafa/pressao_2.png?9b1ccc23", "assets/garrafa/pressao_3.png?5ae1c8f5", "assets/garrafa/pressao_4.png?814638f5", "assets/garrafa/pressao_5.png?a973acca", "assets/garrafa/pressao_6.png?f6b21ba3", "assets/home/bt_classico.png?cd4bf280", "assets/home/bt_classico_2.png?7142d25d", "assets/home/bt_classico_icone.png?2364234e", "assets/home/bt_classico_icone_2.png?6ea508ae", "assets/home/bt_config.png?21e2251f", "assets/home/bt_config_2.png?ef0f7f20", "assets/home/bt_config_3.png?fcbda112", "assets/home/bt_config_icone.png?c5812abd", "assets/home/bt_continuar.png?652f7781", "assets/home/bt_continuar_2.png?c68c4b2c", "assets/home/bt_continuar_3.png?86cf6797", "assets/home/bt_continuar_4.png?939f8034", "assets/home/bt_continuar_icone.png?ebc131d4", "assets/home/bt_noitada.png?19066349", "assets/home/bt_noitada_2.png?6d34d80a", "assets/home/bt_noitada_3.png?482c80d1", "assets/home/bt_noitada_apertado.png?7923a5e4", "assets/home/bt_noitada_icone.png?535cc581", "assets/home/bt_noitada_icone_2.png?3db06c06", "assets/home/bt_noitada_icone_3.png?49c2394e", "assets/home/bt_tutorial.png?43cd1d42", "assets/home/bt_tutorial_icone.png?c0125752", "assets/home/fundo.png?ad627060", "assets/home/fundo_icone.png?7f4b48c5", "assets/home/fundo_icone_2.png?edc953e2", "assets/home/fundo_icone_3.png?376ba793", "assets/patas/arara_aberta.png?d1f6a055", "assets/patas/arara_fechada.png?2d3c7a11", "assets/patas/capivara_aberta.png?1dc0ac62", "assets/patas/capivara_fechada.png?f9521e95", "assets/patas/lobo_aberta.png?9bc39bb8", "assets/patas/lobo_fechada.png?372a344a", "assets/patas/onca_aberta.png?b06556a9", "assets/patas/onca_fechada.png?c378cc48", "assets/patas/purim_aberta.png?c41105a9", "assets/patas/purim_fechada.png?a1b78758", "assets/patas/tamandua_aberta.png?55968ed4", "assets/patas/tamandua_fechada.png?3152cc6b", "assets/personagens/arara_busto.png?2994e255", "assets/personagens/arara_corpo.png?c57e2ad9", "assets/personagens/capivara_busto.png?5df58329", "assets/personagens/capivara_corpo.png?b7bee469", "assets/personagens/lobo_busto.png?d638128e", "assets/personagens/lobo_corpo.png?224b63d8", "assets/personagens/onca_busto.png?47d52c58", "assets/personagens/onca_corpo.png?bce89dcc", "assets/personagens/purim_busto.png?fccbd40b", "assets/personagens/purim_corpo.png?8c1c8a12", "assets/personagens/tamandua_busto.png?af00c991", "assets/personagens/tamandua_corpo.png?6efc3df1", "assets/rivais/chegada_chefe1_coruja.png?f960168b", "assets/rivais/chegada_chefe_final_black-cat.png?c1d059c2", "assets/rivais/chegada_rival1_vira-lata.png?e30907b8", "assets/rivais/chegada_rival2_guaxinim.png?e10f8273", "assets/rivais/expressoes_chefe1_coruja.png?5f9e3dd3", "assets/rivais/expressoes_chefe_final_black-cat.png?b75fa6e0", "assets/rivais/expressoes_rival1_vira-lata.png?9a1dc129", "assets/rivais/expressoes_rival2_guaxinim.png?7e752556", "assets/rivais/queda_chefe1_coruja/01.png?d2e401aa", "assets/rivais/queda_chefe1_coruja/02.png?5ef2c8fc", "assets/rivais/queda_chefe1_coruja/03.png?e6277995", "assets/rivais/queda_chefe1_coruja/04.png?14ddcae5", "assets/rivais/queda_chefe1_coruja/05.png?d1002db6", "assets/rivais/queda_chefe1_coruja/06.png?4294f19a", "assets/rivais/queda_chefe1_coruja/07.png?e3f4fc86", "assets/rivais/queda_chefe_final_black-cat/01.png?4a328867", "assets/rivais/queda_chefe_final_black-cat/02.png?641b9518", "assets/rivais/queda_chefe_final_black-cat/03.png?070e8e8c", "assets/rivais/queda_chefe_final_black-cat/04.png?55bbf372", "assets/rivais/queda_chefe_final_black-cat/05.png?7de70421", "assets/rivais/queda_chefe_final_black-cat/06.png?14178a45", "assets/rivais/queda_chefe_final_black-cat/07.png?798edfc0", "assets/rivais/queda_rival1_vira-lata/01.png?955f35ab", "assets/rivais/queda_rival1_vira-lata/02.png?6e40e229", "assets/rivais/queda_rival1_vira-lata/03.png?e988405b", "assets/rivais/queda_rival1_vira-lata/04.png?22b15d15", "assets/rivais/queda_rival1_vira-lata/05.png?c7d22c73", "assets/rivais/queda_rival1_vira-lata/06.png?225728fb", "assets/rivais/queda_rival1_vira-lata/07.png?0d195571", "assets/rivais/queda_rival1_vira-lata/08.png?d4aedde5", "assets/rivais/queda_rival2_guaxinim/01.png?9f056cd0", "assets/rivais/queda_rival2_guaxinim/02.png?1364b64f", "assets/rivais/queda_rival2_guaxinim/03.png?b5b08c22", "assets/rivais/queda_rival2_guaxinim/04.png?9c9504e6", "assets/rivais/queda_rival2_guaxinim/05.png?3a8ad941", "assets/rivais/queda_rival2_guaxinim/06.png?ae8f6039", "assets/rivais/queda_rival2_guaxinim/07.png?237fe26b", "assets/ui/banner-src.png?5ad7e59b", "assets/ui/barra_dica.png?3d71a1a6", "assets/ui/barra_dica_2.png?b7192079", "assets/ui/body_surv_slots_slot_b4_hab.png?5ea317b9", "assets/ui/bt_menu.png?19a6502b", "assets/ui/bt_menu_icone.png?d63a6b64", "assets/ui/bt_menu_icone_2.png?1071cb6a", "assets/ui/bt_rolar.png?9887c7d2", "assets/ui/bt_rolar_apertado.png?bcf022c6", "assets/ui/bt_rolar_icone.png?ad9cca16", "assets/ui/caixa_tentativas.png?b3ae9c7d", "assets/ui/caixa_tentativas_2.png?fddff0a8", "assets/ui/caixa_tentativas_icone.png?1152f59c", "assets/ui/cartela.png?635814aa", "assets/ui/cartela_2.png?f57701ad", "assets/ui/cartela_3.png?c74fc763", "assets/ui/cartela_icone.png?4b2ec72e", "assets/ui/cartela_icone_2.png?c36c0a85", "assets/ui/dy_surv_bonus_data-ling_before.png?879c3c6c", "assets/ui/fita.png?415b26bc", "assets/ui/ic-escudo.png?7bcca296", "assets/ui/ic-perdida.png?ec2d6695", "assets/ui/ic-roubo.png?28aae295", "assets/ui/ic-tomada.png?65bd239a", "assets/ui/igual_a_mesa_tuto_tm-feltro.png?21ade33e", "assets/ui/mp-chefe.png?096cf607", "assets/ui/mp-duelo1.png?cba5df15", "assets/ui/mp-duelo2.png?dd9e9c57", "assets/ui/mp-gato.png?42e9f4f7", "assets/ui/mp-mesa1.png?11730d3a", "assets/ui/mp-mesa2.png?9dc7fd99", "assets/ui/mp-mesa3.png?a9917dbf", "assets/ui/mp-ouro.png?28b55862", "assets/ui/mp-seta.png?70d3bb98", "assets/ui/mp-x.png?fb7c23d1", "assets/ui/painel.png?5f5d7c3b", "assets/ui/painel_2.png?e36ccd25", "assets/ui/painel_icone.png?f3197aa7", "assets/ui/painel_icone_2.png?f27a90e7", "assets/ui/placa.png?a4f06713", "assets/ui/placa_matraqueado.png?08a25509", "assets/ui/placa_matraqueado_2.png?0edcd259", "assets/ui/quadro_noite.png?985e2b53", "assets/ui/quem_comeca_icone.svg?8acda5a3", "assets/ui/quem_comeca_icone_2.svg?8639c040", "assets/ui/quem_comeca_icone_3.svg?916c1ba8", "assets/ui/quem_comeca_icone_4.svg?bc793874", "assets/ui/quem_comeca_icone_5.svg?3d653817", "assets/ui/tuto_tm-rolar.png?74ffc0ec", "assets/ui/tuto_tm-tent.png?a41c4d2e", "assets/ui/tuto_tuto-volta.png?1048d5ff", "assets/ui/ui-balcao.png?9b30f3a4", "assets/ui/ui-bt.png?1cc9a382", "assets/ui/ui-bt2.png?506e6b51", "assets/ui/ui-bta.png?54ce2917", "assets/ui/ui-bta2.png?ad6cfd18", "assets/ui/ui-btc.png?0ce9814e", "assets/ui/ui-btc2.png?0ab5f42f", "assets/ui/ui-bto.png?15300d17", "assets/ui/ui-bto2.png?3fca566b", "assets/ui/ui-cad.png?51bcd9d1", "assets/ui/ui-ficha.png?7fb15734", "assets/ui/ui-jan-azul.png?f5a5b5d8", "assets/ui/ui-jan-vinho.png?507a53b8", "assets/ui/ui-jan.png?507ac9eb", "assets/ui/ui-mold-sel.png?f2784296", "assets/ui/ui-mold.png?e7acccab", "assets/ui/ui-palco.png?16e49c54", "assets/ui/ui-treino.png?7b4ca291", "assets/ui/vt-benc.png?75a31bd0", "assets/ui/vt-bocab.png?a4a54d13", "assets/ui/vt-bolso.png?0c6ae646", "assets/ui/vt-chance.png?2d775f31", "assets/ui/vt-ficha.png?1063f3e5", "assets/ui/vt-fregues.png?bfa81168", "assets/ui/vt-frio.png?d32c3f4f", "assets/ui/vt-garcom.png?40f14660", "assets/ui/vt-gelo.png?33fec190", "assets/ui/vt-gorj.png?c592c48f", "assets/ui/vt-gorjeta.png?2a3d9d09", "assets/ui/vt-item.png?8b40c123", "assets/ui/vt-mao.png?d65d886b", "assets/ui/vt-meta.png?d40574b0", "assets/ui/vt-pavio.png?d1fd39a1", "assets/ui/vt-pavio_2.png?2e9c303b", "assets/ui/vt-risco.png?85541520", "assets/ui/vt-saca.png?59066eff", "assets/ui/vt-sena.png?852e59e4", "assets/ui/vt-sorte.png?30fc7a4a", "assets/ui/vt-tampa.png?fb949157"],P=window.__PRE=[];function vai(){L.forEach(function(u){var i=new Image();i.decoding="async";i.src=u;P.push(i)})}if(document.readyState==="complete")vai();else addEventListener("load",vai)})();</script><script>if("serviceWorker"in navigator&&location.protocol==="https:")addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script></body>
 </html>
