@@ -1134,6 +1134,30 @@ body.surv #slots .slot.b4.ativo{filter:brightness(1.3) drop-shadow(0 0 4px #ffd7
 #balcao.stats .col{justify-content:center}
 #ps-stats{display:block;width:100%;margin:6px 0 2px;padding:7px 0;font-size:17px;letter-spacing:1px;color:#e8d3a8;background:rgba(20,6,8,.75);border:2px solid #7a5a2e;border-radius:4px;cursor:pointer}
 #ps-stats:active{transform:translateY(1px)}
+#treino{background:radial-gradient(ellipse at 50% 20%,#2c1a12 0%,#140b0b 65%,#0b0607 100%)!important;z-index:32}
+#treino .col{gap:10px;max-width:420px}
+/* botões */
+#painel .pn button.rolar,#perso .rolar,#treino .rolar,#sl button.rolar{clip-path:none!important;background:none!important;border:0!important;box-shadow:none!important;outline:0;
+  border-image:var(--ui-bt) 14 fill / 10px stretch!important;color:#2a0d10!important;text-shadow:none!important}
+#painel .pn button.rolar:active,#perso .rolar:active,#treino .rolar:active{border-image-source:var(--ui-bt2)!important}
+#painel .pn button.opc,#perso .rolar.opc,#treino .rolar.opc{border-image-source:var(--ui-bta)!important;color:#f1d9a8!important}
+#painel .pn button.opc:active,#perso .rolar.opc:active,#treino .rolar.opc:active{border-image-source:var(--ui-bta2)!important}
+#treino .rolar[data-tr]{border-image-source:var(--ui-bto)!important;color:#2a1208!important}
+#treino .rolar[data-tr]:active{border-image-source:var(--ui-bto2)!important}
+#painel .pn button.rolar[disabled],#perso .rolar[disabled],#treino .rolar[disabled]{border-image-source:var(--ui-btc)!important;color:#3a3a40!important;opacity:1!important;filter:none!important}
+#treino .bc-item button.rolar{padding:9px 14px 10px!important;font-size:17px!important}
+#treino .bc-nome{font-size:17px!important}
+#treino:not(.stats) .bc-caixa{display:none!important}
+#treino.stats .bc-banner,#treino.stats .bc-topo,#treino.stats .bc-lista{display:none!important}
+#treino.stats .col{justify-content:center}
+.ps-extras{display:flex;gap:6px;width:100%}
+.ps-extras #ps-stats,.ps-extras #ps-treino{flex:1;display:block;margin:6px 0 2px;padding:7px 0;font-size:17px;letter-spacing:1px;color:#e8d3a8;background:rgba(20,6,8,.75);border:2px solid #7a5a2e;border-radius:4px;cursor:pointer}
+.ps-extras #ps-treino{color:#ffd75a;border-color:#a8782e}
+#treino .tr-ic{width:46px;height:46px;border:2px solid #c9952e;border-radius:4px;background:#2a0c10 0 0/400% 100% no-repeat;image-rendering:pixelated}
+#treino .tr-item.trava .tr-ic{filter:brightness(0) opacity(.6)}
+#treino .tr-prox{color:#7ad07a}
+#treino .bc-nv b.on{background:#ffd75a!important}
+#treino #tr-voltar{margin-top:10px}
 
 .ps-perfil label[for="ps-nomej"],#ps-nomej{display:none!important}
 .ps-perfil{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:6px 10px!important}
@@ -1385,8 +1409,12 @@ body.surv #slots .slot.b4.hab{border-image-source:url(assets/ui/body_surv_slots_
 </div>
 
 <div class="inicio" id="painel" hidden><div class="col" id="painel-col"></div></div>
+<div class="inicio" id="treino" hidden><div class="col">
+<div class="bc-topo"><h2 class="bc-tit px">MESA DE TREINO<small>O barman ensina. Melhore a habilidade de cada personagem.</small></h2><span class="bc-fichas px" id="tr-fichas"><i></i>0</span></div>
+<div class="bc-lista" id="tr-lista"></div>
+<button type="button" id="tr-voltar" class="rolar px">VOLTAR</button></div></div>
 <div class="inicio" id="balcao" hidden><div class="col"><div class="bc-banner" role="img" aria-label="Black Cat no balcão"></div><div class="bc-topo"><h2 class="bc-tit px">BALCÃO DO BLACK CAT<small>Vantagens fixas, para todas as noitadas.</small></h2><span class="bc-fichas px" id="bc-fichas"></span></div><div class="bc-lista" id="bc-lista"></div><div class="bc-caixa"><h3 class="px" id="bc-nome"></h3><div class="bc-stats" id="bc-stats"></div></div><div class="bc-caixa"><h3 class="px">Levar para outro aparelho</h3>O progresso fica salvo neste navegador. Copie o código e cole no outro aparelho.<div class="bc-bk"><button class="rolar px opc" id="bc-copia" type="button">COPIAR CÓDIGO</button><button class="rolar px opc" id="bc-cola" type="button">COLAR CÓDIGO</button></div><div id="bc-colar" hidden><textarea id="bc-cod" placeholder="Cole aqui o código"></textarea><div class="bc-bk"><button class="rolar px" id="bc-importa" type="button">CARREGAR</button></div></div><div id="bc-msg"></div></div><button class="rolar px" id="bc-voltar" type="button">VOLTAR</button></div></div>
-<div class="inicio" id="perso" hidden><div class="col"><h2 class="ps-tit px">ESCOLHA SEU PERSONAGEM</h2><div class="ps-perfil"><label class="px" for="ps-nomej">Jogador</label><input id="ps-nomej" maxlength="14" autocomplete="off" placeholder="Seu nome"><span class="ps-fichas px" id="ps-fichas"></span><button class="rolar px opc" id="ps-balcao" type="button">BALCÃO</button></div><div class="ps-palco"><div class="ps-corpo" id="ps-corpo"></div><div class="ps-info"><div class="ps-nome px" id="ps-nome"></div><div class="ps-poder px" id="ps-poder"></div><div class="ps-desc" id="ps-desc"></div><div class="ps-tranca px" id="ps-tranca"></div></div></div><div class="ps-fila" id="ps-fila"></div><button class="px" id="ps-stats" type="button">Suas noitadas</button><div class="ps-bts"><button class="rolar px opc" id="ps-voltar" type="button">VOLTAR</button><button class="rolar px" id="ps-ok" type="button">COMEÇAR</button></div></div></div>
+<div class="inicio" id="perso" hidden><div class="col"><h2 class="ps-tit px">ESCOLHA SEU PERSONAGEM</h2><div class="ps-perfil"><label class="px" for="ps-nomej">Jogador</label><input id="ps-nomej" maxlength="14" autocomplete="off" placeholder="Seu nome"><span class="ps-fichas px" id="ps-fichas"></span><button class="rolar px opc" id="ps-balcao" type="button">BALCÃO</button></div><div class="ps-palco"><div class="ps-corpo" id="ps-corpo"></div><div class="ps-info"><div class="ps-nome px" id="ps-nome"></div><div class="ps-poder px" id="ps-poder"></div><div class="ps-desc" id="ps-desc"></div><div class="ps-tranca px" id="ps-tranca"></div></div></div><div class="ps-fila" id="ps-fila"></div><div class="ps-extras"><button class="px" id="ps-treino" type="button">Mesa de treino</button><button class="px" id="ps-stats" type="button">Suas noitadas</button></div><div class="ps-bts"><button class="rolar px opc" id="ps-voltar" type="button">VOLTAR</button><button class="rolar px" id="ps-ok" type="button">COMEÇAR</button></div></div></div>
 
 <div class="inicio" id="slot" hidden>
   <button type="button" id="sl-seta" hidden aria-label="Ver mais opções abaixo">▼</button>
@@ -2248,7 +2276,7 @@ var DUELOS={2:{look:0,nome:"Rival 1",rod:10,l0:70,pensa:0,erro:.75,forca:0,pod:"
             4:{look:2,nome:"Rival 2",rod:10,l0:60,pensa:1,erro:.25,forca:0,pod:"Mão leve"},
             6:{look:1,nome:"Chefe 1",rod:10,l0:55,pensa:1,erro:.1,forca:0,pod:"Previsão"},
             7:{look:4,nome:"Black Cat",rod:10,l0:50,pensa:1,erro:0,forca:0,pod:"Previsão · Mão leve · Tranca"}};
-function limitesDuelo(D){var out=[],i,x=(temPerso("capivara")?10:0)+5*nivel("pavio");for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5+x);return out}   // capivara: +10                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
+function limitesDuelo(D){var out=[],i,x=(temPerso("capivara")?10+5*nivHab("capivara"):0)+5*nivel("pavio");for(i=0;i<D.rod;i++)out.push(Math.round((D.l0-(D.l0-25)*i/(D.rod-1))/5)*5+x);return out}   // capivara: +10                          // chefe: 1 lance a menos; a meta cai na proporção do valor esperado desse lance
 var SLOT_PESOS={n:{c:.50,i:.30,r:.15,l:.05},t:{c:.25,i:.35,r:.28,l:.12}};
 var MAQ_PESOS=[{c:.60,i:.30,r:.09,l:.01},{c:.35,i:.40,r:.20,l:.05},{c:.15,i:.40,r:.33,l:.12}];   // bronze, prata, ouro (nov/2026: menos raras, a noitada estava fácil)
 var GORJ_CASA=[3,5,10];   // prêmio das fases sem caça-níquel: bronze, prata, ouro
@@ -2413,7 +2441,7 @@ function kAnt(){return INI_BLOCO[R.fase]?0:RODADAS[R.fase-2]}   // rodadas do bl
 function espBloco(n){return n>0?E3[n-1]+VELHA*LIN_ESP[n-1]:0}
 function calcMeta(){   // meta = total do bloco ao fim desta fase; a maldição só pesa nos pontos esperados desta fase
   var f=META_MESA[(R.fase-1)>>1]||.7,m=f*espBloco(R.k)+TAXA*poder();
-  m-=COMP*custoMald()*(temPerso("lobo")?2:1)*f*(espBloco(R.k)-espBloco(kAnt()));   // lobo-guará: dobro
+  m-=COMP*custoMald()*(temPerso("lobo")?2+.5*nivHab("lobo"):1)*f*(espBloco(R.k)-espBloco(kAnt()));   // lobo-guará: dobro
   m*=AJ_META[R.fase-1]||1;
   m*=1-.02*nivel("meta");   // balcão: meta mais leve
   return Math.max(5,Math.round(m/5)*5);
@@ -2463,7 +2491,7 @@ function novaRunCom(perso){try{if(arguments[0])localStorage.setItem("matraq-pers
   (function(){var nb=nivel("benc"),com=BONUS.filter(function(b){return b.t==="rel"&&b.r==="c"&&R.relics.indexOf(b.id)<0});
     for(var k=0;k<nb&&com.length;k++){var j=Math.floor(Math.random()*com.length);R.relics.push(com[j].id);com.splice(j,1)}
     if(nivel("item")){var its=BONUS.filter(function(b){return b.t==="item"&&(b.r==="c"||b.r==="i")});R.itens.push(its[Math.floor(Math.random()*its.length)].id)}})();
-  if(R.perso==="onca"){var raras=BONUS.filter(function(b){return b.t==="rel"&&b.r==="r"});R.relics.push(raras[Math.floor(Math.random()*raras.length)].id)}   // onça: começa com uma bênção rara
+  if(R.perso==="onca"){var raras=BONUS.filter(function(b){return b.t==="rel"&&b.r==="r"});R.relics.push(raras[Math.floor(Math.random()*raras.length)].id);if(nivHab("onca")>=1){var ii=BONUS.filter(function(b){return b.t==="item"&&b.r==="i"});if(ii.length)R.itens.push(ii[Math.floor(Math.random()*ii.length)].id)}}   // onça: começa com uma bênção rara
   recalcMods();comecaFase(true);
 }
 function comecaFase(mostra){
@@ -2474,7 +2502,7 @@ function comecaFase(mostra){
   if(R.duelo){R.mald=null;R.maldCasa=null}
   else if(INI_BLOCO[R.fase]||(R.fase>=FASE_MALD&&R.maldMesa!==etapa(R.fase).mesa)){R.maldMesa=etapa(R.fase).mesa;R.mald=sorteiaMald();if(R.mald)R.maldUlt=R.mald;var tv=trancaveis();R.maldCasa=R.mald==="casa"?tv[Math.floor(Math.random()*tv.length)]:null}   // maldição da mesa
   R.cred=novo?R.credProx:(R.cred||0)+R.credProx;R.credProx=0;if(novo&&!R.duelo)R.cred+=3*nivel("gorj");   // balcão: couvertR.base=R.duelo?null:brutoFase();
-  var aAnt=novo?0:(R.alvo||0);R.alvo=R.duelo?0:calcMeta();R.alvoAnt=aAnt;R.inicio=R.duelo?0:pontosFase();R.rext=false;R.lingua=false;modoLing=false;R.estado=R.duelo?"duelo":"jogando";R.slot=null;
+  var aAnt=novo?0:(R.alvo||0);R.alvo=R.duelo?0:calcMeta();R.alvoAnt=aAnt;R.inicio=R.duelo?0:pontosFase();R.rext=false;R.lingua=false;R.lingN=0;modoLing=false;R.estado=R.duelo?"duelo":"jogando";R.slot=null;
   vendo=0;modoItem=-1;guardaInicioFase();
   desenha();salvaRun();
   if(mostra)abrePainelFase();
@@ -2819,7 +2847,7 @@ function usaLingua(){
   modoItem=-1;modoLing=true;desenha();
 }
 function linguaDado(i){
-  modoLing=false;R.lingua=true;var antes=S.dados.slice(),v=sorteia();
+  modoLing=false;R.lingN=(R.lingN||0)+1;R.lingua=R.lingN>=1+nivHab("tamandua");var antes=S.dados.slice(),v=sorteia();
   if(window.TESTE_PROX){v=TESTE_PROX[i];window.TESTE_PROX=null}
   S.dados[i]=v;S.boca=false;S.guardado[i]=false;somFica(true);desenha();salvaRun();
   var cd=centro($("dados").children[i]);particulas(cd.x,cd.y,18,["#c98a5a","#f1d9a8","#fff6dc"],{v:260});tremer(1);
@@ -2995,7 +3023,7 @@ function abrirSlot(retomar){
     var jack=rs[0]===rs[1]&&rs[1]===rs[2]&&rs[0]!=="c";
     if(jack)esc.push(pegaBonus(PROX[rs[0]],esc));
     var cx=-1;if(R.mald){cx=esc.length;esc.push(pegaBonus(sorteiaRar(w),esc))}
-    if(temPerso("arara"))esc.push(pegaBonus(sorteiaRar(w),esc));   // arara: olho vivo   // maldição vencida: uma opção a mais
+    if(temPerso("arara"))for(var ka=0;ka<1+nivHab("arara");ka++)esc.push(pegaBonus(sorteiaRar(w),esc));   // arara: olho vivo   // maldição vencida: uma opção a mais
     R.estado="slot";
     R.slot={ids:esc.map(function(b){return b.id}),jack:jack,cx:cx,turbo:turbo,nivel:niv,pts:pts,alvo:du?du.ele:R.alvo,duelo:!!du,pick:null};
     salvaRun();
@@ -3131,6 +3159,40 @@ $("bc-lista").addEventListener("click",function(e){
 });
 $("bc-voltar").addEventListener("click",function(){$("balcao").hidden=true;psPerfil()});
 $("ps-stats").addEventListener("click",function(){$("balcao").classList.add("stats");abreBalcao()});
+/* mesa de treino */
+var TREINO_K="matraq-treino-v1";
+var TREINO={
+  capivara:{precos:[10,18,28],efeito:function(n){return "Garrafa aguenta +"+(10+5*n)+" pontos"}},
+  tamandua:{precos:[20,35],efeito:function(n){return "Língua "+(1+n)+"× por mesa"}},
+  arara:{precos:[25],efeito:function(n){return "Caça-níquel com +"+(1+n)+" opç"+(n?"ões":"ão")}},
+  lobo:{precos:[15,25],efeito:function(n){return "Desconto da maldição "+(2+.5*n).toString().replace(".",",")+"×"}},
+  onca:{precos:[30],efeito:function(n){return n?"Bênção rara + item incomum":"Começa com 1 bênção rara"}}
+};
+function lerTreino(){try{return JSON.parse(localStorage.getItem(TREINO_K))||{}}catch(e){return {}}}
+function nivHab(id){return lerTreino()[id]|0}
+function abreTreino(){pintaTreino();$("treino").hidden=false;$("treino").scrollTop=0}
+function pintaTreino(ok){
+  var d=lerSave(),t=lerTreino();$("tr-fichas").innerHTML=fichasTxt(d.fichas);
+  $("tr-lista").innerHTML=PERSOS.map(function(p){
+    var T=TREINO[p.id],n=t[p.id]|0,max=T.precos.length,pr=T.precos[n],lib=persoLiberado(p.id),pips="";
+    for(var k=0;k<max;k++)pips+='<b class="'+(k<n?"on":"")+'"></b>';
+    var bt=!lib?'<button type="button" class="rolar px" disabled>🔒</button>':
+      n>=max?'<button type="button" class="rolar px" disabled>MÁX</button>':
+      '<button type="button" class="rolar px" data-tr="'+p.id+'"'+(d.fichas<pr?" disabled":"")+'><i style="font-style:normal">'+pr+'</i> fichas</button>';
+    return '<div class="bc-item tr-item'+(lib?"":" trava")+(ok===p.id?" ok":"")+'"><i class="tr-ic" data-p="'+p.id+'"></i>'+
+      '<div class="bc-nome px">'+(lib?p.nome+" · "+p.poder:"Bloqueado")+'</div>'+
+      '<div class="bc-desc">'+(lib?T.efeito(n)+(n<max?' <span class="tr-prox">→ '+T.efeito(n+1)+'</span>':""):"Libere o personagem para treinar.")+'</div>'+
+      '<div class="bc-nv">'+pips+'</div>'+bt+'</div>'}).join("");
+  [].forEach.call($("tr-lista").querySelectorAll(".tr-ic"),function(el){var a=PERSO_ARTE&&PERSO_ARTE[el.dataset.p];if(a&&a.b){el.style.backgroundImage="url("+a.b.src+")";el.style.backgroundSize="400% 100%"}});
+}
+$("tr-lista").addEventListener("click",function(e){
+  var b=e.target.closest("[data-tr]");if(!b||b.disabled)return;
+  var id=b.dataset.tr,T=TREINO[id],t=lerTreino(),n=t[id]|0,pr=T.precos[n],d=lerSave();if(pr==null||d.fichas<pr)return;
+  d.fichas-=pr;gravaSave(d);t[id]=n+1;try{localStorage.setItem(TREINO_K,JSON.stringify(t))}catch(x){}
+  somFica(true);pintaTreino(id);psPerfil();
+});
+$("tr-voltar").addEventListener("click",function(){$("treino").hidden=true;psPerfil()});
+$("ps-treino").addEventListener("click",abreTreino);
 // código de backup: save + personagens liberados + melhor noitada
 function codigoSave(){
   var o={s:lerSave(),p:null,m:melhor()};try{o.p=JSON.parse(localStorage.getItem("matraq-perso-v1"))}catch(e){}
